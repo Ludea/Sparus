@@ -1,0 +1,96 @@
+{
+  "package": {
+    "productName": "sparus",
+    "version": "../package.json"
+  },
+  "build": {
+    "distDir": "../dist",
+    "devPath": "http://localhost:3000",
+    "beforeDevCommand": "yarn dev",
+    "beforeBuildCommand": "yarn build"
+  },
+  "tauri": {
+    "bundle": {
+      "active": true,
+      "targets": ["msi", "deb", "dmg"],
+      "identifier": "com.Sparus.dev",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [],
+      "externalBin": [],
+      "copyright": "",
+      "category": "DeveloperTool",
+      "shortDescription": "",
+      "longDescription": "",
+      "deb": {
+        "depends": []
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "",
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": null
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": {
+            "en-US": {},
+            "fr-FR": {
+              "localePath": "locales/fr-FR.wxl"
+            }
+          }
+        }
+      }
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    },
+    "updater": {
+      "active": false
+    },
+    "allowlist": {      
+      "notification": {
+        "all": true
+      },
+      "shell": {
+        "open": true,
+        "execute": true,
+        "scope": [
+          {
+            "name": "cmd",
+            "cmd": "cmd",
+            "args": ["/C", { "validator": "\\S+" }]
+          }
+        ]
+      },
+      "window": {
+        "close": true,
+        "minimize": true,
+        "startDragging": true
+      }
+    },
+    "windows": [
+      {
+        "title": "Sparus",
+        "width": 800,
+        "height": 600,
+        "resizable": false,
+        "decorations": false,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-eval' 'unsafe-inline'"
+    }
+  }
+}
