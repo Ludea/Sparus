@@ -24,7 +24,7 @@ interface UpdateEvent {
   applied_output_bytes_per_sec: number;
 }
 
-const convert_readable_data = (data: number): string => {
+const convertReadableData = (data: number): string => {
   if (data > 1024 && data < 1024 * 1024) {
     return `${String(Math.floor((data / 1024) * 100) / 100)} kiB`;
   }
@@ -80,22 +80,22 @@ function Footer() {
           100
       );
       setDownloadedBytesStart(
-        convert_readable_data(event.payload.downloaded_bytes_start)
+        convertReadableData(event.payload.downloaded_bytes_start)
       );
       setDownloadedBytesEnd(
-        convert_readable_data(event.payload.downloaded_bytes_end)
+        convertReadableData(event.payload.downloaded_bytes_end)
       );
       setDownloadedBytesPerSec(
-        convert_readable_data(event.payload.downloaded_bytes_per_sec)
+        convertReadableData(event.payload.downloaded_bytes_per_sec)
       );
       setAppliedOutputBytesStart(
-        convert_readable_data(event.payload.applied_output_bytes_start)
+        convertReadableData(event.payload.applied_output_bytes_start)
       );
       setAppliedOutputBytesEnd(
-        convert_readable_data(event.payload.applied_output_bytes_end)
+        convertReadableData(event.payload.applied_output_bytes_end)
       );
       setAppliedOutputBytesPerSec(
-        convert_readable_data(event.payload.applied_output_bytes_per_sec)
+        convertReadableData(event.payload.applied_output_bytes_per_sec)
       );
     });
   });
