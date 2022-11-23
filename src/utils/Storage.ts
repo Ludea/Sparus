@@ -12,8 +12,8 @@ export const Save = async (key: string, value: string) => {
   await stronghold.save();
 };
 
-export const Load = async (key: string) =>
-  new Promise<string>((resolve, reject) => {
+export const Load = async (key: string) => 
+  new Promise<string>(async(resolve, reject) => {
     const client = await getClient();
     const store = client.getStore();
     store
@@ -21,11 +21,11 @@ export const Load = async (key: string) =>
       .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
       .then((value: any) => resolve(value))
       .catch((error: any) => reject(error));
-  });
+  })
 
 const getClient = async () => {
-  new Promise<string>((resolve, reject) => {
-    resolve(await stronghold.loadClient(clientPath));
-    reject(await stronghold.createClient(clientPath));
-  }) 
+  return stronghold
+	.loadClient(clientPath)
+	.catch(() =>
+	    stronghold.createClient(clientPath));
 };
