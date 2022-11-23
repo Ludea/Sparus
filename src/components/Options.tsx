@@ -79,7 +79,7 @@ function Options() {
             label="Installation Path"
             type="text"
             variant="standard"
-            value={installationPath}
+            value={workspacePath}
             onChange={(event) => setWorkspacePath(event.target.value)}
           />
         </Box>
