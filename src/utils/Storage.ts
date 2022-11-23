@@ -26,6 +26,6 @@ export const Load = async (key: string) =>
 const getClient = async () => {
   new Promise<string>((resolve, reject) => {
     resolve(await stronghold.loadClient(clientPath));
-    reject(await stronghold.createClient(clientPath)) ;
-  }
+    reject(await stronghold.createClient(clientPath));
+  }) 
 };
