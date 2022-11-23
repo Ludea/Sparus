@@ -108,31 +108,25 @@ function Footer() {
     const platformName = await platform();
     switch (platformName) {
       case "win32":
-        {
-          extension = ".exe";
-          shell = "cmd";
-          arg = "/C";
-        }
+        extension = ".exe";
+        shell = "cmd";
+        arg = "/C";
         break;
       case "darwin":
-        {
-          extension = ".app";
-          shell = "sh";
-          arg = "-c";
-        }
+        extension = ".app";
+        shell = "sh";
+        arg = "-c";
         break;
       case "linux":
-        {
-          extension = ".sh";
-          shell = "sh";
-          arg = "-c";
-        }
+        extension = ".sh";
+        shell = "sh";
+        arg = "-c";
         break;
-      default: {
+      default: 
         extension = "";
         shell = "";
         arg = "";
-      }
+        break;
     }
 
     const command = new Command(shell, [
