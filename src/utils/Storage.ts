@@ -13,7 +13,7 @@ export const Save = async (key: string, value: string) => {
   await stronghold.save();
 };
 
-export const Load = (key: string) =>
+export const Load = async (key: string) =>
   new Promise<string>((resolve, reject) => {
     const client = await getClient();
     const store = client.getStore();
