@@ -19,9 +19,9 @@ export const Load = (key: string) =>
     const store = client.getStore();
     store
       .get(key)
-      .then((value) => new TextDecoder().decode(new Uint8Array(value)))
-      .then((value) => resolve(value))
-      .catch((error) => reject(error));
+      .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
+      .then((value: any) => resolve(value))
+      .catch((error: any) => reject(error));
   });
 
 const getClient = async () => {
