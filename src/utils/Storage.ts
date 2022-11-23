@@ -2,7 +2,6 @@
 import { Stronghold, Location } from "tauri-plugin-stronghold-api/webview-dist";
 
 const stronghold = new Stronghold(".config", "password");
-const location = Location.generic("vault", "record");
 const clientPath = "sparus";
 
 export const Save = async (key: string, value: string) => {
