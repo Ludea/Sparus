@@ -35,4 +35,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
          name: Sparus
-         path: src-tauri/target/release/bundle/**/sparus*
+         path: src-tauri/target/release/bundle/**/sparus_*
