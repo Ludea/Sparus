@@ -101,7 +101,6 @@ function Footer() {
   });
 
   const spawn = async () => {
-    let child;
     let extension;
     let shell;
     let arg: any;
@@ -142,9 +141,6 @@ function Footer() {
     );
     command
       .spawn()
-      .then((c) => {
-        child = c;
-      })
       .catch((err) => console.log(err));
   };
 
