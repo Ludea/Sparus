@@ -8,7 +8,6 @@ import IconButton from "@mui/material/IconButton";
 
 // Components
 import { Load, Save } from "utils/Storage";
-import { invoke } from "@tauri-apps/api/tauri";
 import { removeDir } from "@tauri-apps/api/fs";
 
 // Icons
