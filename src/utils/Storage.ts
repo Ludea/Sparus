@@ -6,9 +6,8 @@ const clientPath = "sparus";
 
 const getClient = async () => {
   return stronghold
-	.loadClient(clientPath)
-	.catch(() =>
-	    stronghold.createClient(clientPath));
+    .loadClient(clientPath)
+    .catch(() => stronghold.createClient(clientPath));
 };
 
 export const Save = async (key: string, value: string) => {
@@ -18,8 +17,8 @@ export const Save = async (key: string, value: string) => {
   await stronghold.save();
 };
 
-export const Load = async (key: string) => 
-  new Promise<string>(async(resolve, reject) => {
+export const Load = async (key: string) =>
+  new Promise<string>(async (resolve, reject) => {
     const client = await getClient();
     const store = client.getStore();
     store
@@ -27,4 +26,4 @@ export const Load = async (key: string) =>
       .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
       .then((value: any) => resolve(value))
       .catch((error: any) => reject(error));
-  })
+  });

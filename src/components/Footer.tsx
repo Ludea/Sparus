@@ -122,7 +122,7 @@ function Footer() {
         shell = "sh";
         arg = "-c";
         break;
-      default: 
+      default:
         extension = "";
         shell = "";
         arg = "";
