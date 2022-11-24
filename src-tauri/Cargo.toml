@@ -18,16 +18,12 @@ tauri-build = { version = "1.2.0", features = [] }
 once_cell = "1.16"
 locale_config = "0.3.0"
 futures = "0.3.25"
-base64 = "0.13.1"
 tokio = "1.21.2"
-image = "0.24.4"
 serde = { version = "1.0", features = [ "derive" ] }
 tauri = { version = "1.2.0", features = ["http-request", "notification-all", "shell-execute", "shell-open", "system-tray", "window-close", "window-minimize", "window-start-dragging"] }
 speedupdate = { git = "https://github.com/speedy37/speedupdate-rs" }
 rust-argon2 = { version = "=1.0.0" }
-iota_stronghold = "1.0"
 libloading = "0.7"
-zeroize = { version = "1", features = ["zeroize_derive"] }
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/tauri-plugin-stronghold" }
 
 [dependencies.tauri-plugin-window-state]
