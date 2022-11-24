@@ -5,7 +5,7 @@ const stronghold = new Stronghold(".config", "password");
 const clientPath = "sparus";
 
 const getClient = async () =>
-  return stronghold
+  stronghold
     .loadClient(clientPath)
     .catch(() => stronghold.createClient(clientPath));
 

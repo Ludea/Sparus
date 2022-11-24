@@ -133,15 +133,12 @@ function Footer() {
       workspacePath + gameName + extension,
     ]);
 
-
     command.on("error", (error) => console.log(`command error: "${error}"`));
 
     command.stderr.on("data", (line) =>
       console.log(`command stderr: "${line}"`)
     );
-    command
-      .spawn()
-      .catch((err) => console.log(err));
+    command.spawn().catch((err) => console.log(err));
   };
 
   return (
