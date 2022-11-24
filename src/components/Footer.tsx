@@ -194,6 +194,21 @@ function Footer() {
               Install
             </LoadingButton>
           ) : null}
+          {gameState === "installed" ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => spawn()
+              }
+              sx={{
+                position: "fixed",
+                right: "130px",
+                bottom: "70px",
+              }}
+            >
+              Play
+            </Button>
+          ) : null}
         </Grid>
         <Grid item display="flex" justifyContent="flex-start" xs={6}>
           {gameState === "installing"
