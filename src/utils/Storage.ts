@@ -4,11 +4,10 @@ import { Stronghold } from "tauri-plugin-stronghold-api/webview-dist";
 const stronghold = new Stronghold(".config", "password");
 const clientPath = "sparus";
 
-const getClient = async () => {
+const getClient = async () =>
   return stronghold
     .loadClient(clientPath)
     .catch(() => stronghold.createClient(clientPath));
-};
 
 export const Save = async (key: string, value: string) => {
   const client = await getClient();
