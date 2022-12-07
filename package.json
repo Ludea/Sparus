@@ -21,7 +21,7 @@
     "react-transition-group": "^4.4.2",
     "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold",
     "vite-plugin-svgr": "^2.2.2",
-    "vite-tsconfig-paths": "^3.5.2"
+    "vite-tsconfig-paths": "^4.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.2.2",
