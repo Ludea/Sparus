@@ -21,7 +21,7 @@ futures = "0.3.25"
 tokio = "1.21.2"
 serde = { version = "1.0", features = [ "derive" ] }
 tauri = { version = "1.2.0", features = ["http-request", "notification-all", "shell-execute", "shell-open", "system-tray", "window-close", "window-minimize", "window-start-dragging"] }
-speedupdate = { git = "https://github.com/speedy37/speedupdate-rs" }
+speedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 rust-argon2 = { version = "=1.0.0" }
 libloading = "0.7"
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/tauri-plugin-stronghold" }
