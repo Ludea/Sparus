@@ -20,7 +20,7 @@
     "react-router-dom": "6.4.5",
     "react-transition-group": "4.4.5",
     "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold",
-    "vite-plugin-svgr": "2.2.2",
+    "vite-plugin-svgr": "2.3.0",
     "vite-tsconfig-paths": "4.0.0"
   },
   "devDependencies": {
