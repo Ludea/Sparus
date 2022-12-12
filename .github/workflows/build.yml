@@ -21,9 +21,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version: 16
-      - name: Enable Corepack
-        run: corepack enable && corepack prepare yarn@stable --activate && yarn init -2       
+          node-version: 16       
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
