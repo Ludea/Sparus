@@ -19,9 +19,7 @@
     "react-router": "6.4.5",
     "react-router-dom": "6.4.5",
     "react-transition-group": "4.4.5",
-    "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold",
-    "vite-plugin-svgr": "2.4.0",
-    "vite-tsconfig-paths": "4.0.2"
+    "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold"
   },
   "devDependencies": {
     "@types/jest": "29.2.4",
@@ -42,7 +40,9 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "prettier": "2.8.1",
     "typescript": "4.9.4",
-    "vite": "4.0.1"
+    "vite": "4.0.1",
+    "vite-plugin-svgr": "2.4.0",
+    "vite-tsconfig-paths": "4.0.2"
   },
   "scripts": {
     "dev": "vite",
