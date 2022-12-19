@@ -7,7 +7,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 // components
 import Header from "components/Header";
 import routes from "routes";
-import Background from 'assets/background.jpg';
+import Background from "assets/background.jpg";
 
 function App() {
   const theme = createTheme();
@@ -33,29 +33,19 @@ function App() {
       <Box
         m={-1}
         sx={{
-	  height: 600,
+          height: 800,
           backgroundImage: `url(${Background})`,
-	  backgroundSize: 'contain',
-	  backgroundRepeat: 'no-repeat',
+          //	  backgroundSize: 'contain',
+          //	  backgroundRepeat: 'no-repeat',
         }}
       >
         <Grid container spacing={0}>
           <Grid item xs={12}>
             <Header />
           </Grid>
-          <Box
-            sx={{
-              display: "flex",
-              height: 500,
-              width: "100%",
-              position: "fixed",
-              top: "10%",
-            }}
-          >
-            <Grid item xs={12}>
-              {routing}
-            </Grid>
-          </Box>
+          <Grid item xs={12}>
+            {routing}
+          </Grid>
         </Grid>
       </Box>
     </ThemeProvider>

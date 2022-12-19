@@ -21,7 +21,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version: 16       
+          node-version: 16
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -34,6 +34,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v3
         with:
-         name: Sparus
-         path: src-tauri/target/release/bundle/**/sparus_*.*
-         
+          name: Sparus
+          path: src-tauri/target/release/bundle/**/sparus_*.*

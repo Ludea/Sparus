@@ -17,12 +17,13 @@ export const Save = async (key: string, value: string) => {
 };
 
 export const Load = async (key: string) =>
-  new Promise<string>(async (resolve, reject) => {
-    const client = await getClient();
-    const store = client.getStore();
-    store
-      .get(key)
-      .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
-      .then((value: any) => resolve(value))
-      .catch((error: any) => reject(error));
+  new Promise<string>((resolve, reject) => {
+    getClient().then((client) => {
+      const store = client.getStore();
+      store
+        .get(key)
+        .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
+        .then((value: any) => resolve(value))
+        .catch((error: any) => reject(error));
+    });
   });

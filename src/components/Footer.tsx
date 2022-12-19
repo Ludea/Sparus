@@ -198,8 +198,7 @@ function Footer() {
             <LoadingButton
               variant="contained"
               color="primary"
-              onClick={() => spawn()
-              }
+              onClick={() => spawn()}
               sx={{
                 position: "fixed",
                 right: "130px",
