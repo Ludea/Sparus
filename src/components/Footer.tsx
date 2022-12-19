@@ -57,7 +57,7 @@ function Footer() {
 
   useEffect(() => {
     Load("workspace_path")
-      .then((value: string) => setWorkspacePath(""))
+      .then((value: string) => setWorkspacePath(value))
       .catch(() => {});
 
     Load("game_url")
