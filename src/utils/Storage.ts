@@ -16,14 +16,15 @@ export const Save = async (key: string, value: string) => {
   await stronghold.save();
 };
 
-export const Load = async (key: string) =>
+export const Load = (key: string) =>
   new Promise<string>((resolve, reject) => {
     getClient().then((client) => {
       const store = client.getStore();
       store
         .get(key)
-        .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
-        .then((value: any) => resolve(value))
-        .catch((error: any) => reject(error));
+        .then((value: Uint8Array) =>
+          resolve(new TextDecoder().decode(new Uint8Array(value)))
+        )
+        .catch((error: string) => reject(error));
     });
   });

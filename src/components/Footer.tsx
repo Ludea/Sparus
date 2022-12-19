@@ -45,7 +45,7 @@ function Footer() {
   const [launcherState, setLauncherState] = useState("");
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState(false);
-  const [workspacePath, setWorkspacePath] = useState("");
+  const [workspacePath, setWorkspacePath] = useState<string>("");
   const [gameName, setGameName] = useState("");
   const [repositoryUrl, setRepositoryUrl] = useState("");
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
@@ -57,7 +57,7 @@ function Footer() {
 
   useEffect(() => {
     Load("workspace_path")
-      .then((value) => setWorkspacePath(value))
+      .then((value: string) => setWorkspacePath(""))
       .catch(() => {});
 
     Load("game_url")
