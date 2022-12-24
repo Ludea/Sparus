@@ -24,7 +24,7 @@ fn main() {
   let tray_menu = SystemTrayMenu::new().add_item(CustomMenuItem::new("exit", "Exit App"));
   tauri::Builder::default()
     .manage(spawner)
-    .invoke_handler(tauri::generate_handler![updater::update_workspace])
+    .invoke_handler(tauri::generate_handler![updater::update_workspace, updater::update_available])
     .system_tray(SystemTray::new().with_menu(tray_menu))
     .on_system_tray_event(move |app, event| match event {
       SystemTrayEvent::LeftClick {

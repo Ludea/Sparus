@@ -188,7 +188,7 @@ pub async fn update_workspace(
 }
 
 #[command]
-async fn update_available<R: Runtime>(
+pub async fn update_available<R: Runtime>(
   handle: AppHandle<R>,
   repository_url: String,
   username: Option<String>,
