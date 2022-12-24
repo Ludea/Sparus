@@ -5,12 +5,7 @@
 
 use libloading::{Library, Symbol};
 use tauri::{
-  Manager,
-  plugin::TauriPlugin, 
-  CustomMenuItem, 
-  Runtime, SystemTray, 
-  SystemTrayEvent, 
-  SystemTrayMenu,
+  plugin::TauriPlugin, CustomMenuItem, Runtime, SystemTray, SystemTrayEvent, SystemTrayMenu,
 };
 
 mod updater;
