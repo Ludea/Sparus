@@ -1,8 +1,9 @@
 use futures::TryStreamExt;
+use semver::Version;
 use serde::Serialize;
 use speedupdate::{
-  link::AutoRepository,
-  metadata::CleanName,
+  link::{AutoRepository, RemoteRepository, RepositoryError},
+  metadata::{CleanName, Current},
   workspace::{UpdateError, UpdateOptions, Workspace},
 };
 use std::{
@@ -10,7 +11,7 @@ use std::{
   path::Path,
   sync::{Arc, Mutex},
 };
-use tauri::Window;
+use tauri::{command, AppHandle, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
   task::LocalSet,
@@ -23,6 +24,14 @@ pub enum UpdateErr {
 
 impl From<UpdateError> for UpdateErr {
   fn from(error: UpdateError) -> Self {
+    Self::UpdateErr {
+      description: error.to_string(),
+    }
+  }
+}
+
+impl From<RepositoryError> for UpdateErr {
+  fn from(error: RepositoryError) -> Self {
     Self::UpdateErr {
       description: error.to_string(),
     }
@@ -149,7 +158,7 @@ async fn run_task(task: Task) {
   }
 }
 
-#[tauri::command]
+#[command]
 pub async fn update_workspace(
   window: Window,
   spawner: tauri::State<'_, LocalSpawner>,
@@ -176,4 +185,42 @@ pub async fn update_workspace(
     response: send,
   });
   response.await.unwrap()
+}
+
+#[command]
+async fn update_available<R: Runtime>(
+  handle: AppHandle<R>,
+  repository_url: String,
+  username: Option<String>,
+  password: Option<String>,
+) -> Result<bool, UpdateErr> {
+  let auth;
+  match username {
+    Some(ref user) => match password {
+      Some(ref pass) => auth = Some((user.as_str(), pass.as_str())),
+      None => auth = None,
+    },
+    None => auth = None,
+  }
+
+  let local_version = &handle.package_info().version;
+
+  let remote_version = latest_remote_version(repository_url, auth).await;
+  match remote_version {
+    Ok(value) => {
+      let remote_version_semver = Version::parse(value.version().as_str());
+      let rv = remote_version_semver.unwrap().gt(local_version);
+      Ok(rv)
+    }
+    Err(value) => Err(value),
+  }
+}
+
+async fn latest_remote_version(
+  repository_url: String,
+  auth: Option<(&str, &str)>,
+) -> Result<Current, UpdateErr> {
+  let res = AutoRepository::new(repository_url.as_str(), auth)?;
+  let remote_version = res.current_version().await?;
+  Ok(remote_version)
 }
