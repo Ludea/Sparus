@@ -1,5 +1,5 @@
 // Tauri api
-import { Stronghold } from "tauri-plugin-stronghold-api/webview-dist";
+import { Stronghold } from "tauri-plugin-stronghold-api";
 
 const stronghold = new Stronghold(".config", "password");
 const clientPath = "sparus";
