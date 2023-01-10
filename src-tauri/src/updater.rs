@@ -61,7 +61,7 @@ struct DownloadInfos {
   applied_output_bytes_per_sec: Option<f64>,
 }
 
-enum Task {
+pub enum Task {
   UpdateWorkspace {
     window: Window,
     repo: AutoRepository,
