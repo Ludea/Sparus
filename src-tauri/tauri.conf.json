@@ -65,13 +65,6 @@
       "shell": {
         "open": true,
         "execute": true,
-        "scope": [
-          {
-            "name": "cmd",
-            "cmd": "cmd",
-            "args": ["/C", { "validator": "\\S+" }]
-          }
-        ]
       },
       "window": {
         "close": true,
