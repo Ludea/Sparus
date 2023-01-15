@@ -64,7 +64,7 @@
       },
       "shell": {
         "open": true,
-        "execute": true,
+        "execute": true
       },
       "window": {
         "close": true,
