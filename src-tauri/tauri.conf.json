@@ -40,15 +40,7 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": "",
-        "wix": {
-          "language": {
-            "en-US": {},
-            "fr-FR": {
-              "localePath": "locales/fr-FR.wxl"
-            }
-          }
-        }
+        "timestampUrl": ""
       }
     },
     "systemTray": {
