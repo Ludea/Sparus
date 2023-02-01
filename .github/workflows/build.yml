@@ -18,6 +18,9 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
+      - name: Set short sha
+        shell: bash
+        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
       - name: setup node
         uses: actions/setup-node@v3.6.0
         with:
@@ -30,9 +33,11 @@ jobs:
       - name: install app dependencies and build it
         run: yarn && yarn build
       - uses: tauri-apps/tauri-action@dev
+        id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v3
         with:
-          name: Sparus
-          path: src-tauri/target/release/bundle/**/sparus_*.*
+          name: Sparus-${{ env.SHORT_SHA }}.zip
+          path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+          if-no-files-found: error
