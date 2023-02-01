@@ -30,24 +30,21 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
+      <Grid container spacing={0}
         m={-1}
         sx={{
-          height: 800,
+          height: 600,
+          width: 800,
           backgroundImage: `url(${Background})`,
-          //	  backgroundSize: 'contain',
-          //	  backgroundRepeat: 'no-repeat',
         }}
       >
-        <Grid container spacing={0}>
-          <Grid item xs={12}>
-            <Header />
-          </Grid>
-          <Grid item xs={12}>
-            {routing}
-          </Grid>
+        <Grid item xs={12}>
+          <Header />
         </Grid>
-      </Box>
+        <Grid item xs={12}>
+          {routing}
+        </Grid>
+      </Grid>
     </ThemeProvider>
   );
 }
