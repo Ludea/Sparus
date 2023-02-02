@@ -17,7 +17,7 @@ function Header() {
   const location = useLocation();
 
   return (
-    <Grid container>
+    <Grid container sx={{height: 50}}>
       <Grid item xs={9.7} onMouseDown={() => appWindow.startDragging()}>
         {location.pathname !== "/" ? (
           <IconButton
