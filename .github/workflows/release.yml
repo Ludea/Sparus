@@ -28,6 +28,7 @@ jobs:
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
         with:
           tagName: v__VERSION__
           releaseName: "Sparus v__VERSION__"
