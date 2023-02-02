@@ -39,7 +39,9 @@ function Options() {
         direction="column"
         sx={{
           backgroundColor: "#363f45",
-          height: "120%",
+          height: 550,
+          position: "fixed",
+          top: 50,
           zIndex: 30,
         }}
       >
@@ -93,8 +95,8 @@ function Options() {
           }}
           sx={{
             position: "absolute",
-            bottom: -20,
-            right: "20px",
+            bottom: 30,
+            right: "40px",
           }}
         >
           Save
