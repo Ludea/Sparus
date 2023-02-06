@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -30,7 +29,9 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={0}
+      <Grid
+        container
+        spacing={0}
         m={-1}
         sx={{
           height: 600,

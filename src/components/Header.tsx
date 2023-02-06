@@ -1,5 +1,4 @@
 import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -17,8 +16,8 @@ function Header() {
   const location = useLocation();
 
   return (
-    <Grid container sx={{height: 50}}>
-      <Grid item xs={9.7} onMouseDown={() => appWindow.startDragging()}>
+    <Grid container>
+      <Grid item xs={1}>
         {location.pathname !== "/" ? (
           <IconButton
             color="primary"
@@ -29,7 +28,14 @@ function Header() {
           </IconButton>
         ) : null}
       </Grid>
-      <Box
+      <Grid
+        item
+        xs={9}
+        sx={{ height: 50 }}
+        onMouseDown={() => appWindow.startDragging()}
+      />
+      <Grid
+        item
         sx={{
           position: "fixed",
           right: 0,
@@ -56,7 +62,7 @@ function Header() {
         >
           <ClearIcon />
         </IconButton>
-      </Box>
+      </Grid>
     </Grid>
   );
 }
