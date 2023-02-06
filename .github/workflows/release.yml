@@ -25,10 +25,11 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies and build it
         run: yarn && yarn build
-      - uses: tauri-apps/tauri-action@dev
+      - uses: JonasKruckenberg/tauri-build@v1.2.3
+        id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload file 
+        uses: softprops/action-gh-release@v1
         with:
-          tagName: v__VERSION__
-          releaseName: "Sparus v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          files: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
