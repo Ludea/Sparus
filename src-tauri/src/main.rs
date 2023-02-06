@@ -7,7 +7,7 @@ use libloading::{Library, Symbol};
 use tauri::{
   plugin::TauriPlugin, Manager, CustomMenuItem, Runtime, SystemTray, SystemTrayEvent, SystemTrayMenu,
 };
-use std::env;
+use rand::distributions::{Alphanumeric, DistString};
 
 mod updater;
 
@@ -57,8 +57,7 @@ fn main() {
           ..Default::default()
         };
 
-        let salt = env::var("STRONGHOLD_SALT").unwrap_or("nopassword".to_string());
-
+        let salt = Alphanumeric.sample_string(&mut rand::thread_rng(), 12);
         let key = argon2::hash_raw(password.as_ref(), salt.as_bytes(), &config)
           .expect("failed to hash password");
 
