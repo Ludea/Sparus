@@ -103,7 +103,7 @@ function Footer() {
   const spawn = async () => {
     let extension;
     let shell;
-    let arg: any;
+    let arg;
     const platformName = await platform();
     switch (platformName) {
       case "win32":
@@ -133,9 +133,9 @@ function Footer() {
       workspacePath + gameName + extension,
     ]);
 
-    command.on("error", (error) => console.log(`command error: "${error}"`));
+    command.on("error", (error: string) => console.log(`command error: "${error}"`));
 
-    command.stderr.on("data", (line) =>
+    command.stderr.on("data", (line: string) =>
       console.log(`command stderr: "${line}"`)
     );
     command.spawn().catch((err) => console.log(err));
