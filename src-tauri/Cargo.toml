@@ -27,7 +27,6 @@ rust-argon2 = { version = "=1.0.0" }
 libloading = "0.7"
 rand = "0.8.5"
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace" }
-tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace" }
 
 [features]
 default = [ "custom-protocol" ]
