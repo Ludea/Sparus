@@ -7,6 +7,7 @@ use libloading::{Library, Symbol};
 use tauri::{
   plugin::TauriPlugin, Manager, CustomMenuItem, Runtime, SystemTray, SystemTrayEvent, SystemTrayMenu,
 };
+use tauri_plugin_autostart::MacosLauncher;
 use rand::distributions::{Alphanumeric, DistString};
 
 mod updater;
@@ -46,6 +47,7 @@ fn main() {
       },
       _ => {}
     })
+    .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = argon2::Config {

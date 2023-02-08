@@ -19,6 +19,7 @@
     "react-router": "6.8.1",
     "react-router-dom": "6.8.1",
     "react-transition-group": "4.4.5",
+    "tauri-plugin-autostart-api": "https://github.com/tauri-apps/tauri-plugin-autostart",
     "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold"
   },
   "devDependencies": {
