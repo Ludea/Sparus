@@ -4,17 +4,21 @@ import TextField from "@mui/material/TextField";
 import Slide from "@mui/material/Slide";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 
 // Components
 import { Load, Save } from "utils/Storage";
 import { removeDir } from "@tauri-apps/api/fs";
+import { enable, disable } from "tauri-plugin-autostart-api";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
 
 function Options() {
   const [gameURL, setGameURL] = useState<string>("");
+  const [autostart, setAutostart] = useState<boolean>();
   const [launcherURL, setLauncherURL] = useState<string>("");
   const [workspacePath, setWorkspacePath] = useState<string>("");
 
@@ -82,6 +86,21 @@ function Options() {
             variant="standard"
             value={workspacePath}
             onChange={(event) => setWorkspacePath(event.target.value)}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={autostart}
+                onChange={(event) => {
+                  setAutostart(event.target.checked);
+                  if (event.target.checked) {
+                    enable();
+                  } else disable();
+                }}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            }
+            label="Start Sparus on system boot"
           />
         </Box>
         <Button
