@@ -4,11 +4,12 @@
 )]
 
 use libloading::{Library, Symbol};
+use rand::distributions::{Alphanumeric, DistString};
 use tauri::{
-  plugin::TauriPlugin, Manager, CustomMenuItem, Runtime, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  plugin::TauriPlugin, CustomMenuItem, Manager, Runtime, SystemTray, SystemTrayEvent,
+  SystemTrayMenu,
 };
 use tauri_plugin_autostart::MacosLauncher;
-use rand::distributions::{Alphanumeric, DistString};
 
 mod updater;
 
@@ -26,7 +27,10 @@ fn main() {
   let tray_menu = SystemTrayMenu::new().add_item(CustomMenuItem::new("exit", "Exit App"));
   tauri::Builder::default()
     .manage(spawner)
-    .invoke_handler(tauri::generate_handler![updater::update_workspace, updater::update_available])
+    .invoke_handler(tauri::generate_handler![
+      updater::update_workspace,
+      updater::update_available
+    ])
     .system_tray(SystemTray::new().with_menu(tray_menu))
     .on_system_tray_event(move |app, event| match event {
       SystemTrayEvent::LeftClick {
@@ -47,7 +51,10 @@ fn main() {
       },
       _ => {}
     })
-    .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
+    .plugin(tauri_plugin_autostart::init(
+      MacosLauncher::LaunchAgent,
+      None,
+    ))
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = argon2::Config {
