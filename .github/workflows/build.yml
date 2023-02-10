@@ -27,10 +27,9 @@ jobs:
           node-version: 16
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
-          workspaces: |
-            src-tauri
       - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri/
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
