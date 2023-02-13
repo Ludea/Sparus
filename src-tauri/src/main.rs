@@ -50,6 +50,8 @@ fn main() {
       }
       _ => {}
     })
+    .plugin(tauri_plugin_single_instance::init(|_ ,_ ,_ | {
+    }))
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
       None,
