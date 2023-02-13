@@ -43,12 +43,11 @@ fn main() {
         window.show().unwrap();
         window.set_focus().unwrap();
       }
-      SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-        "exit" => {
+      SystemTrayEvent::MenuItemClick { id, .. } => {
+        if id.as_str() == "exit" {
           app.exit(0);
         }
-        _ => {}
-      },
+      }
       _ => {}
     })
     .plugin(tauri_plugin_autostart::init(
