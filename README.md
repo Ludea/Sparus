@@ -2,8 +2,6 @@
 
 Sparus is a simple game launcher, available on Windows, MacOS, and Linux, to start and keep your game up-to-date !
 
-Note: Sparus is in heavily development, prebuilt binaries are only available from CI artifacts
-
 ## Build Instructions
 
 ### Dependencies
