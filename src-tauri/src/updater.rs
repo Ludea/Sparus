@@ -1,7 +1,7 @@
 use futures::TryStreamExt;
 use semver::Version;
 use serde::Serialize;
-use speedupdate::{
+use libspeedupdate::{
   link::{AutoRepository, RemoteRepository, RepositoryError},
   metadata::{CleanName, Current},
   workspace::{UpdateError, UpdateOptions, Workspace},
