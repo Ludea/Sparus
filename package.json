@@ -23,7 +23,7 @@
     "tauri-plugin-stronghold-api": "github:tauri-apps/tauri-plugin-stronghold"
   },
   "devDependencies": {
-    "@types/jest": "29.5.1",
+    "@types/jest": "29.5.2",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
