@@ -20,7 +20,8 @@ function App() {
   const routing = useRoutes(routes);
 
   useEffect(() => {
-      const storage = new Stronghold(".config", "password");
+      let storage;
+     Stronghold.load(".config", "password").then((value) => storage = value);
     setStronghold(storage);
     if (import.meta.env.DEV) {
       // window.addEventListener("contextmenu", event => event.preventDefault());
