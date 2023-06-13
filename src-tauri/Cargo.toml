@@ -26,7 +26,7 @@ libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 rust-argon2 = { version = "=1.0.0" }
 libloading = "0.8"
 rand = "0.8.5"
-tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace" }
+tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plugin-single-instance" }
 
