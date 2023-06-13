@@ -20,7 +20,7 @@
     "react-router-dom": "6.12.1",
     "react-transition-group": "4.4.5",
     "tauri-plugin-autostart-api": "https://github.com/tauri-apps/tauri-plugin-autostart",
-    "tauri-plugin-stronghold": "https://github.com/tauri-apps/tauri-plugin-stronghold"
+    "tauri-plugin-stronghold": "https://github.com/tauri-apps/tauri-plugin-stronghold#v1"
   },
   "devDependencies": {
     "@types/jest": "29.5.2",
