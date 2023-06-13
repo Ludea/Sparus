@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Slide from "@mui/material/Slide";
@@ -16,23 +16,28 @@ import { enable, disable } from "tauri-plugin-autostart-api";
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
 
+// Context
+ import SparusContext from 'utils/Context';
+
 function Options() {
   const [gameURL, setGameURL] = useState<string>("");
   const [autostart, setAutostart] = useState<boolean>();
   const [launcherURL, setLauncherURL] = useState<string>("");
   const [workspacePath, setWorkspacePath] = useState<string>("");
 
+   const stronghold = useContext(SparusContext);
+
   useEffect(() => {
-    Load("game_url")
+    Load(stronghold, "game_url")
       .then((value) => {
         setGameURL(value);
       })
-      .catch();
-    Load("launcher_url")
+      .catch((error) => console.log("15 : " + error));
+    Load(stronghold, "launcher_url")
       .then((value) => {
         setLauncherURL(value);
       })
-      .catch();
+      .catch((error) => console.log("16 : " + error));
   }, []);
 
   return (
@@ -108,9 +113,9 @@ function Options() {
           color="primary"
           type="submit"
           onClick={() => {
-            Save("game_url", gameURL);
-            Save("launcher_url", launcherURL);
-            Save("workspace_path", workspacePath);
+            Save("game_url", gameURL).catch(() => {});
+            Save("launcher_url", launcherURL).catch(() => {});
+            Save("workspace_path", workspacePath).catch(() => {});
           }}
           sx={{
             position: "absolute",
