@@ -1,5 +1,5 @@
 import {createContext } from 'react';
 
-const SparusContext = createContext(null);
+const SparusContext = createContext();
 
 export default SparusContext ;

@@ -25,7 +25,7 @@ function Options() {
   const [launcherURL, setLauncherURL] = useState<string>("");
   const [workspacePath, setWorkspacePath] = useState<string>("");
 
-   const stronghold = useContext(SparusContext);
+  const stronghold = useContext(SparusContext);
 
   useEffect(() => {
     Load(stronghold, "game_url")
@@ -113,9 +113,9 @@ function Options() {
           color="primary"
           type="submit"
           onClick={() => {
-            Save("game_url", gameURL).catch(() => {});
-            Save("launcher_url", launcherURL).catch(() => {});
-            Save("workspace_path", workspacePath).catch(() => {});
+            Save(stronghold, "game_url", gameURL).catch(() => {});
+            Save(stronghold, "launcher_url", launcherURL).catch(() => {});
+            Save(stronghold, "workspace_path", workspacePath).catch(() => {});
           }}
           sx={{
             position: "absolute",

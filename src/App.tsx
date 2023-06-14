@@ -20,9 +20,10 @@ function App() {
   const routing = useRoutes(routes);
 
   useEffect(() => {
-      let storage;
-     Stronghold.load(".config", "password").then((value) => storage = value);
-    setStronghold(storage);
+    Stronghold.load(".config", "password").then((value) => {
+      console.log("Stronghold initialized !");
+      setStronghold(value)
+    }).catch((error) => console.log(error));
     if (import.meta.env.DEV) {
       // window.addEventListener("contextmenu", event => event.preventDefault());
       window.addEventListener("keydown", (event) => {
@@ -49,14 +50,14 @@ function App() {
           backgroundImage: `url(${Background})`,
         }}
       >
-        <SparusContext.Provider value={stronghold}> 
+        <SparusContext.Provider value={stronghold}>
           <Grid item xs={12}>
             <Header />
           </Grid>
           <Grid item xs={12}>
             {routing}
           </Grid>
-        </SparusContext.Provider> 
+        </SparusContext.Provider>
       </Grid>
     </ThemeProvider>
   );
