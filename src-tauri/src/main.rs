@@ -4,7 +4,6 @@
 )]
 
 use libloading::{Library, Symbol};
-use rand::distributions::{Alphanumeric, DistString};
 use tauri::{
   plugin::TauriPlugin, CustomMenuItem, Manager, Runtime, SystemTray, SystemTrayEvent,
   SystemTrayMenu,
@@ -50,31 +49,12 @@ fn main() {
       }
       _ => {}
     })
-    .plugin(tauri_plugin_single_instance::init(|_ ,_ ,_ | {
-    }))
+    .plugin(tauri_plugin_store::Builder::default().build())
+    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
       None,
     ))
-    .plugin(
-      tauri_plugin_stronghold::Builder::new(|password| {
-        let config = argon2::Config {
-          lanes: 2,
-          mem_cost: 50_000,
-          time_cost: 30,
-          thread_mode: argon2::ThreadMode::from_threads(2),
-          variant: argon2::Variant::Argon2id,
-          ..Default::default()
-        };
-
-        let salt = Alphanumeric.sample_string(&mut rand::thread_rng(), 12);
-        let key = argon2::hash_raw(password.as_ref(), salt.as_bytes(), &config)
-          .expect("failed to hash password");
-
-        key.to_vec()
-      })
-      .build(),
-    )
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

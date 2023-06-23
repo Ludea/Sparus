@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
@@ -6,12 +6,11 @@ import Grid from "@mui/material/Grid";
 
 // Tauri api
 import { invoke } from "@tauri-apps/api/tauri";
+import { appConfigDir } from "@tauri-apps/api/path";
 import { listen } from "@tauri-apps/api/event";
 import { Command } from "@tauri-apps/api/shell";
 import { platform } from "@tauri-apps/api/os";
-
-// Components
-import { Load } from "utils/Storage";
+import { Store } from "tauri-plugin-store-api";
 
 interface UpdateEvent {
   download: number;
@@ -54,19 +53,32 @@ function Footer() {
   const [appliedOutputBytesStart, setAppliedOutputBytesStart] = useState("");
   const [appliedOutputBytesEnd, setAppliedOutputBytesEnd] = useState("");
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
+  const [localConfig, setLocalConfig] = useState<string>();
+
+  appConfigDir().then((dir) => setLocalConfig(dir));
+  const store = new Store(localConfig + ".settings.sparus");
 
   useEffect(() => {
-    Load("workspace_path")
-      .then((value: string) => setWorkspacePath(value))
-      .catch(() => {});
+    store.load();
+    store
+      .get("game_url")
+      .then((value: any) => {
+        setRepositoryUrl(value);
+      })
+      .catch((error: any) => console.log(`15 : ${error}`));
+    store
+      .get("workspace_url")
+      .then((value: any) => {
+        setRepositoryUrl(value);
+      })
+      .catch((error: any) => console.log(`15 : ${error}`));
 
-    Load("game_url")
-      .then((url: string) => setRepositoryUrl(url))
-      .catch(() => {});
-
-    Load("game")
-      .then((game: string) => setGameName(game))
-      .catch(() => {});
+    store
+      .get("game")
+      .then((value: any) => {
+        setRepositoryUrl(value);
+      })
+      .catch((error: any) => console.log(`15 : ${error}`));
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -133,7 +145,9 @@ function Footer() {
       workspacePath + gameName + extension,
     ]);
 
-    command.on("error", (error: string) => console.log(`command error: "${error}"`));
+    command.on("error", (error: string) =>
+      console.log(`command error: "${error}"`)
+    );
 
     command.stderr.on("data", (line: string) =>
       console.log(`command stderr: "${line}"`)
@@ -167,7 +181,7 @@ function Footer() {
               }}
             />
           ) : null}
-          {gameState === "not_installed" ? (
+          {gameState === "not_installed" && workspacePath && repositoryUrl ? (
             <LoadingButton
               variant="contained"
               color="primary"

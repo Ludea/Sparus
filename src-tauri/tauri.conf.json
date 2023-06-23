@@ -54,6 +54,9 @@
       "notification": {
         "all": true
       },
+      "path": {
+        "all": true
+      },
       "shell": {
         "open": true,
         "execute": true

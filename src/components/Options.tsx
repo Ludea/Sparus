@@ -9,35 +9,44 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 
 // Components
-import { Load, Save } from "utils/Storage";
+import { appConfigDir } from "@tauri-apps/api/path";
 import { removeDir } from "@tauri-apps/api/fs";
 import { enable, disable } from "tauri-plugin-autostart-api";
+import { Store } from "tauri-plugin-store-api";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
-
-// Context
- import SparusContext from 'utils/Context';
 
 function Options() {
   const [gameURL, setGameURL] = useState<string>("");
   const [autostart, setAutostart] = useState<boolean>();
   const [launcherURL, setLauncherURL] = useState<string>("");
   const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [localConfig, setLocalConfig] = useState<string>();
 
-  const stronghold = useContext(SparusContext);
+  appConfigDir().then((dir) => setLocalConfig(dir));
+  const store = new Store(localConfig + ".settings.sparus");
 
   useEffect(() => {
-    Load(stronghold, "game_url")
-      .then((value) => {
+    store.load().then((value) => console.log("allo : " + value));
+    store
+      .get("game_url")
+      .then((value: any) => {
         setGameURL(value);
       })
-      .catch((error) => console.log("15 : " + error));
-    Load(stronghold, "launcher_url")
-      .then((value) => {
+      .catch((error: any) => console.log(`15 : ${error}`));
+    store
+      .get("launcher_url")
+      .then((value: any) => {
         setLauncherURL(value);
       })
-      .catch((error) => console.log("16 : " + error));
+      .catch((error: any) => console.log(`15 : ${error}`));
+    store
+      .get("workspace_path")
+      .then((value: any) => {
+        setWorkspacePath(value);
+      })
+      .catch((error: any) => console.log(`15 : ${error}`));
   }, []);
 
   return (
@@ -113,14 +122,10 @@ function Options() {
           color="primary"
           type="submit"
           onClick={() => {
-            Save(stronghold, "game_url", gameURL).catch(() => {});
-            Save(stronghold, "launcher_url", launcherURL).catch(() => {});
-            Save(stronghold, "workspace_path", workspacePath).catch(() => {});
-          }}
-          sx={{
-            position: "absolute",
-            bottom: 30,
-            right: "40px",
+            store.set("game_url", gameURL);
+            store.set("launcher_url", launcherURL);
+            store.set("workspace_path", workspacePath);
+            store.save();
           }}
         >
           Save

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
+
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -11,19 +12,11 @@ import Background from "assets/background.jpg";
 // API
 import { Stronghold } from "tauri-plugin-stronghold";
 
-// Context
-import SparusContext from 'utils/Context';
-
 function App() {
-  const [stronghold, setStronghold] = useState<Stronghold>();
   const theme = createTheme();
   const routing = useRoutes(routes);
 
   useEffect(() => {
-    Stronghold.load(".config", "password").then((value) => {
-      console.log("Stronghold initialized !");
-      setStronghold(value)
-    }).catch((error) => console.log(error));
     if (import.meta.env.DEV) {
       // window.addEventListener("contextmenu", event => event.preventDefault());
       window.addEventListener("keydown", (event) => {
@@ -37,7 +30,6 @@ function App() {
       });
     }
   }, []);
-
   return (
     <ThemeProvider theme={theme}>
       <Grid
@@ -50,14 +42,12 @@ function App() {
           backgroundImage: `url(${Background})`,
         }}
       >
-        <SparusContext.Provider value={stronghold}>
-          <Grid item xs={12}>
-            <Header />
-          </Grid>
-          <Grid item xs={12}>
-            {routing}
-          </Grid>
-        </SparusContext.Provider>
+        <Grid item xs={12}>
+          <Header />
+        </Grid>
+        <Grid item xs={12}>
+          {routing}
+        </Grid>
       </Grid>
     </ThemeProvider>
   );
