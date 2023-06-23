@@ -9,9 +9,6 @@ import Header from "components/Header";
 import routes from "routes";
 import Background from "assets/background.jpg";
 
-// API
-import { Stronghold } from "tauri-plugin-stronghold";
-
 function App() {
   const theme = createTheme();
   const routing = useRoutes(routes);
