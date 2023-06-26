@@ -25,10 +25,10 @@ function Options() {
   const [localConfig, setLocalConfig] = useState<string>();
 
   appConfigDir().then((dir) => setLocalConfig(dir));
-  const store = new Store(localConfig + ".settings.sparus");
+  const store = new Store(`${localConfig  }.settings.sparus`);
 
   useEffect(() => {
-    store.load().then((value) => console.log("allo : " + value));
+    store.load().then((value) => console.log(`allo : ${  value}`));
     store
       .get("game_url")
       .then((value: any) => {

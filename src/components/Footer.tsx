@@ -56,7 +56,7 @@ function Footer() {
   const [localConfig, setLocalConfig] = useState<string>();
 
   appConfigDir().then((dir) => setLocalConfig(dir));
-  const store = new Store(localConfig + ".settings.sparus");
+  const store = new Store(`${localConfig  }.settings.sparus`);
 
   useEffect(() => {
     store.load();
