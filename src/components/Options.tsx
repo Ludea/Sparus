@@ -9,6 +9,9 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 
 // Components
+import SparusContext from "utils/Context";
+
+// Tauri api
 import { appConfigDir } from "@tauri-apps/api/path";
 import { removeDir } from "@tauri-apps/api/fs";
 import { enable, disable } from "tauri-plugin-autostart-api";
@@ -24,29 +27,33 @@ function Options() {
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [localConfig, setLocalConfig] = useState<string>();
 
-  appConfigDir().then((dir) => setLocalConfig(dir));
-  const store = new Store(`${localConfig  }.settings.sparus`);
+  const { setError } = useContext(SparusContext);
+
+  appConfigDir()
+    .then((dir) => setLocalConfig(dir))
+    .catch((err: string) => setError(err));
+  const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
-    store.load().then((value) => console.log(`allo : ${  value}`));
+    store.load().catch((err: string) => setError(err));
     store
       .get("game_url")
       .then((value: any) => {
         setGameURL(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
     store
       .get("launcher_url")
       .then((value: any) => {
         setLauncherURL(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
     store
       .get("workspace_path")
       .then((value: any) => {
         setWorkspacePath(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
   }, []);
 
   return (
@@ -108,8 +115,8 @@ function Options() {
                 onChange={(event) => {
                   setAutostart(event.target.checked);
                   if (event.target.checked) {
-                    enable();
-                  } else disable();
+                    enable().catch((err: string) => setError(err));
+                  } else disable().catch((err: string) => setError(err));
                 }}
                 inputProps={{ "aria-label": "controlled" }}
               />
@@ -122,17 +129,27 @@ function Options() {
           color="primary"
           type="submit"
           onClick={() => {
-            store.set("game_url", gameURL);
-            store.set("launcher_url", launcherURL);
-            store.set("workspace_path", workspacePath);
-            store.save();
+            store
+              .set("game_url", gameURL)
+              .catch((err: string) => setError(err));
+            store
+              .set("launcher_url", launcherURL)
+              .catch((err: string) => setError(err));
+            store
+              .set("workspace_path", workspacePath)
+              .catch((err: string) => setError(err));
+            store.save().catch((err: string) => setError(err));
           }}
         >
           Save
         </Button>
         <IconButton
           aria-label="delete"
-          onClick={() => removeDir("game", { recursive: true })}
+          onClick={() =>
+            removeDir("game", { recursive: true }).catch((err: string) =>
+              setError(err)
+            )
+          }
         >
           <DeleteIcon />
         </IconButton>

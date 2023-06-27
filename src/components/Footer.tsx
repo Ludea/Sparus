@@ -4,6 +4,9 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
+// Components
+import SparusContext from "utils/Context";
+
 // Tauri api
 import { invoke } from "@tauri-apps/api/tauri";
 import { appConfigDir } from "@tauri-apps/api/path";
@@ -55,8 +58,10 @@ function Footer() {
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
   const [localConfig, setLocalConfig] = useState<string>();
 
+  const { setError } = useContext(SparusContext);
+
   appConfigDir().then((dir) => setLocalConfig(dir));
-  const store = new Store(`${localConfig  }.settings.sparus`);
+  const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
     store.load();
@@ -65,20 +70,20 @@ function Footer() {
       .then((value: any) => {
         setRepositoryUrl(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
     store
       .get("workspace_url")
       .then((value: any) => {
         setRepositoryUrl(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
 
     store
       .get("game")
       .then((value: any) => {
         setRepositoryUrl(value);
       })
-      .catch((error: any) => console.log(`15 : ${error}`));
+      .catch((err: string) => setError(err));
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -145,14 +150,10 @@ function Footer() {
       workspacePath + gameName + extension,
     ]);
 
-    command.on("error", (error: string) =>
-      console.log(`command error: "${error}"`)
-    );
+    command.on("error", (err: string) => setError(err));
 
-    command.stderr.on("data", (line: string) =>
-      console.log(`command stderr: "${line}"`)
-    );
-    command.spawn().catch((err) => console.log(err));
+    command.stderr.on("data", (line: string) => setError(line));
+    command.spawn().catch((err) => setError(err));
   };
 
   return (

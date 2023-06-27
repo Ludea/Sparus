@@ -8,8 +8,11 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "components/Header";
 import routes from "routes";
 import Background from "assets/background.jpg";
+import SparusContext from "utils/Context";
 
 function App() {
+  const [error, setError] = useState("");
+  const value = { error, setError };
   const theme = createTheme();
   const routing = useRoutes(routes);
 
@@ -28,25 +31,27 @@ function App() {
     }
   }, []);
   return (
-    <ThemeProvider theme={theme}>
-      <Grid
-        container
-        spacing={0}
-        m={-1}
-        sx={{
-          height: 600,
-          width: 800,
-          backgroundImage: `url(${Background})`,
-        }}
-      >
-        <Grid item xs={12}>
-          <Header />
+    <SparusContext.Provider value={value}>
+      <ThemeProvider theme={theme}>
+        <Grid
+          container
+          spacing={0}
+          m={-1}
+          sx={{
+            height: 600,
+            width: 800,
+            backgroundImage: `url(${Background})`,
+          }}
+        >
+          <Grid item xs={12}>
+            <Header />
+          </Grid>
+          <Grid item xs={12}>
+            {routing}
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          {routing}
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SparusContext.Provider>
   );
 }
 
