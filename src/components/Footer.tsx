@@ -60,7 +60,9 @@ function Footer() {
 
   const { setError } = useContext(SparusContext);
 
-  appConfigDir().then((dir) => setLocalConfig(dir)).catch((err: string) => setError(err));
+  appConfigDir()
+    .then((dir) => setLocalConfig(dir))
+    .catch((err: string) => setError(err));
   const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
@@ -213,7 +215,9 @@ function Footer() {
             <LoadingButton
               variant="contained"
               color="primary"
-              onClick={() => {spawn().catch((err: string) => setError(err))}}
+              onClick={() => {
+                spawn().catch((err: string) => setError(err));
+              }}
               sx={{
                 position: "fixed",
                 right: "130px",

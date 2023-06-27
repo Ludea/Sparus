@@ -37,7 +37,9 @@ function Header() {
         item
         xs={9}
         sx={{ height: 50 }}
-        onMouseDown={() => {appWindow.startDragging().catch((err: string) => setError(err))}}
+        onMouseDown={() => {
+          appWindow.startDragging().catch((err: string) => setError(err));
+        }}
       />
       <Grid
         item
@@ -56,14 +58,18 @@ function Header() {
         <IconButton
           color="primary"
           aria-label="Minimize Sparus"
-          onClick={() => {appWindow.minimize().catch((err: string) => setError(err))}}
+          onClick={() => {
+            appWindow.minimize().catch((err: string) => setError(err));
+          }}
         >
           <MinimizeIcon />
         </IconButton>
         <IconButton
           color="primary"
           aria-label="Close Sparus"
-          onClick={() => {appWindow.close().catch((err: string) => setError(err))}}
+          onClick={() => {
+            appWindow.close().catch((err: string) => setError(err));
+          }}
         >
           <ClearIcon />
         </IconButton>
