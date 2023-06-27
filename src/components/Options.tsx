@@ -145,11 +145,7 @@ function Options() {
         </Button>
         <IconButton
           aria-label="delete"
-          onClick={() =>
-            removeDir("game", { recursive: true }).catch((err: string) =>
-              setError(err)
-            )
-          }
+          onClick={() => {removeDir("game", { recursive: true }).catch((err: string) => setError(err))}}
         >
           <DeleteIcon />
         </IconButton>

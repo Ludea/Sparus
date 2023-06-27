@@ -47,40 +47,40 @@ function Footer() {
   const [launcherState, setLauncherState] = useState("");
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState(false);
-  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [workspacePath, setWorkspacePath] = useState<string | null>("");
   const [gameName, setGameName] = useState("");
-  const [repositoryUrl, setRepositoryUrl] = useState("");
+  const [repositoryUrl, setRepositoryUrl] = useState<string | null>("");
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
   const [downloadedBytesPerSec, setDownloadedBytesPerSec] = useState("");
   const [appliedOutputBytesStart, setAppliedOutputBytesStart] = useState("");
   const [appliedOutputBytesEnd, setAppliedOutputBytesEnd] = useState("");
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
-  const [localConfig, setLocalConfig] = useState<string>();
+  const [localConfig, setLocalConfig] = useState<string>("");
 
   const { setError } = useContext(SparusContext);
 
-  appConfigDir().then((dir) => setLocalConfig(dir));
+  appConfigDir().then((dir) => setLocalConfig(dir)).catch((err: string) => setError(err));
   const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
-    store.load();
+    store.load().catch((err: string) => setError(err));
     store
-      .get("game_url")
-      .then((value: any) => {
+      .get<string>("game_url")
+      .then((value: string | null) => {
         setRepositoryUrl(value);
       })
       .catch((err: string) => setError(err));
     store
       .get("workspace_url")
-      .then((value: any) => {
+      .then((value: string | null) => {
         setRepositoryUrl(value);
       })
       .catch((err: string) => setError(err));
 
     store
       .get("game")
-      .then((value: any) => {
+      .then((value: string | null) => {
         setRepositoryUrl(value);
       })
       .catch((err: string) => setError(err));
@@ -153,7 +153,7 @@ function Footer() {
     command.on("error", (err: string) => setError(err));
 
     command.stderr.on("data", (line: string) => setError(line));
-    command.spawn().catch((err) => setError(err));
+    command.spawn().catch((err: string) => setError(err));
   };
 
   return (
@@ -198,7 +198,7 @@ function Footer() {
                     setGameState("installed");
                     setGameLoading(false);
                   })
-                  .catch((error) => console.log(JSON.stringify(error)));
+                  .catch((err: string) => setError(err));
               }}
               sx={{
                 position: "fixed",
@@ -213,7 +213,7 @@ function Footer() {
             <LoadingButton
               variant="contained"
               color="primary"
-              onClick={() => spawn()}
+              onClick={() => {spawn().catch((err: string) => setError(err))}}
               sx={{
                 position: "fixed",
                 right: "130px",

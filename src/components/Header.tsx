@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,10 +9,14 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import SettingsIcon from "@mui/icons-material/Settings";
 
+// Components
+import SparusContext from "utils/Context";
+
 // Tauri api
 import { appWindow } from "@tauri-apps/api/window";
 
 function Header() {
+  const { setError } = useContext(SparusContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,7 +37,7 @@ function Header() {
         item
         xs={9}
         sx={{ height: 50 }}
-        onMouseDown={() => appWindow.startDragging()}
+        onMouseDown={() => {appWindow.startDragging().catch((err: string) => setError(err))}}
       />
       <Grid
         item
@@ -51,14 +56,14 @@ function Header() {
         <IconButton
           color="primary"
           aria-label="Minimize Sparus"
-          onClick={() => appWindow.minimize()}
+          onClick={() => {appWindow.minimize().catch((err: string) => setError(err))}}
         >
           <MinimizeIcon />
         </IconButton>
         <IconButton
           color="primary"
           aria-label="Close Sparus"
-          onClick={() => appWindow.close()}
+          onClick={() => {appWindow.close().catch((err: string) => setError(err))}}
         >
           <ClearIcon />
         </IconButton>
