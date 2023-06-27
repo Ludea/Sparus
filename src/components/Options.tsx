@@ -21,11 +21,11 @@ import { Store } from "tauri-plugin-store-api";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 function Options() {
-  const [gameURL, setGameURL] = useState<string>("");
+  const [gameURL, setGameURL] = useState<string | null>("");
   const [autostart, setAutostart] = useState<boolean>();
-  const [launcherURL, setLauncherURL] = useState<string>("");
-  const [workspacePath, setWorkspacePath] = useState<string>("");
-  const [localConfig, setLocalConfig] = useState<string>();
+  const [launcherURL, setLauncherURL] = useState<string | null>("");
+  const [workspacePath, setWorkspacePath] = useState<string | null>("");
+  const [localConfig, setLocalConfig] = useState<string>("");
 
   const { setError } = useContext(SparusContext);
 
@@ -37,24 +37,24 @@ function Options() {
   useEffect(() => {
     store.load().catch((err: string) => setError(err));
     store
-      .get("game_url")
-      .then((value: any) => {
+      .get<string>("game_url")
+      .then((value: string | null) => {
         setGameURL(value);
       })
       .catch((err: string) => setError(err));
     store
-      .get("launcher_url")
-      .then((value: any) => {
+      .get<string>("launcher_url")
+      .then((value: string | null) => {
         setLauncherURL(value);
       })
       .catch((err: string) => setError(err));
     store
-      .get("workspace_path")
-      .then((value: any) => {
+      .get<string>("workspace_path")
+      .then((value: string | null) => {
         setWorkspacePath(value);
       })
       .catch((err: string) => setError(err));
-  }, []);
+  });
 
   return (
     <Slide direction="right" in mountOnEnter unmountOnExit>
