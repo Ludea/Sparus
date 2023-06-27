@@ -1,11 +1,11 @@
 use futures::TryStreamExt;
-use semver::Version;
-use serde::Serialize;
 use libspeedupdate::{
   link::{AutoRepository, RemoteRepository, RepositoryError},
   metadata::{CleanName, Current},
   workspace::{UpdateError, UpdateOptions, Workspace},
 };
+use semver::Version;
+use serde::Serialize;
 use std::{
   future,
   path::Path,
