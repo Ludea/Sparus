@@ -116,7 +116,7 @@ function Footer() {
       setAppliedOutputBytesPerSec(
         convertReadableData(event.payload.applied_output_bytes_per_sec)
       );
-    });
+    }).catch((err: string) => setError(err));
   });
 
   const spawn = async () => {
