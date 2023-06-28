@@ -28,6 +28,7 @@ libloading = "0.8"
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plugin-single-instance" }
+tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 
 [features]
 default = [ "custom-protocol" ]
