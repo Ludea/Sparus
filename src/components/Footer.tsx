@@ -74,9 +74,9 @@ function Footer() {
       })
       .catch((err: string) => setError(err));
     store
-      .get("workspace_url")
+      .get("workspace_path")
       .then((value: string | null) => {
-        setRepositoryUrl(value);
+        setWorkspacePath(value);
       })
       .catch((err: string) => setError(err));
 
