@@ -81,9 +81,9 @@ function Footer() {
       .catch((err: string) => setError(err));
 
     store
-      .get("game")
+      .get("game_name")
       .then((value: string | null) => {
-        setRepositoryUrl(value);
+        setGameName(value);
       })
       .catch((err: string) => setError(err));
 
