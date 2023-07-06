@@ -10,6 +10,7 @@ use tauri::{
 };
 use tauri_plugin_autostart::MacosLauncher;
 
+mod rpc;
 mod updater;
 
 pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Error>> {
@@ -30,6 +31,10 @@ fn main() {
       updater::update_workspace,
       updater::update_available
     ])
+    .setup(|_|{
+      tauri::async_runtime::spawn(rpc::start_rpc_client());
+      Ok(())
+    })
     .system_tray(SystemTray::new().with_menu(tray_menu))
     .on_system_tray_event(move |app, event| match event {
       SystemTrayEvent::LeftClick {

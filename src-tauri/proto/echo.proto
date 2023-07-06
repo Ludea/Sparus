@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package grpc.examples.echo;
+
+message Message {
+  string plugin = 1;
+}
+
+message Empty {}
+
+ service Echo {
+   rpc ServerStreamingEcho(Empty) returns (stream Message) {}
+ }
