@@ -23,6 +23,9 @@ export const Load = async (stronghold: Stronghold, key: string) => {
   const store = client.getStore();
   store
     .get(key)
-    .then((value: any) => new TextDecoder().decode(new Uint8Array(value)))
+    .then((value) => {
+      if (typeof value === "string")
+        new TextDecoder().decode(new Uint8Array(value));
+    })
     .catch((error: string) => error);
 };
