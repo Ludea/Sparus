@@ -183,7 +183,7 @@ function Footer() {
               }}
             />
           ) : null}
-          {gameState === "not_installed" && workspacePath && repositoryUrl ? (
+          {gameState === "not_installed" ? (
             <LoadingButton
               variant="contained"
               color="primary"
