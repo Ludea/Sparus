@@ -44,7 +44,6 @@ const convertReadableData = (data: number): string => {
 function Footer() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(0);
-  const [launcherState, setLauncherState] = useState("");
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState(false);
   const [workspacePath, setWorkspacePath] = useState<string | null>("");
