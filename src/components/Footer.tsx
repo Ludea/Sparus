@@ -48,7 +48,7 @@ function Footer() {
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState(false);
   const [workspacePath, setWorkspacePath] = useState<string | null>("");
-  const [gameName, setGameName] = useState("");
+  const [gameName, setGameName] = useState<string | null>("");
   const [repositoryUrl, setRepositoryUrl] = useState<string | null>("");
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
@@ -81,7 +81,7 @@ function Footer() {
       .catch((err: string) => setError(err));
 
     store
-      .get<string>("game")
+      .get<string>("game_name")
       .then((value: string | null) => {
         setGameName(value);
       })
