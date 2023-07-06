@@ -31,7 +31,7 @@ fn main() {
       updater::update_workspace,
       updater::update_available
     ])
-    .setup(|_|{
+    .setup(|_| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
       Ok(())
     })
