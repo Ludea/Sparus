@@ -10,7 +10,7 @@ const getClient = async (stronghold: Stronghold) =>
 export const Save = async (
   stronghold: Stronghold,
   key: string,
-  value: string
+  value: string,
 ) => {
   const client = await getClient(stronghold);
   const store = client.getStore();

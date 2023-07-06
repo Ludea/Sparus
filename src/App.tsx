@@ -26,7 +26,7 @@ function App() {
     .catch((err: string) => setError(err));
 
   Stronghold.load(`${localConfigDir}config.stronghold`, "password").catch(
-    (err: string) => setError(err)
+    (err: string) => setError(err),
   );
 
   useEffect(() => {

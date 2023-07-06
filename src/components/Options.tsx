@@ -147,7 +147,7 @@ function Options() {
           aria-label="delete"
           onClick={() => {
             removeDir("game", { recursive: true }).catch((err: string) =>
-              setError(err)
+              setError(err),
             );
           }}
         >

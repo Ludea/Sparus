@@ -35,7 +35,7 @@ const convertReadableData = (data: number): string => {
   }
   if (data > 1024 * 1024 * 1024) {
     return `${String(
-      Math.floor((data / (1024 * 1024 * 1024)) * 100) / 100
+      Math.floor((data / (1024 * 1024 * 1024)) * 100) / 100,
     )} GiB`;
   }
   return "";
@@ -91,30 +91,30 @@ function Footer() {
       setProgress(
         (event.payload.downloaded_bytes_start /
           event.payload.downloaded_bytes_end) *
-          100
+          100,
       );
       setBuffer(
         (event.payload.applied_output_bytes_start /
           event.payload.applied_output_bytes_end) *
-          100
+          100,
       );
       setDownloadedBytesStart(
-        convertReadableData(event.payload.downloaded_bytes_start)
+        convertReadableData(event.payload.downloaded_bytes_start),
       );
       setDownloadedBytesEnd(
-        convertReadableData(event.payload.downloaded_bytes_end)
+        convertReadableData(event.payload.downloaded_bytes_end),
       );
       setDownloadedBytesPerSec(
-        convertReadableData(event.payload.downloaded_bytes_per_sec)
+        convertReadableData(event.payload.downloaded_bytes_per_sec),
       );
       setAppliedOutputBytesStart(
-        convertReadableData(event.payload.applied_output_bytes_start)
+        convertReadableData(event.payload.applied_output_bytes_start),
       );
       setAppliedOutputBytesEnd(
-        convertReadableData(event.payload.applied_output_bytes_end)
+        convertReadableData(event.payload.applied_output_bytes_end),
       );
       setAppliedOutputBytesPerSec(
-        convertReadableData(event.payload.applied_output_bytes_per_sec)
+        convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
     }).catch((err: string) => setError(err));
   });
