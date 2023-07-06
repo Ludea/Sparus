@@ -21,7 +21,7 @@ export const Save = async (
 export const Load = async (
   stronghold: Stronghold,
   key: string
-): Promise<string> => {
+) => {
   const client = await getClient(stronghold);
   const store = client.getStore();
   store
