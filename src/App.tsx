@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Grid from "@mui/material/Grid";
 
 import { useRoutes } from "react-router-dom";
@@ -15,11 +15,10 @@ import Background from "assets/background.jpg";
 import SparusContext from "utils/Context";
 
 function App() {
-  const [error, setError] = useState("");
   const [localConfigDir, setLocalConfigDir] = useState("");
-  const value = { error, setError };
   const theme = createTheme();
   const routing = useRoutes(routes);
+  const { setError } = useContext(SparusContext);
 
   appConfigDir()
     .then((dir) => setLocalConfigDir(dir))
@@ -44,27 +43,25 @@ function App() {
     }
   }, []);
   return (
-    <SparusContext.Provider value={value}>
-      <ThemeProvider theme={theme}>
-        <Grid
-          container
-          spacing={0}
-          m={-1}
-          sx={{
-            height: 600,
-            width: 800,
-            backgroundImage: `url(${Background})`,
-          }}
-        >
-          <Grid item xs={12}>
-            <Header />
-          </Grid>
-          <Grid item xs={12}>
-            {routing}
-          </Grid>
+    <ThemeProvider theme={theme}>
+      <Grid
+        container
+        spacing={0}
+        m={-1}
+        sx={{
+          height: 600,
+          width: 800,
+          backgroundImage: `url(${Background})`,
+        }}
+      >
+        <Grid item xs={12}>
+          <Header />
         </Grid>
-      </ThemeProvider>
-    </SparusContext.Provider>
+        <Grid item xs={12}>
+          {routing}
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
 
