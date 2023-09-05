@@ -26,7 +26,7 @@ semver = "1.0.16"
 libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 rust-argon2 = { version = "=2.0.0" }
 libloading = "0.8"
-prost = "0.11"
+prost = "0.12"
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plugin-single-instance" }
