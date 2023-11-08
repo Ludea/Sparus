@@ -18,7 +18,7 @@
     "tauri-plugin-stronghold": "https://github.com/tauri-apps/tauri-plugin-stronghold#v1"
   },
   "devDependencies": {
-    "@types/react": "18.2.32",
+    "@types/react": "18.2.37",
     "@types/react-dom": "18.2.14",
     "@typescript-eslint/eslint-plugin": "6.9.0",
     "@typescript-eslint/parser": "6.9.1",
