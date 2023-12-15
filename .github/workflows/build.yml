@@ -53,7 +53,7 @@ jobs:
         id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Sparus-${{ env.SHORT_SHA }}.zip
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
