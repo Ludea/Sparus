@@ -9,7 +9,7 @@
     "@mui/lab": "5.0.0-alpha.156",
     "@mui/material": "5.15.0",
     "@tauri-apps/api": "1.5.2",
-    "@tauri-apps/cli": "1.5.8",
+    "@tauri-apps/cli": "1.5.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "6.21.0",
