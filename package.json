@@ -12,7 +12,7 @@
     "@tauri-apps/cli": "1.5.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "6.21.0",
+    "react-router-dom": "6.21.1",
     "tauri-plugin-autostart-api": "https://github.com/tauri-apps/tauri-plugin-autostart",
     "tauri-plugin-store-api": "https://github.com/tauri-apps/tauri-plugin-store#v1",
     "tauri-plugin-stronghold": "https://github.com/tauri-apps/tauri-plugin-stronghold#v1"
