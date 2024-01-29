@@ -8,8 +8,7 @@ use tonic::transport::Channel;
 
 async fn streaming_echo(client: &mut LucleClient<Channel>, num: usize) {
   let stream = client
-    .server_streaming_echo(Empty {
-        })
+    .server_streaming_echo(Empty {})
     .await
     .unwrap()
     .into_inner();

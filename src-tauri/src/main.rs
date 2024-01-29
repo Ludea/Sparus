@@ -31,8 +31,16 @@ fn main() {
       updater::update_workspace,
       updater::update_available
     ])
-    .setup(|_| {
+    .setup(|app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+      let salt_path = app
+        .path_resolver()
+        .app_local_data_dir()
+        .expect("could not resolve app local data path")
+        .join("salt.txt");
+      app
+        .handle()
+        .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
       Ok(())
     })
     .system_tray(SystemTray::new().with_menu(tray_menu))
@@ -60,24 +68,6 @@ fn main() {
       MacosLauncher::LaunchAgent,
       None,
     ))
-    .plugin(
-      tauri_plugin_stronghold::Builder::new(|password| {
-        let config = argon2::Config {
-          lanes: 2,
-          mem_cost: 50_000,
-          time_cost: 30,
-          thread_mode: argon2::ThreadMode::from_threads(2),
-          variant: argon2::Variant::Argon2id,
-          ..Default::default()
-        };
-
-        let key = argon2::hash_raw(password.as_ref(), b"SALT_TODO", &config)
-          .expect("failed to hash password");
-
-        key.to_vec()
-      })
-      .build(),
-    )
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
