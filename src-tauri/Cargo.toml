@@ -27,10 +27,10 @@ libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 rust-argon2 = { version = "=2.0.0" }
 libloading = "0.8"
 prost = "0.12"
-tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
-tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace" }
+tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace"}
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plugin-single-instance" }
-tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace" }
 tonic = "0.10.0"
 tokio-stream = "0.1"
 
