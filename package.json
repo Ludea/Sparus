@@ -2,6 +2,7 @@
   "name": "sparus",
   "version": "0.1.0",
   "license": "Apache-2.0",
+  "type": "module",
   "dependencies": {
     "@emotion/react": "11.11.3",
     "@emotion/styled": "11.11.0",
