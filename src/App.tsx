@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
 
 import { useRoutes } from "react-router-dom";
@@ -12,13 +12,16 @@ import { appConfigDir } from "@tauri-apps/api/path";
 import Header from "components/Header";
 import routes from "routes";
 import Background from "assets/background.jpg";
-import SparusContext from "utils/Context";
+import SparusErrorContext from "utils/Context";
 
 function App() {
+  const [error, setError] = useState();
   const [localConfigDir, setLocalConfigDir] = useState("");
   const theme = createTheme();
   const routing = useRoutes(routes);
-  const { setError } = useContext(SparusContext);
+
+  const errorCache = useMemo(() => ({
+    error, setError}), [error, setError]);
 
   appConfigDir()
     .then((dir) => setLocalConfigDir(dir))
@@ -41,27 +44,30 @@ function App() {
         }
       });
     }
-  }, []);
+  }, [error]);
+
   return (
-    <ThemeProvider theme={theme}>
-      <Grid
-        container
-        spacing={0}
-        m={-1}
-        sx={{
-          height: 600,
-          width: 800,
-          backgroundImage: `url(${Background})`,
-        }}
-      >
-        <Grid item xs={12}>
-          <Header />
+    <SparusErrorContext.Provider value={errorCache}>
+      <ThemeProvider theme={theme}>
+        <Grid
+          container
+          spacing={0}
+          m={-1}
+          sx={{
+            height: 600,
+            width: 800,
+            backgroundImage: `url(${Background})`,
+          }}
+        >
+          <Grid item xs={12}>
+            <Header />
+          </Grid>
+          <Grid item xs={12}>
+            {routing}
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          {routing}
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SparusErrorContext.Provider>
   );
 }
 

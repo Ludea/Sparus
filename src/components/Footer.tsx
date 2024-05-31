@@ -4,8 +4,8 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-// Components
-import SparusContext from "utils/Context";
+// Context
+import SparusErrorContext from "utils/Context";
 
 // Tauri api
 import { invoke } from "@tauri-apps/api/tauri";
@@ -57,7 +57,7 @@ function Footer() {
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
   const [localConfig, setLocalConfig] = useState<string>("");
 
-  const { setError } = useContext(SparusContext);
+  const { setError } = useContext(SparusErrorContext);
 
   appConfigDir()
     .then((dir) => setLocalConfig(dir))
