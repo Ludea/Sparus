@@ -20,8 +20,13 @@ function App() {
   const theme = createTheme();
   const routing = useRoutes(routes);
 
-  const errorCache = useMemo(() => ({
-    error, setError}), [error, setError]);
+  const errorCache = useMemo(
+    () => ({
+      error,
+      setError,
+    }),
+    [error, setError],
+  );
 
   appConfigDir()
     .then((dir) => setLocalConfigDir(dir))
