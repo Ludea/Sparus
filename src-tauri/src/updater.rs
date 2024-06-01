@@ -120,7 +120,7 @@ async fn run_task(task: Task) {
           UpdateOptions::default(),
         )
         .try_take_while(|progress| {
-          let state = progress.lock();
+          let state = progress.borrow();
           let progression = state.histogram.progress();
           let speed = state.histogram.speed().progress_per_sec();
           window
