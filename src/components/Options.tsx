@@ -27,33 +27,33 @@ function Options() {
   const [workspacePath, setWorkspacePath] = useState<string | null>("");
   const [localConfig, setLocalConfig] = useState<string>("");
 
-  const { setError } = useContext(SparusContext);
+  const { setGlobalError } = useContext(SparusContext);
 
   appConfigDir()
     .then((dir) => setLocalConfig(dir))
-    .catch((err: string) => setError(err));
+    .catch((err: string) => setGlobalError(err));
   const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
-    store.load().catch((err: string) => setError(err));
+    store.load().catch((err: string) => setGlobalError(err));
     store
       .get<string>("game_url")
       .then((value: string | null) => {
         setGameURL(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
     store
       .get<string>("launcher_url")
       .then((value: string | null) => {
         setLauncherURL(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
     store
       .get<string>("workspace_path")
       .then((value: string | null) => {
         setWorkspacePath(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
   });
 
   return (
@@ -115,8 +115,8 @@ function Options() {
                 onChange={(event) => {
                   setAutostart(event.target.checked);
                   if (event.target.checked) {
-                    enable().catch((err: string) => setError(err));
-                  } else disable().catch((err: string) => setError(err));
+                    enable().catch((err: string) => setGlobalError(err));
+                  } else disable().catch((err: string) => setGlobalError(err));
                 }}
                 inputProps={{ "aria-label": "controlled" }}
               />
@@ -131,14 +131,14 @@ function Options() {
           onClick={() => {
             store
               .set("game_url", gameURL)
-              .catch((err: string) => setError(err));
+              .catch((err: string) => setGlobalError(err));
             store
               .set("launcher_url", launcherURL)
-              .catch((err: string) => setError(err));
+              .catch((err: string) => setGlobalError(err));
             store
               .set("workspace_path", workspacePath)
-              .catch((err: string) => setError(err));
-            store.save().catch((err: string) => setError(err));
+              .catch((err: string) => setGlobalError(err));
+            store.save().catch((err: string) => setGlobalError(err));
           }}
         >
           Save
@@ -147,7 +147,7 @@ function Options() {
           aria-label="delete"
           onClick={() => {
             removeDir("game", { recursive: true }).catch((err: string) =>
-              setError(err),
+              setGlobalError(err),
             );
           }}
         >

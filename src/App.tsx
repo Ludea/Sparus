@@ -15,25 +15,25 @@ import Background from "assets/background.jpg";
 import SparusErrorContext from "utils/Context";
 
 function App() {
-  const [error, setError] = useState();
+  const [globalError, setGlobalError] = useState("");
   const [localConfigDir, setLocalConfigDir] = useState("");
   const theme = createTheme();
   const routing = useRoutes(routes);
 
   const errorCache = useMemo(
     () => ({
-      error,
-      setError,
+      globalError,
+      setGlobalError,
     }),
-    [error, setError],
+    [globalError, setGlobalError],
   );
 
   appConfigDir()
     .then((dir) => setLocalConfigDir(dir))
-    .catch((err: string) => setError(err));
+    .catch((err: string) => setGlobalError(err));
 
   Stronghold.load(`${localConfigDir}config.stronghold`, "password").catch(
-    (err: string) => setError(err),
+    (err: string) => setGlobalError(err),
   );
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function App() {
         }
       });
     }
-  }, [error]);
+  }, [globalError]);
 
   return (
     <SparusErrorContext.Provider value={errorCache}>

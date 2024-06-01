@@ -46,9 +46,9 @@ function Footer() {
   const [buffer, setBuffer] = useState(0);
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState(false);
-  const [workspacePath, setWorkspacePath] = useState<string | null>("");
-  const [gameName, setGameName] = useState<string | null>("");
-  const [repositoryUrl, setRepositoryUrl] = useState<string | null>("");
+  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [gameName, setGameName] = useState<string>("");
+  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
   const [downloadedBytesPerSec, setDownloadedBytesPerSec] = useState("");
@@ -57,34 +57,35 @@ function Footer() {
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
   const [localConfig, setLocalConfig] = useState<string>("");
 
-  const { setError } = useContext(SparusErrorContext);
+  const { setGlobalError } = useContext(SparusErrorContext);
 
   appConfigDir()
     .then((dir) => setLocalConfig(dir))
-    .catch((err: string) => setError(err));
+    .catch((err: string) => setGlobalError(err));
   const store = new Store(`${localConfig}.settings.sparus`);
 
   useEffect(() => {
-    store.load().catch((err: string) => setError(err));
+    store.load().catch((err: string) => setGlobalError(err));
     store
       .get<string>("game_url")
-      .then((value: string | null) => {
-        setRepositoryUrl(value);
+      .then((value) => {
+        if (value) setRepositoryUrl(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
+
     store
       .get<string>("workspace_path")
-      .then((value: string | null) => {
-        setWorkspacePath(value);
+      .then((value) => {
+        if (value) setWorkspacePath(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
 
     store
       .get<string>("game_name")
-      .then((value: string | null) => {
-        setGameName(value);
+      .then((value) => {
+        if (value) setGameName(value);
       })
-      .catch((err: string) => setError(err));
+      .catch((err: string) => setGlobalError(err));
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -115,7 +116,7 @@ function Footer() {
       setAppliedOutputBytesPerSec(
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
-    }).catch((err: string) => setError(err));
+    }).catch((err: string) => setGlobalError(err));
   });
 
   const spawn = async () => {
@@ -151,10 +152,10 @@ function Footer() {
       workspacePath + gameName + extension,
     ]);
 
-    command.on("error", (err: string) => setError(err));
+    command.on("error", (err: string) => setGlobalError(err));
 
-    command.stderr.on("data", (line: string) => setError(line));
-    command.spawn().catch((err: string) => setError(err));
+    command.stderr.on("data", (line: string) => setGlobalError(line));
+    command.spawn().catch((err: string) => setGlobalError(err));
   };
 
   return (
@@ -199,7 +200,7 @@ function Footer() {
                     setGameState("installed");
                     setGameLoading(false);
                   })
-                  .catch((err: string) => setError(err));
+                  .catch((err: string) => setGlobalError(err));
               }}
               sx={{
                 position: "fixed",
@@ -215,7 +216,7 @@ function Footer() {
               variant="contained"
               color="primary"
               onClick={() => {
-                spawn().catch((err: string) => setError(err));
+                spawn().catch((err: string) => setGlobalError(err));
               }}
               sx={{
                 position: "fixed",

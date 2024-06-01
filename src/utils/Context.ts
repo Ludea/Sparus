@@ -1,8 +1,13 @@
 import { createContext } from "react";
 
-const SparusErrorContext = createContext({
-  error: "",
-  setError: () => {},
+type SparusError = {
+  globalError: string;
+  setGlobalError: (err: string) => void;
+};
+
+const SparusErrorContext = createContext<SparusError>({
+  globalError: "",
+  setGlobalError: () => {},
 });
 
 export default SparusErrorContext;

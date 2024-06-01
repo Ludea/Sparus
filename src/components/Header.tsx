@@ -16,7 +16,7 @@ import SparusContext from "utils/Context";
 import { appWindow } from "@tauri-apps/api/window";
 
 function Header() {
-  const { setError } = useContext(SparusContext);
+  const { setGlobalError } = useContext(SparusContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,7 +38,7 @@ function Header() {
         xs={9}
         sx={{ height: 50 }}
         onMouseDown={() => {
-          appWindow.startDragging().catch((err: string) => setError(err));
+          appWindow.startDragging().catch((err: string) => setGlobalError(err));
         }}
       />
       <Grid
@@ -59,7 +59,7 @@ function Header() {
           color="primary"
           aria-label="Minimize Sparus"
           onClick={() => {
-            appWindow.minimize().catch((err: string) => setError(err));
+            appWindow.minimize().catch((err: string) => setGlobalError(err));
           }}
         >
           <MinimizeIcon />
@@ -68,7 +68,7 @@ function Header() {
           color="primary"
           aria-label="Close Sparus"
           onClick={() => {
-            appWindow.close().catch((err: string) => setError(err));
+            appWindow.close().catch((err: string) => setGlobalError(err));
           }}
         >
           <ClearIcon />
