@@ -13,7 +13,7 @@ import SparusContext from "utils/Context";
 
 // Tauri api
 import { appConfigDir } from "@tauri-apps/api/path";
-import { removeDir } from "@tauri-apps/api/fs";
+import { remove } from "@tauri-apps/plugin-fs";
 import { enable, disable } from "tauri-plugin-autostart-api";
 import { Store } from "tauri-plugin-store-api";
 
@@ -146,7 +146,7 @@ function Options() {
         <IconButton
           aria-label="delete"
           onClick={() => {
-            removeDir("game", { recursive: true }).catch((err: string) =>
+            remove("game", { recursive: true }).catch((err: string) =>
               setGlobalError(err),
             );
           }}

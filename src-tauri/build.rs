@@ -8,7 +8,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR not set")).join("file_descriptor_set.bin");
   fs::write(&file_descriptor_path, file_descriptors.encode_to_vec()).unwrap();
 
-  tauri_build::build();
+  tauri_build::try_build(
+    tauri_build::Attributes::new()
+      .codegen(tauri_build::CodegenContext::new())
+      .app_manifest(
+        tauri_build::AppManifest::new().commands(&["update_workspace", "update_available"]),
+      ),
+  )
+  .expect("failed to run tauri-build");
+
   tonic_build::configure()
     .skip_protoc_run()
     .file_descriptor_set_path(&file_descriptor_path)

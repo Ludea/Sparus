@@ -8,11 +8,11 @@ import Grid from "@mui/material/Grid";
 import SparusErrorContext from "utils/Context";
 
 // Tauri api
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import { appConfigDir } from "@tauri-apps/api/path";
 import { listen } from "@tauri-apps/api/event";
-import { Command } from "@tauri-apps/api/shell";
-import { platform } from "@tauri-apps/api/os";
+import { Command } from "@tauri-apps/plugin-shell";
+import { platform } from "@tauri-apps/plugin-os";
 import { Store } from "tauri-plugin-store-api";
 
 interface UpdateEvent {
@@ -121,16 +121,16 @@ function Footer() {
 
   const spawn = async () => {
     let extension;
-    let shell;
-    let arg;
+    let shell: string;
+    let arg: string;
     const platformName = await platform();
     switch (platformName) {
-      case "win32":
+      case "windows":
         extension = ".exe";
         shell = "cmd";
         arg = "/C";
         break;
-      case "darwin":
+      case "macos":
         extension = ".app";
         shell = "sh";
         arg = "-c";
@@ -147,15 +147,9 @@ function Footer() {
         break;
     }
 
-    const command = new Command(shell, [
-      arg,
-      workspacePath + gameName + extension,
-    ]);
-
-    command.on("error", (err: string) => setGlobalError(err));
-
-    command.stderr.on("data", (line: string) => setGlobalError(line));
-    command.spawn().catch((err: string) => setGlobalError(err));
+    Command.create(shell, [arg, workspacePath + gameName + extension])
+      .execute()
+      .catch((err: string) => setGlobalError(err));
   };
 
   return (

@@ -11,7 +11,7 @@ use std::{
   path::Path,
   sync::{Arc, Mutex},
 };
-use tauri::{command, AppHandle, Runtime, Window};
+use tauri::{command, AppHandle, Manager, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
   task::LocalSet,

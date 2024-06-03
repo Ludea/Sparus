@@ -13,7 +13,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SparusContext from "utils/Context";
 
 // Tauri api
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrent } from "@tauri-apps/api/window";
 
 function Header() {
   const { setGlobalError } = useContext(SparusContext);
@@ -38,7 +38,9 @@ function Header() {
         xs={9}
         sx={{ height: 50 }}
         onMouseDown={() => {
-          appWindow.startDragging().catch((err: string) => setGlobalError(err));
+          getCurrent()
+            .startDragging()
+            .catch((err: string) => setGlobalError(err));
         }}
       />
       <Grid
@@ -59,7 +61,9 @@ function Header() {
           color="primary"
           aria-label="Minimize Sparus"
           onClick={() => {
-            appWindow.minimize().catch((err: string) => setGlobalError(err));
+            getCurrent()
+              .minimize()
+              .catch((err: string) => setGlobalError(err));
           }}
         >
           <MinimizeIcon />
@@ -68,7 +72,9 @@ function Header() {
           color="primary"
           aria-label="Close Sparus"
           onClick={() => {
-            appWindow.close().catch((err: string) => setGlobalError(err));
+            getCurrent()
+              .close()
+              .catch((err: string) => setGlobalError(err));
           }}
         >
           <ClearIcon />

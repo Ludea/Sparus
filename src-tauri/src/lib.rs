@@ -1,0 +1,49 @@
+use libloading::{Library, Symbol};
+use tauri::{plugin::TauriPlugin, Runtime};
+use tauri_plugin_autostart::MacosLauncher;
+
+mod rpc;
+#[cfg(desktop)]
+mod tray;
+mod updater;
+
+pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Error>> {
+  unsafe {
+    let lib = Library::new("~/lib.rlib")?;
+    let func: Symbol<unsafe extern "C" fn() -> Box<TauriPlugin<R>>> = lib.get(b"")?;
+    Ok(*func())
+  }
+}
+
+pub fn run() {
+  let spawner = updater::LocalSpawner::new();
+
+  tauri::Builder::default()
+    .manage(spawner)
+    .invoke_handler(tauri::generate_handler![
+      updater::update_workspace,
+      updater::update_available
+    ])
+    .setup(|app| {
+      tauri::async_runtime::spawn(rpc::start_rpc_client());
+      {
+        #[cfg(desktop)]
+        let handle = app.handle();
+        tray::create_tray(handle)?;
+      }
+      Ok(())
+    })
+    .plugin(tauri_plugin_notification::init())
+    .plugin(tauri_plugin_shell::init())
+    .plugin(tauri_plugin_store::Builder::default().build())
+    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+    .plugin(tauri_plugin_autostart::init(
+      MacosLauncher::LaunchAgent,
+      None,
+    ))
+    .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_fs::init())
+    .plugin(tauri_plugin_os::init())
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
+}
