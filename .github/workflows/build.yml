@@ -64,6 +64,7 @@ jobs:
           target: ${{ matrix.platform.rust_target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-${{ env.SHORT_SHA }}.zip
