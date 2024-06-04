@@ -4,10 +4,6 @@ import Grid from "@mui/material/Grid";
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-// Tauri API
-import { Stronghold } from "tauri-plugin-stronghold";
-import { appConfigDir } from "@tauri-apps/api/path";
-
 // components
 import Header from "components/Header";
 import routes from "routes";
@@ -16,7 +12,6 @@ import SparusErrorContext from "utils/Context";
 
 function App() {
   const [globalError, setGlobalError] = useState("");
-  const [localConfigDir, setLocalConfigDir] = useState("");
   const theme = createTheme();
   const routing = useRoutes(routes);
 
@@ -26,14 +21,6 @@ function App() {
       setGlobalError,
     }),
     [globalError, setGlobalError],
-  );
-
-  appConfigDir()
-    .then((dir) => setLocalConfigDir(dir))
-    .catch((err: string) => setGlobalError(err));
-
-  Stronghold.load(`${localConfigDir}config.stronghold`, "password").catch(
-    (err: string) => setGlobalError(err),
   );
 
   useEffect(() => {

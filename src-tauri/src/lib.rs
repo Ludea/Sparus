@@ -1,4 +1,6 @@
+use argon2::{hash_raw, Config, Variant, Version};
 use libloading::{Library, Symbol};
+use std::{env, fs, path::Path};
 use tauri::{plugin::TauriPlugin, Runtime};
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -31,6 +33,7 @@ pub fn run() {
         let handle = app.handle();
         tray::create_tray(handle)?;
       }
+
       Ok(())
     })
     .plugin(tauri_plugin_notification::init())
@@ -41,8 +44,37 @@ pub fn run() {
       MacosLauncher::LaunchAgent,
       None,
     ))
+    .plugin(
+      tauri_plugin_stronghold::Builder::new(|password| {
+        let config = Config {
+          lanes: 4,
+          mem_cost: 10_000,
+          time_cost: 10,
+          variant: Variant::Argon2id,
+          version: Version::Version13,
+          ..Default::default()
+        };
+        //let salt;
+        let salt = match env::var("STRONGHOLD_SALT") {
+          Ok(val) => val,
+          Err(_) => {
+            if !Path::new("salt.txt").exists() {
+              let mut buf = [0u8, 16];
+              getrandom::getrandom(&mut buf).unwrap();
+              fs::write("salt.txt", buf).unwrap();
+              String::from_utf8(buf.to_vec()).unwrap()
+            } else {
+              fs::read_to_string("salt.txt").unwrap()
+            }
+          }
+        };
+        let key =
+          hash_raw(password.as_ref(), salt.as_bytes(), &config).expect("failed to hash password");
+        key.to_vec()
+      })
+      .build(),
+    )
     .plugin(tauri_plugin_process::init())
-    .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_os::init())
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
