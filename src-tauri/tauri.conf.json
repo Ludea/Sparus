@@ -38,7 +38,7 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "tsc && yarn build",
+    "beforeBuildCommand": "npx tsc && yarn build",
     "frontendDist": "../dist",
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:5173"
