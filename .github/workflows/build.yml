@@ -70,3 +70,4 @@ jobs:
           name: Sparus-${{ env.SHORT_SHA }}.zip
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
           if-no-files-found: error
+          merge-multiple: true
