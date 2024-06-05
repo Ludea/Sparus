@@ -1,3 +1,4 @@
+use async_lock::Mutex;
 use futures::TryStreamExt;
 use libspeedupdate::{
   link::{AutoRepository, RemoteRepository, RepositoryError},
@@ -6,11 +7,7 @@ use libspeedupdate::{
 };
 use semver::Version;
 use serde::Serialize;
-use std::{
-  future,
-  path::Path,
-  sync::{Arc, Mutex},
-};
+use std::{future, path::Path, sync::Arc};
 use tauri::{command, AppHandle, Manager, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
@@ -113,7 +110,7 @@ async fn run_task(task: Task) {
     } => {
       let result = workspace
         .lock()
-        .unwrap()
+        .await
         .update(
           &repo,
           goal_version.map(|v| CleanName::new(v).unwrap()),
