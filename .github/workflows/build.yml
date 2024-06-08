@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: web/yarn.lock
+          cache-dependency-path: yarn.lock
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
