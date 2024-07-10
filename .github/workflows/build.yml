@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
       - name: setup node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 18
           cache: yarn
