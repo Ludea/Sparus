@@ -119,12 +119,12 @@ function Footer() {
     }).catch((err: string) => setGlobalError(err));
   });
 
-  const spawn = async () => {
+  const spawn = () => {
     let extension;
     let shell: string;
     let arg: string;
-    const platformName = await platform();
-    switch (platformName) {
+    //    const platformName = await platform();
+    switch (platform()) {
       case "windows":
         extension = ".exe";
         shell = "cmd";
@@ -209,9 +209,7 @@ function Footer() {
             <LoadingButton
               variant="contained"
               color="primary"
-              onClick={() => {
-                spawn().catch((err: string) => setGlobalError(err));
-              }}
+              onClick={() => spawn()}
               sx={{
                 position: "fixed",
                 right: "130px",
