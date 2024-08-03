@@ -8,7 +8,7 @@ use libspeedupdate::{
 use semver::Version;
 use serde::Serialize;
 use std::{future, path::Path, sync::Arc};
-use tauri::{command, AppHandle, Manager, Runtime, Window};
+use tauri::{command, AppHandle, Manager, Emitter, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
   task::LocalSet,
