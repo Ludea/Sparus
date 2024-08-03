@@ -14,7 +14,7 @@ name = "libsparus"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-beta", features = ["codegen"] }
+tauri-build = { version = "2.0.0-rc", features = ["codegen"] }
 tonic-build = { version = "0.11.0", features = [] }
 protox = "0.6"
 
@@ -25,7 +25,7 @@ futures = "0.3.25"
 tokio = "1.21.2"
 serde_json = "1.0"
 serde = { version = "1.0", features = [ "derive" ] }
-tauri = { version = "2.0.0-beta", features = ["tray-icon"] }
+tauri = { version = "2.0.0-rc", features = ["tray-icon"] }
 semver = "1.0.16"
 libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 libloading = "0.8"

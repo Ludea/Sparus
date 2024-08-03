@@ -9,8 +9,8 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/lab": "^5.0.0-alpha.169",
     "@mui/material": "^5.15.15",
-    "@tauri-apps/api": "2.0.0-beta.13",
-    "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@tauri-apps/api": "2.0.0-rc.0",
+    "@tauri-apps/cli": "^2.0.0-rc.0",
     "@tauri-apps/plugin-autostart": "^2.0.0-beta.5",
     "@tauri-apps/plugin-fs": "^2.0.0-beta.5",
     "@tauri-apps/plugin-notification": "^2.0.0-beta.5",
@@ -54,5 +54,6 @@
     "build": "tsc && vite build",
     "serve": "vite preview",
     "tauri": "tauri"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
