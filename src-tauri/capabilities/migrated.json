@@ -21,6 +21,6 @@
     "shell:allow-open",
     "core:notification:default",
     "shell:default",
-    "core:notification:default"
+    "notification:default"
   ]
 }
