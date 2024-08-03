@@ -42,6 +42,7 @@ jobs:
               ln -sf "$new_target" "$link"
               echo "Changed $(basename "$link") from $current_target to $new_target"
           done
+      - run: yarn tauri android init
       - name: build Apk
         run: |
           yarn 
