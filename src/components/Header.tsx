@@ -13,7 +13,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SparusContext from "utils/Context";
 
 // Tauri api
-import { getCurrent } from "@tauri-apps/api/window";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 function Header() {
   const { setGlobalError } = useContext(SparusContext);
