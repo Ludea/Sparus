@@ -38,7 +38,7 @@ function Header() {
         xs={9}
         sx={{ height: 50 }}
         onMouseDown={() => {
-          getCurrent()
+          getCurrentWindow()
             .startDragging()
             .catch((err: string) => setGlobalError(err));
         }}
@@ -61,7 +61,7 @@ function Header() {
           color="primary"
           aria-label="Minimize Sparus"
           onClick={() => {
-            getCurrent()
+            getCurrentWindow()
               .minimize()
               .catch((err: string) => setGlobalError(err));
           }}
@@ -72,7 +72,7 @@ function Header() {
           color="primary"
           aria-label="Close Sparus"
           onClick={() => {
-            getCurrent()
+            getCurrentWindow()
               .close()
               .catch((err: string) => setGlobalError(err));
           }}
