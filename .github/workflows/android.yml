@@ -48,7 +48,7 @@ jobs:
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: build Apk
-        run: yarn tauri android build --target aarch64 --split-per-abi 
+        run: yarn tauri android build --target aarch64 --split-per-abi
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: find apk
