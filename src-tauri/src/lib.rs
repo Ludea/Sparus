@@ -76,11 +76,11 @@ pub fn run() {
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 
-    #[cfg(desktop)]
-    app
+  #[cfg(desktop)]
+  app
     .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
       None,
-    )); 
+    ));
 }
