@@ -56,5 +56,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-apk.zip
-          path: "src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk" 
+          path: "src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk"
           if-no-files-found: error
