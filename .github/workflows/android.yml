@@ -48,8 +48,8 @@ jobs:
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: build Apk
-        run: yarn tauri android build
+        run: yarn tauri android build --target aarch64 
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: find apk
-        run: ls src-tauri/gen/android/app/build/outputs/apk/universal
+        run: ls src-tauri/gen/android/app/build/outputs/apk/
