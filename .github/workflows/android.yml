@@ -10,7 +10,7 @@ on:
 
 jobs:
   android_build:
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
       - name: setup node
@@ -43,7 +43,7 @@ jobs:
           done
       - name: Install yarn deps
         run: yarn
-      - name: Init Android project 
+      - name: Init Android project
         run: yarn tauri android init
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
@@ -53,5 +53,3 @@ jobs:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: find apk
         run: ls src-tauri/gen/android/app/build/outputs/apk/universal
-
-          
