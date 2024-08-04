@@ -2,6 +2,7 @@ use argon2::{hash_raw, Config, Variant, Version};
 use libloading::{Library, Symbol};
 use std::{env, fs, path::Path};
 use tauri::{plugin::TauriPlugin, Runtime};
+#[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
 mod rpc;
