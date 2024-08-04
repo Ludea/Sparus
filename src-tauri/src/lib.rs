@@ -40,6 +40,8 @@ pub fn run() {
     })
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_shell::init())
+    #[cfg(desktop)]
+    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
     .plugin(tauri_plugin_store::Builder::default().build())
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
