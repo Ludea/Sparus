@@ -22,7 +22,7 @@ pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Er
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  let mut app = tauri::Builder::default()
+  let app = tauri::Builder::default()
     .manage(spawner)
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
