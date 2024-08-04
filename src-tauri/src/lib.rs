@@ -41,7 +41,9 @@ pub fn run() {
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_store::Builder::default().build())
+    #[cfg(desktop)]
     .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+    #[cfg(desktop)]
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
       None,
