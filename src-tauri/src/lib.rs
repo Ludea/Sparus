@@ -22,7 +22,7 @@ pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Er
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  tauri::Builder::default()
+  let mut app = tauri::Builder::default()
     .manage(spawner)
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
@@ -41,13 +41,6 @@ pub fn run() {
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_store::Builder::default().build())
-    #[cfg(desktop)]
-    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
-    #[cfg(desktop)]
-    .plugin(tauri_plugin_autostart::init(
-      MacosLauncher::LaunchAgent,
-      None,
-    ))
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = Config {
@@ -82,4 +75,12 @@ pub fn run() {
     .plugin(tauri_plugin_os::init())
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
+
+    #[cfg(desktop)]
+    app
+    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+    .plugin(tauri_plugin_autostart::init(
+      MacosLauncher::LaunchAgent,
+      None,
+    )); 
 }
