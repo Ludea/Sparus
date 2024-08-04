@@ -30,8 +30,8 @@ pub fn run() {
     ])
     .setup(|app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+      #[cfg(desktop)]
       {
-        #[cfg(desktop)]
         let handle = app.handle();
         tray::create_tray(handle)?;
       }
