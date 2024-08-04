@@ -48,7 +48,7 @@ jobs:
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: build Apk
-        run: yarn tauri android build --target aarch64 --split-per-abi 
+        run: yarn tauri android build --split-per-abi 
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: find apk
@@ -56,5 +56,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-apk.zip
-          path: "src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk"
+          path: "src-tauri/gen/android/app/build/outputs/apk/**/release/*.apk"
           if-no-files-found: error
