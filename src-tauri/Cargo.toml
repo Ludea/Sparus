@@ -30,7 +30,7 @@ semver = "1.0.16"
 libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 libloading = "0.8"
 prost = "0.12"
-tonic = "0.11.0"
+tonic = "0.12.1"
 tokio-stream = "0.1"
 
 tauri-plugin-shell = "2.0.0-rc"
