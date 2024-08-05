@@ -77,7 +77,7 @@ pub fn run() {
       None,
     ));
 
-  let mut app = builer
+  let mut app = builder
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
       updater::update_available,
