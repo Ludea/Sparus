@@ -22,12 +22,8 @@ pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Er
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  let mut app = tauri::Builder::default()
+  let mut builder = tauri::Builder::default()
     .manage(spawner)
-    .invoke_handler(tauri::generate_handler![
-      updater::update_workspace,
-      updater::update_available
-    ])
     .setup(|app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
       #[cfg(desktop)]
@@ -74,16 +70,20 @@ pub fn run() {
     .plugin(tauri_plugin_os::init());
 
   #[cfg(desktop)]
-  {
-    app
-      .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
-      .plugin(tauri_plugin_autostart::init(
-        MacosLauncher::LaunchAgent,
-        None,
-      ));
-  }
+  builder
+    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+    .plugin(tauri_plugin_autostart::init(
+      MacosLauncher::LaunchAgent,
+      None,
+    ));
 
-  app
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+  let mut app = builer
+    .invoke_handler(tauri::generate_handler![
+      updater::update_workspace,
+      updater::update_available,
+    ])
+    .build(tauri::tauri_build_context!())
+    .expect("error while building tauri application");
+
+  app.run();
 }
