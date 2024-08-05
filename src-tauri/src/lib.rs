@@ -85,5 +85,5 @@ pub fn run() {
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
 
-  app.run();
+  app.run(move |_app_handle, _event| {});
 }
