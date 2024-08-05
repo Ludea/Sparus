@@ -72,7 +72,7 @@ pub fn run() {
     )
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_os::init());
-  
+
   #[cfg(desktop)]
   {
     app
@@ -81,10 +81,9 @@ pub fn run() {
         MacosLauncher::LaunchAgent,
         None,
       ));
-   } 
+  }
 
   app
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
-
 }
