@@ -43,6 +43,8 @@ jobs:
           done
       - name: Install yarn deps
         run: yarn
+      - name: Build interface
+        run: yarn build
       - name: Init Android project
         run: yarn tauri android init
         env:
