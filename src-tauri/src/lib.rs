@@ -79,7 +79,7 @@ pub fn run() {
 
   let app = builder
     .invoke_handler(tauri::generate_handler![
-    p      updater::update_workspace,
+          updater::update_workspace,
           updater::update_available,
         ])
     .build(tauri::tauri_build_context!())
