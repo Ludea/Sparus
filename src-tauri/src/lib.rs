@@ -71,6 +71,7 @@ pub fn run() {
 
   #[cfg(desktop)]
   builder
+    .clone()
     .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
