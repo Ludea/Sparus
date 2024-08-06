@@ -22,7 +22,7 @@ pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Er
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  let builder = tauri::Builder::default()
+  let mut builder = tauri::Builder::default()
     .manage(spawner)
     .setup(|app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
@@ -71,7 +71,6 @@ pub fn run() {
 
   #[cfg(desktop)]
   builder
-    .clone()
     .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
     .plugin(tauri_plugin_autostart::init(
       MacosLauncher::LaunchAgent,
