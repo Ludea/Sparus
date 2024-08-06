@@ -70,18 +70,20 @@ pub fn run() {
     .plugin(tauri_plugin_os::init());
 
   #[cfg(desktop)]
-  builder = builder
-    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
-    .plugin(tauri_plugin_autostart::init(
-      MacosLauncher::LaunchAgent,
-      None,
-    ));
+  {
+    builder = builder
+      .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+      .plugin(tauri_plugin_autostart::init(
+        MacosLauncher::LaunchAgent,
+        None,
+      ));
+  }
 
   let app = builder
     .invoke_handler(tauri::generate_handler![
-          updater::update_workspace,
-          updater::update_available,
-        ])
+      updater::update_workspace,
+      updater::update_available,
+    ])
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
 
