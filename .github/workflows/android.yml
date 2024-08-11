@@ -57,8 +57,21 @@ jobs:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: find apk
         run: ls src-tauri/gen/android/app/build/outputs/apk/
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        # ID used to access action output
+        id: sign_app
+        with:
+         releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/ 
+         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+         alias: ${{ secrets.ALIAS }}
+         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+         keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          # override default build-tools version (33.0.0) -- optional
+          BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-apk.zip
-          path: "src-tauri/gen/android/app/build/outputs/apk/**/release/*.apk"
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
           if-no-files-found: error
