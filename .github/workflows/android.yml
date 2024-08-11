@@ -62,11 +62,11 @@ jobs:
         # ID used to access action output
         id: sign_app
         with:
-         releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/ 
-         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-         alias: ${{ secrets.ALIAS }}
-         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-         keyPassword: ${{ secrets.KEY_PASSWORD }}
+          releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           # override default build-tools version (33.0.0) -- optional
           BUILD_TOOLS_VERSION: "34.0.0"
