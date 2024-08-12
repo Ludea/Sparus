@@ -46,8 +46,9 @@ function App() {
           spacing={0}
           m={-1}
           sx={{
-            height: 600,
-            width: 800,
+            height: window.innerHeight,
+            width: window.innerWidth,
+            backgroundRepeat: "no-repeat",
             backgroundImage: `url(${Background})`,
           }}
         >
