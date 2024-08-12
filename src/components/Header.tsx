@@ -21,7 +21,12 @@ function Header() {
   const location = useLocation();
 
   return (
-    <Grid container>
+    <Grid
+      container
+      sx={{
+        display: { xl: "block", xs: "none" },
+      }}
+    >
       <Grid item xs={1}>
         {location.pathname !== "/" ? (
           <IconButton
