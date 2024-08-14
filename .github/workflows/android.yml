@@ -18,9 +18,6 @@ jobs:
         with:
           node-version: 18
       - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: stable
-          targets: aarch64-linux-android,x86_64-unknown-linux-gnu
       - name: install Linux dependencies
         run: |
           sudo apt-get update
