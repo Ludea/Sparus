@@ -48,9 +48,8 @@ function App() {
           sx={{
             height: window.innerHeight,
             width: window.innerWidth,
-            backgroundColor: "red",
-            //            backgroundRepeat: "no-repeat",
-            //            backgroundImage: `url(${Background})`,
+            backgroundRepeat: "no-repeat",
+            backgroundImage: `url(${Background})`,
           }}
         >
           <Grid item xs={12}>

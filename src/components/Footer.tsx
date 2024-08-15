@@ -3,6 +3,13 @@ import LinearProgress from "@mui/material/LinearProgress";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+
+// Icons
+import PhoneIcon from "@mui/icons-material/Phone";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonPinIcon from "@mui/icons-material/PersonPin";
 
 // Context
 import SparusErrorContext from "utils/Context";
@@ -42,6 +49,7 @@ const convertReadableData = (data: number): string => {
 };
 
 function Footer() {
+  const [currentTab, setCurrentTab] = useState(0);
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(0);
   const [gameState, setGameState] = useState("not_installed");
@@ -123,7 +131,7 @@ function Footer() {
     let extension;
     let shell: string;
     let arg: string;
-    //    const platformName = await platform();
+
     switch (platform()) {
       case "windows":
         extension = ".exe";
@@ -163,7 +171,7 @@ function Footer() {
         width: "100%",
       }}
     >
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ display: { xl: "block", xs: "none" } }}>
         <Grid item xs={1} />
         <Grid item display="flex" justifyContent="flex-start" xs={10}>
           {gameLoading ? (
@@ -226,6 +234,17 @@ function Footer() {
             : null}
         </Grid>
       </Grid>
+
+      <Tabs
+        sx={{ display: { xl: "none", xs: "block" } }}
+        value={currentTab}
+        onChange={(_, tab: number) => setCurrentTab(tab)}
+        aria-label="icon label tabs example"
+      >
+        <Tab icon={<PhoneIcon />} label="RECENTS" />
+        <Tab icon={<FavoriteIcon />} label="FAVORITES" />
+        <Tab icon={<PersonPinIcon />} label="NEARBY" />
+      </Tabs>
     </Box>
   );
 }

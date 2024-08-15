@@ -27,7 +27,7 @@ function Header() {
         display: { xl: "block", xs: "none" },
       }}
     >
-      {/*      <Grid item xs={1}>
+      <Grid item xs={1}>
         {location.pathname !== "/" ? (
           <IconButton
             color="primary"
@@ -84,7 +84,7 @@ function Header() {
         >
           <ClearIcon />
         </IconButton>
-      </Grid> */}
+      </Grid>
     </Grid>
   );
 }
