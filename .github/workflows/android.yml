@@ -48,7 +48,7 @@ jobs:
         run: yarn
       - name: Build interface
         run: yarn build
-      - name: Init Android project 
+      - name: Init Android project
         run: yarn tauri android init
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
