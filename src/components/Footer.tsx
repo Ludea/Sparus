@@ -238,7 +238,7 @@ function Footer() {
       <Tabs
         sx={{ display: { xl: "none", xs: "block" } }}
         value={currentTab}
-        onChange={(_, tab) => setCurrentTab(tab)}
+        onChange={(_, tab: number) => setCurrentTab(tab)}
         aria-label="icon label tabs example"
       >
         <Tab icon={<PhoneIcon />} label="RECENTS" />
