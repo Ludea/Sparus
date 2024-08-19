@@ -839,6 +839,11 @@
   resolved "https://registry.yarnpkg.com/@tauri-apps/api/-/api-2.0.0-rc.0.tgz#902b4e9803ecdcc0a3913d7c09df26d651f3dfd1"
   integrity sha512-v454Qs3REHc3Za59U+/eSmBsdmF+3NE5+76+lFDaitVqN4ZglDHENDaMARYKGJVZuxiSkzyqG0SeG7lLQjVkPA==
 
+"@tauri-apps/api@^2.0.0-rc.1":
+  version "2.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/api/-/api-2.0.0-rc.1.tgz#ec858f239e34792625e311f687fcaca0581e0904"
+  integrity sha512-qubAWjM9sqofUh7fe+7UAbBY3wlkfCyxm+PNRYpq9mnNng7lvSQq3sYsFUEB12AYvgGARZSb54VMVUvRuVLi7w==
+
 "@tauri-apps/cli-darwin-arm64@2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-2.0.0-rc.0.tgz#53de595f7df1448981b6e3491873ad55582d7ff8"
@@ -905,56 +910,56 @@
     "@tauri-apps/cli-win32-ia32-msvc" "2.0.0-rc.0"
     "@tauri-apps/cli-win32-x64-msvc" "2.0.0-rc.0"
 
-"@tauri-apps/plugin-autostart@^2.0.0-rc":
+"@tauri-apps/plugin-autostart@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-autostart/-/plugin-autostart-2.0.0-rc.0.tgz#345eb0ec7f9f8fb7af2fe1bdb5b607a81dcde206"
   integrity sha512-V49lm++vhrMPPDGMtmOcbJLF4TYu78ZmAiMhyd4FFnbYlgin6ZTjiMCFEl4JKVy2lqP3C8DQvXf/gkUMuER7Iw==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-fs@^2.0.0-rc":
-  version "2.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-fs/-/plugin-fs-2.0.0-rc.0.tgz#9d21a3111df05d3d01e90fc1986adf7fb5b8e19a"
-  integrity sha512-74VCXEZlzTJ+Jv1V3KrV0qIHhSePpE/ljsF78rcEuvSfyTxLtt/Sb5CIUmVhFlKTRFOH9dX50T4dTZ3qFLyRnA==
+"@tauri-apps/plugin-fs@^2.0.0-rc.0":
+  version "2.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-fs/-/plugin-fs-2.0.0-rc.1.tgz#ef921a15941c0704c18eb91f7a3827c9b8182a8f"
+  integrity sha512-r6N5dqBNXy9YAK9XbiEqAq3ZKBIN+TWevE7ZFmSRdvdSB1urrLweYu4wxycY2kDaDPzSeeOIJhCmqdNrFT9OSA==
   dependencies:
-    "@tauri-apps/api" "^2.0.0-rc.0"
+    "@tauri-apps/api" "^2.0.0-rc.1"
 
-"@tauri-apps/plugin-notification@^2.0.0-rc":
+"@tauri-apps/plugin-notification@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-notification/-/plugin-notification-2.0.0-rc.0.tgz#f0cdb831793ace942bf24bbf357802de17d171d8"
   integrity sha512-0qsT/kvxQ6Ky4g6eQ4SUiHXzM4szTVc6thjz9vnGPYaApLoZrCJ9GdG+vEqeB+cT2dvE+wmxUFETh3ZXYVw8UA==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-os@^2.0.0-rc":
+"@tauri-apps/plugin-os@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-os/-/plugin-os-2.0.0-rc.0.tgz#b35046964a5aa3272848fa7ed7f2fbc5c8eaa157"
   integrity sha512-OWAl8mooKnGykSD4iog8WRqcnOSx0gGmTJBlEExHdFeIuOHg0Ezvd+WiVLhT9LBg7go3ibNWRWpe/ZG7YEp4Vw==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-process@^2.0.0-rc":
+"@tauri-apps/plugin-process@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-process/-/plugin-process-2.0.0-rc.0.tgz#0bec4448b655f56cb55fcd6e8cdf1dd69d7ffa7b"
   integrity sha512-Z12D/kmQzG1vCVf+jLXPhPDUA0pEjFrsg4p0uwO2sotVLM9287IuTM+aIz9cuAYOxFLKcsnDG7amSCL9IfA1gw==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-shell@^2.0.0-rc":
+"@tauri-apps/plugin-shell@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-shell/-/plugin-shell-2.0.0-rc.0.tgz#41645da666375930f95ee2155fb9dd5a02874952"
   integrity sha512-bhUcQcrqZoK8H1DFXapr5r1Z75oh6Kd5Tltz97XpZFLREEqp+KhN2Fvyh8r/fKAyenYsTYUIsDsyGdjdueuF9g==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-store@^2.0.0-rc":
+"@tauri-apps/plugin-store@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-store/-/plugin-store-2.0.0-rc.0.tgz#74ec5ea63200a5184bc9455c799cff9fa8a58589"
   integrity sha512-KqiEzq6EdRwxrl0/FwyNLwumDBM91xTchdu2a8vfkNub30GuP9z7RskP9ifVRI1gbxfa5TUDi0hKFk/SP7TANQ==
   dependencies:
     "@tauri-apps/api" "^2.0.0-rc.0"
 
-"@tauri-apps/plugin-stronghold@^2.0.0-rc":
+"@tauri-apps/plugin-stronghold@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-stronghold/-/plugin-stronghold-2.0.0-rc.0.tgz#a3602be14ad72ec6e4dd90a2a363adfed6cccf3f"
   integrity sha512-LklmHkUGHZNxxrtDg4BM1zGRz6EbwJhJQpoRqadADHXjNmKTFKxCwynhc1GvkTRUmBbTm9nj7H+yu7VoFjhFSw==
@@ -2908,10 +2913,10 @@ possible-typed-array-names@^1.0.0:
   resolved "https://registry.yarnpkg.com/possible-typed-array-names/-/possible-typed-array-names-1.0.0.tgz#89bb63c6fada2c3e90adc4a647beeeb39cc7bf8f"
   integrity sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==
 
-postcss@^8.4.39:
-  version "8.4.40"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.40.tgz#eb81f2a4dd7668ed869a6db25999e02e9ad909d8"
-  integrity sha512-YF2kKIUzAofPMpfH6hOi2cGnv/HrUlfucspc7pDyvv7kGdqXrfj8SCl/t8owkEgKEuu8ZcRjSOxFxVLqwChZ2Q==
+postcss@^8.4.41:
+  version "8.4.41"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.41.tgz#d6104d3ba272d882fe18fc07d15dc2da62fa2681"
+  integrity sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==
   dependencies:
     nanoid "^3.3.7"
     picocolors "^1.0.1"
@@ -3488,13 +3493,13 @@ vite-tsconfig-paths@^4.3.2:
     globrex "^0.1.2"
     tsconfck "^3.0.3"
 
-vite@^5.2.8:
-  version "5.3.5"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-5.3.5.tgz#b847f846fb2b6cb6f6f4ed50a830186138cb83d8"
-  integrity sha512-MdjglKR6AQXQb9JGiS7Rc2wC6uMjcm7Go/NHNO63EwiJXfuk9PgqiP/n5IDJCziMkfw9n4Ubp7lttNwz+8ZVKA==
+vite@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-5.4.1.tgz#2aa72370de824d23f53658affd807e4c9905b058"
+  integrity sha512-1oE6yuNXssjrZdblI9AfBbHCC41nnyoVoEZxQnID6yvQZAFBzxxkqoFLtHUMkYunL8hwOLEjgTuxpkRxvba3kA==
   dependencies:
     esbuild "^0.21.3"
-    postcss "^8.4.39"
+    postcss "^8.4.41"
     rollup "^4.13.0"
   optionalDependencies:
     fsevents "~2.3.3"
