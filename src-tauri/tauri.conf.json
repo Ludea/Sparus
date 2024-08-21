@@ -45,7 +45,7 @@
   },
   "productName": "sparus",
   "version": "../package.json",
-  "identifier": "com.sparus.dev",
+  "identifier": "com.Sparus.dev",
   "plugins": {},
   "app": {
     "security": {
