@@ -62,7 +62,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
-          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }} 
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - uses: r0adkll/sign-android-release@v1
         name: Sign app APK
         id: sign_app
