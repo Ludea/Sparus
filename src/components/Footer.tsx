@@ -5,11 +5,12 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import AppBar from "@mui/material/AppBar";
 
 // Icons
-import PhoneIcon from "@mui/icons-material/Phone";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import PersonPinIcon from "@mui/icons-material/PersonPin";
+import ChatIcon from "@mui/icons-material/Chat";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HomeIcon from "@mui/icons-material/Home";
 
 // Context
 import SparusErrorContext from "utils/Context";
@@ -67,12 +68,12 @@ function Footer() {
 
   const { setGlobalError } = useContext(SparusErrorContext);
 
-  appConfigDir()
+  /*  appConfigDir()
     .then((dir) => setLocalConfig(dir))
     .catch((err: string) => setGlobalError(err));
   const store = new Store(`${localConfig}.settings.sparus`);
-
-  useEffect(() => {
+/*
+  /* useEffect(() => {
     store.load().catch((err: string) => setGlobalError(err));
     store
       .get<string>("game_url")
@@ -125,7 +126,7 @@ function Footer() {
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
     }).catch((err: string) => setGlobalError(err));
-  });
+  }); */
 
   const spawn = () => {
     let extension;
@@ -234,17 +235,31 @@ function Footer() {
             : null}
         </Grid>
       </Grid>
-
-      <Tabs
-        sx={{ display: { xl: "none", xs: "block" } }}
-        value={currentTab}
-        onChange={(_, tab: number) => setCurrentTab(tab)}
-        aria-label="icon label tabs example"
+      <Box
+        sx={{
+          display: { xl: "none", xs: "block" },
+          cbgcolor: "background.paper",
+          width: window.innerWidth,
+        }}
       >
-        <Tab icon={<PhoneIcon />} label="RECENTS" />
-        <Tab icon={<FavoriteIcon />} label="FAVORITES" />
-        <Tab icon={<PersonPinIcon />} label="NEARBY" />
-      </Tabs>
+        <AppBar position="static">
+          <Tabs
+            indicatorColor="secondary"
+            textColor="inherit"
+            variant="fullWidth"
+            value={currentTab}
+            onChange={(_, t) => setCurrentTab(t)}
+            aria-label="menu tab"
+          >
+            <Tab icon={<HomeIcon fontSize="large" />} aria-label="home" />
+            <Tab icon={<ChatIcon fontSize="large" />} aria-label="chat" />
+            <Tab
+              icon={<AccountCircleIcon fontSize="large" />}
+              aria-label="account"
+            />
+          </Tabs>
+        </AppBar>
+      </Box>
     </Box>
   );
 }
