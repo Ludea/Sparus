@@ -55,9 +55,14 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
-        run: yarn tauri android build --apk --target aarch64 --split-per-abi
+      - uses: Ludea/tauri-build@next
+        id: build
+        with:
+          mobile: android
         env:
-          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }} 
       - uses: r0adkll/sign-android-release@v1
         name: Sign app APK
         id: sign_app
