@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - android
-permissions:
-  contents: write
   
 jobs:
   android_build:
