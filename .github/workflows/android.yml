@@ -62,7 +62,7 @@ jobs:
         with:
           mobile: android
           target: aarch64 
-          args: "--split-per-abi" 
+          args: "-v" 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
