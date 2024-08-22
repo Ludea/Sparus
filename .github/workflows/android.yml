@@ -60,7 +60,7 @@ jobs:
         id: build
         with:
           mobile: android
-#          args: "--target aarch64"
+          target: aarch64 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
