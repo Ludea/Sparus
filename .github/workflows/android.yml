@@ -55,12 +55,12 @@ jobs:
 #      - name: Clippy
 #        run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
-#        run: yarn tauri android build --target aarch64 --apk --split-per-abi
         uses: Ludea/tauri-build@android
         id: build
         with:
           mobile: android
           target: aarch64 
+          args: "--split-per-abi" 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
