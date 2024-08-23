@@ -50,6 +50,8 @@ jobs:
         run: yarn build
       - name: recreate Android project
         run: rm -r src-tauri/gen/android && yarn tauri android init
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 #      - name: Clippy
 #        run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
