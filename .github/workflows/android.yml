@@ -48,12 +48,19 @@ jobs:
         run: yarn
       - name: Build interface
         run: yarn build
+      - name: recreate Android project
+        run: rm -r src-tauri/gen/android && yarn tauri android init
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 #      - name: Clippy
 #        run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
-      - name: install test CLI
-        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch fix/ensure-gradlew-executable
       - name: build Apk
-        run: cargo tauri android build --target aarch64 --split-per-abi
+        uses: Ludea/tauri-build@android
+        id: build
+        with:
+          mobile: android
+          target: aarch64 
+          args: "--split-per-abi" 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
