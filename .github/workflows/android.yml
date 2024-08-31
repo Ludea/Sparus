@@ -50,10 +50,8 @@ jobs:
         run: yarn build
 #      - name: Clippy
 #        run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
-      - name: install test CLI
-        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch fix/ensure-gradlew-executable
       - name: build Apk
-        run: cargo tauri android build --target aarch64 --split-per-abi
+        run: yarn tauri android build --target aarch64 --split-per-abi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
