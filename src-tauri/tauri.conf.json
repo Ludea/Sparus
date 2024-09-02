@@ -49,7 +49,12 @@
   "plugins": {},
   "app": {
     "security": {
-      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost"
+      "csp": {
+        "default-src": "'self'",
+        "connect-src": "ipc: http://ipc.localhost",
+        "style-src": "'unsafe-inline' 'self'"
+
+      }
     },
     "windows": [
       {
