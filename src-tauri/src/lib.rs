@@ -1,21 +1,11 @@
 use argon2::{hash_raw, Config, Variant, Version};
-use libloading::{Library, Symbol};
 use std::{env, fs, path::Path};
-use tauri::{plugin::TauriPlugin, Runtime};
 use tauri_plugin_autostart::MacosLauncher;
 
 mod rpc;
 #[cfg(desktop)]
 mod tray;
 mod updater;
-
-pub fn get_plugin<R: Runtime>() -> Result<TauriPlugin<R>, Box<dyn std::error::Error>> {
-  unsafe {
-    let lib = Library::new("~/lib.rlib")?;
-    let func: Symbol<unsafe extern "C" fn() -> Box<TauriPlugin<R>>> = lib.get(b"")?;
-    Ok(*func())
-  }
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
