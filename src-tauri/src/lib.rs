@@ -1,5 +1,6 @@
 use argon2::{hash_raw, Config, Variant, Version};
 use std::{env, fs, path::Path};
+#[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
 mod rpc;
@@ -11,16 +12,12 @@ mod updater;
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  tauri::Builder::default()
+  let mut builder = tauri::Builder::default()
     .manage(spawner)
-    .invoke_handler(tauri::generate_handler![
-      updater::update_workspace,
-      updater::update_available
-    ])
     .setup(|app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+      #[cfg(desktop)]
       {
-        #[cfg(desktop)]
         let handle = app.handle();
         tray::create_tray(handle)?;
       }
@@ -30,11 +27,6 @@ pub fn run() {
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_store::Builder::default().build())
-    .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
-    .plugin(tauri_plugin_autostart::init(
-      MacosLauncher::LaunchAgent,
-      None,
-    ))
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = Config {
@@ -45,7 +37,6 @@ pub fn run() {
           version: Version::Version13,
           ..Default::default()
         };
-        //let salt;
         let salt = match env::var("STRONGHOLD_SALT") {
           Ok(val) => val,
           Err(_) => {
@@ -66,7 +57,25 @@ pub fn run() {
       .build(),
     )
     .plugin(tauri_plugin_process::init())
-    .plugin(tauri_plugin_os::init())
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    .plugin(tauri_plugin_os::init());
+
+  #[cfg(desktop)]
+  {
+    builder = builder
+      .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
+      .plugin(tauri_plugin_autostart::init(
+        MacosLauncher::LaunchAgent,
+        None,
+      ));
+  }
+
+  let app = builder
+    .invoke_handler(tauri::generate_handler![
+      updater::update_workspace,
+      updater::update_available,
+    ])
+    .build(tauri::tauri_build_context!())
+    .expect("error while building tauri application");
+
+  app.run(move |_app_handle, _event| {});
 }
