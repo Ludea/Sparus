@@ -37,6 +37,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: pnpm/action-setup@v4
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -51,13 +52,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies
-        run: yarn
+        run: pnpm install
       - name: Prettier
-        run: yarn prettier
+        run: pnpm prettier
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
       - name: Build interface
-        run: yarn build
+        run: pnpm build
       - name: fmt
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy

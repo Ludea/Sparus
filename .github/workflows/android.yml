@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: pnpm/action-setup@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android
@@ -48,19 +49,19 @@ jobs:
               echo "Changed $(basename "$link") from $current_target to $new_target"
           done
       - name: Install yarn deps
-        run: yarn
+        run: pnpm install
       - name: Prettier
-        run: yarn prettier
+        run: pnpm prettier
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
       - name: Build interface
-        run: yarn build
+        run: pnpm build
       - name: fmt
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
-        run: yarn tauri android build --target aarch64 --split-per-abi
+        run: pnpm tauri android build --target aarch64 --split-per-abi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}

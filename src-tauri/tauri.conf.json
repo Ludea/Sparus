@@ -38,9 +38,9 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "npx tsc && yarn build",
+    "beforeBuildCommand": "npx tsc && pnpm build",
     "frontendDist": "../dist",
-    "beforeDevCommand": "yarn dev",
+    "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:5173"
   },
   "productName": "sparus",
