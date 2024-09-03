@@ -29,7 +29,7 @@ function Header() {
             aria-label="back to Home page"
             onClick={() => navigate("/")}
           >
-            <ArrowBackIosIcon />
+            <ArrowBackIosIcon fontSize="large" />
           </IconButton>
         ) : null}
       </Grid>
@@ -46,6 +46,10 @@ function Header() {
       <Grid
         item
         sx={{
+          display: {
+            sm: "block",
+            xs: "none",
+          },
           position: "fixed",
           right: 0,
         }}

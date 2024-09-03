@@ -123,7 +123,7 @@ function Footer() {
     let extension;
     let shell: string;
     let arg: string;
-    //    const platformName = await platform();
+
     switch (platform()) {
       case "windows":
         extension = ".exe";
@@ -197,6 +197,10 @@ function Footer() {
                   .catch((err: string) => setGlobalError(err));
               }}
               sx={{
+                display: {
+                  sm: "block",
+                  xs: "none",
+                },
                 position: "fixed",
                 right: "130px",
                 bottom: "70px",
