@@ -3,6 +3,8 @@ use std::{env, fs, path::Path};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
+use tauri::RunEvent;
+
 mod rpc;
 #[cfg(desktop)]
 mod tray;
@@ -77,5 +79,11 @@ pub fn run() {
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
 
-  app.run(move |_app_handle, _event| {});
+  app.run(move |_app_handle, event| {
+    if let RunEvent::ExitRequested { api, code, .. } = &event {
+      if code.is_none() {
+        api.prevent_exit();
+      }
+    }
+  });
 }

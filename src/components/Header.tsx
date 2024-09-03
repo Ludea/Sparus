@@ -77,7 +77,7 @@ function Header() {
           aria-label="Close Sparus"
           onClick={() => {
             getCurrentWindow()
-              .close()
+              .hide()
               .catch((err: string) => setGlobalError(err));
           }}
         >
