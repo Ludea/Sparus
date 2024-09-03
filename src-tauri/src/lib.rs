@@ -80,6 +80,7 @@ pub fn run() {
     .expect("error while building tauri application");
 
   app.run(move |_app_handle, event| {
+    #[cfg(desktop)]
     if let RunEvent::ExitRequested { api, code, .. } = &event {
       if code.is_none() {
         api.prevent_exit();
