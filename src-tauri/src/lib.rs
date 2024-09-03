@@ -3,6 +3,7 @@ use std::{env, fs, path::Path};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
+#[cfg(desktop)]
 use tauri::RunEvent;
 
 mod rpc;
@@ -14,13 +15,18 @@ mod updater;
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
 
-  let mut builder = tauri::Builder::default()
+  #[cfg(desktop)]
+  let mut builder;
+  #[cfg(mobile)]
+  let builder;
+
+  builder = tauri::Builder::default()
     .manage(spawner)
-    .setup(|app| {
+    .setup(|_app| {
       tauri::async_runtime::spawn(rpc::start_rpc_client());
       #[cfg(desktop)]
       {
-        let handle = app.handle();
+        let handle = _app.handle();
         tray::create_tray(handle)?;
       }
 
@@ -79,9 +85,9 @@ pub fn run() {
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
 
-  app.run(move |_app_handle, event| {
+  app.run(move |_app_handle, _event| {
     #[cfg(desktop)]
-    if let RunEvent::ExitRequested { api, code, .. } = &event {
+    if let RunEvent::ExitRequested { api, code, .. } = &_event {
       if code.is_none() {
         api.prevent_exit();
       }
