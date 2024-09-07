@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Icons
@@ -22,7 +22,7 @@ function Header() {
 
   return (
     <Grid container>
-      <Grid item xs={1}>
+      <Grid size={1}>
         {location.pathname !== "/" ? (
           <IconButton
             color="primary"
@@ -34,8 +34,7 @@ function Header() {
         ) : null}
       </Grid>
       <Grid
-        item
-        xs={9}
+        size={8}
         sx={{ height: 50 }}
         onMouseDown={() => {
           getCurrentWindow()
@@ -44,13 +43,14 @@ function Header() {
         }}
       />
       <Grid
-        item
+        container
+        size={4}
         sx={{
           display: {
             sm: "block",
             xs: "none",
           },
-          position: "fixed",
+          position: "absolute",
           right: 0,
         }}
       >

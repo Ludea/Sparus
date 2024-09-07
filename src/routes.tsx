@@ -1,7 +1,8 @@
 import Index from "components/Index";
 import Options from "components/Options";
+import MobileIndex from "views/MobileIndex";
 
-const routes = [
+export const DesktopRoutes = [
   {
     path: "/",
     element: <Index />,
@@ -12,4 +13,9 @@ const routes = [
   },
 ];
 
-export default routes;
+export const MobileRoutes = [
+  {
+    path: "/",
+    element: <MobileIndex />,
+  },
+];
