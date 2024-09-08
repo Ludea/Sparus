@@ -47,8 +47,8 @@ function App() {
           spacing={0}
           m={-1}
           sx={{
-            height: "100vh",
-            width: "100vw",
+            height: 600,
+            width: 800,
             backgroundSize: "cover",
             backgroundImage: `url(${DesktopBackground})`,
             display: {
@@ -57,10 +57,10 @@ function App() {
             },
           }}
         >
-          <Grid xs={12}>
+          <Grid>
             <Header />
           </Grid>
-          <Grid xs={12}>{DesktopRouting}</Grid>
+          {DesktopRouting}
         </Grid>
         <Grid
           container
