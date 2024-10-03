@@ -14,7 +14,7 @@ name = "libsparus"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = ["codegen"] }
+tauri-build = { version = "2.0.0", features = ["codegen"] }
 tonic-build = { version = "0.12.1", features = [] }
 protox = "0.7"
 
@@ -25,21 +25,21 @@ futures = "0.3.25"
 tokio = "1.21.2"
 serde_json = "1.0"
 serde = { version = "1.0", features = [ "derive" ] }
-tauri = { version = "2.0.0-rc", features = ["tray-icon"] }
+tauri = { version = "2.0.0", features = ["tray-icon"] }
 semver = "1.0.16"
 libspeedupdate = { git = "https://github.com/ludea/speedupdate-rs" }
 prost = "0.13"
 tonic = "0.12.1"
 tokio-stream = "0.1"
 
-tauri-plugin-shell = "2.0.0-rc"
-tauri-plugin-os = "2.0.0-rc"
-tauri-plugin-notification = "2.0.0-rc"
-tauri-plugin-process = "2.0.0-rc"
-tauri-plugin-store = "2.0.0-rc"
-tauri-plugin-autostart = "2.0.0-rc"
-tauri-plugin-single-instance = "2.0.0-rc"
-tauri-plugin-stronghold = "2.0.0-rc"
+tauri-plugin-shell = "2.0.0"
+tauri-plugin-os = "2.0.0"
+tauri-plugin-notification = "2.0.0"
+tauri-plugin-process = "2.0.0"
+tauri-plugin-store = "2.0.0"
+tauri-plugin-autostart = "2.0.0"
+tauri-plugin-single-instance = "2.0.0"
+tauri-plugin-stronghold = "2.0.0"
 rust-argon2 = "2.1.0"
 getrandom = "0.2.15"
 async-lock = "3.4.0"
