@@ -70,13 +70,13 @@ importers:
         version: 6.26.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tauri-plugin-autostart-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-autostart
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde
       tauri-plugin-store-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-store
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788
       tauri-plugin-stronghold-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-stronghold
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
     devDependencies:
       '@types/react':
         specifier: ^18.2.74
@@ -98,7 +98,7 @@ importers:
         version: 8.57.0
       eslint-config-airbnb:
         specifier: ^19.0.4
-        version: 19.0.4(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint-plugin-jsx-a11y@6.10.0(eslint@8.57.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.57.0))(eslint-plugin-react@7.35.2(eslint@8.57.0))(eslint@8.57.0)
+        version: 19.0.4(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint-plugin-jsx-a11y@6.10.0(eslint@8.57.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.57.0))(eslint-plugin-react@7.37.1(eslint@8.57.0))(eslint@8.57.0)
       eslint-config-airbnb-typescript:
         specifier: ^18.0.0
         version: 18.0.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4))(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint@8.57.0)
@@ -115,8 +115,8 @@ importers:
         specifier: ^6.8.0
         version: 6.10.0(eslint@8.57.0)
       eslint-plugin-react:
-        specifier: ^7.34.1
-        version: 7.35.2(eslint@8.57.0)
+        specifier: ^7.37.1
+        version: 7.37.1(eslint@8.57.0)
       eslint-plugin-react-hooks:
         specifier: ^4.6.0
         version: 4.6.2(eslint@8.57.0)
@@ -1440,8 +1440,8 @@ packages:
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
 
-  eslint-plugin-react@7.35.2:
-    resolution: {integrity: sha512-Rbj2R9zwP2GYNcIak4xoAMV57hrBh3hTaR0k7hVjwCQgryE/pw5px4b13EYjduOI0hfXyZhwBxaGpOTbWSGzKQ==}
+  eslint-plugin-react@7.37.1:
+    resolution: {integrity: sha512-xwTnwDqzbDRA8uJ7BMxPs/EXRB3i8ZfnOIp8BsxEQkT0nHPp+WWceqGgo6rKb9ctNi8GJLDT4Go5HAWELa/WMg==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
@@ -2285,16 +2285,16 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde}
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+    resolution: {commit: 6e4666fe3462f0534e90ed6bc075394dff1a1bde, repo: git@github.com:tauri-apps/tauri-plugin-autostart.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1}
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
+    resolution: {commit: 0b7079b8c55bf25f6d9d9e8c57812d03b48a9788, repo: git@github.com:tauri-apps/tauri-plugin-store.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4}
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+    resolution: {commit: 01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4, repo: git@github.com:tauri-apps/tauri-plugin-stronghold.git, type: git}
     version: 0.0.0
 
   text-table@0.2.0:
@@ -3812,13 +3812,13 @@ snapshots:
     transitivePeerDependencies:
       - eslint-plugin-import
 
-  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint-plugin-jsx-a11y@6.10.0(eslint@8.57.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.57.0))(eslint-plugin-react@7.35.2(eslint@8.57.0))(eslint@8.57.0):
+  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint-plugin-jsx-a11y@6.10.0(eslint@8.57.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.57.0))(eslint-plugin-react@7.37.1(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
       eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-import: 2.30.0(@typescript-eslint/parser@8.4.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.10.0(eslint@8.57.0)
-      eslint-plugin-react: 7.35.2(eslint@8.57.0)
+      eslint-plugin-react: 7.37.1(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.2(eslint@8.57.0)
       object.assign: 4.1.5
       object.entries: 1.1.8
@@ -3917,7 +3917,7 @@ snapshots:
     dependencies:
       eslint: 8.57.0
 
-  eslint-plugin-react@7.35.2(eslint@8.57.0):
+  eslint-plugin-react@7.37.1(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlast: 1.2.5
@@ -4829,15 +4829,15 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
