@@ -70,13 +70,13 @@ importers:
         version: 6.26.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tauri-plugin-autostart-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-autostart
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde
       tauri-plugin-store-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-store
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788
       tauri-plugin-stronghold-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-stronghold
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
     devDependencies:
       '@types/react':
         specifier: ^18.2.74
@@ -91,8 +91,8 @@ importers:
         specifier: ^8.4.0
         version: 8.4.0(eslint@8.57.0)(typescript@5.5.4)
       '@vitejs/plugin-react':
-        specifier: ^4.3.1
-        version: 4.3.1(vite@5.4.3)
+        specifier: ^4.3.2
+        version: 4.3.2(vite@5.4.3)
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -1016,8 +1016,8 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@vitejs/plugin-react@4.3.1':
-    resolution: {integrity: sha512-m/V2syj5CuVnaxcUJOQRel/Wr31FFXRFlnOoq1TVtkCxsY5veGMTEmpWHndrhB2U8ScHtCQB1e+4hWYExQc6Lg==}
+  '@vitejs/plugin-react@4.3.2':
+    resolution: {integrity: sha512-hieu+o05v4glEBucTcKMK3dlES0OeJlD9YVOAPraVMOInBCwzumaIFiUjr4bHK7NPgnAHgiskUoceKercrN8vg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0
@@ -2285,16 +2285,16 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde}
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+    resolution: {commit: 6e4666fe3462f0534e90ed6bc075394dff1a1bde, repo: git@github.com:tauri-apps/tauri-plugin-autostart.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1}
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
+    resolution: {commit: 0b7079b8c55bf25f6d9d9e8c57812d03b48a9788, repo: git@github.com:tauri-apps/tauri-plugin-store.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4}
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+    resolution: {commit: 01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4, repo: git@github.com:tauri-apps/tauri-plugin-stronghold.git, type: git}
     version: 0.0.0
 
   text-table@0.2.0:
@@ -3320,7 +3320,7 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-react@4.3.1(vite@5.4.3)':
+  '@vitejs/plugin-react@4.3.2(vite@5.4.3)':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/plugin-transform-react-jsx-self': 7.24.7(@babel/core@7.25.2)
@@ -4829,15 +4829,15 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
