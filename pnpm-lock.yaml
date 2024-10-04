@@ -70,13 +70,13 @@ importers:
         version: 6.26.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tauri-plugin-autostart-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-autostart
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde
       tauri-plugin-store-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-store
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788
       tauri-plugin-stronghold-api:
         specifier: https://github.com/tauri-apps/tauri-plugin-stronghold
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4
     devDependencies:
       '@types/react':
         specifier: ^18.2.74
@@ -92,7 +92,7 @@ importers:
         version: 8.4.0(eslint@8.57.0)(typescript@5.5.4)
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.3.1(vite@5.4.3)
+        version: 4.3.1(vite@5.4.8)
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -127,14 +127,14 @@ importers:
         specifier: ^5.4.4
         version: 5.5.4
       vite:
-        specifier: ^5.2.8
-        version: 5.4.3
+        specifier: ^5.4.8
+        version: 5.4.8
       vite-plugin-svgr:
         specifier: ^4.2.0
-        version: 4.2.0(rollup@4.21.2)(typescript@5.5.4)(vite@5.4.3)
+        version: 4.2.0(rollup@4.21.2)(typescript@5.5.4)(vite@5.4.8)
       vite-tsconfig-paths:
         specifier: ^5.0.1
-        version: 5.0.1(typescript@5.5.4)(vite@5.4.3)
+        version: 5.0.1(typescript@5.5.4)(vite@5.4.8)
 
 packages:
 
@@ -2285,16 +2285,16 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde}
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+    resolution: {commit: 6e4666fe3462f0534e90ed6bc075394dff1a1bde, repo: git@github.com:tauri-apps/tauri-plugin-autostart.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1}
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
+    resolution: {commit: 0b7079b8c55bf25f6d9d9e8c57812d03b48a9788, repo: git@github.com:tauri-apps/tauri-plugin-store.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4}
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+    resolution: {commit: 01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4, repo: git@github.com:tauri-apps/tauri-plugin-stronghold.git, type: git}
     version: 0.0.0
 
   text-table@0.2.0:
@@ -2388,8 +2388,8 @@ packages:
       vite:
         optional: true
 
-  vite@5.4.3:
-    resolution: {integrity: sha512-IH+nl64eq9lJjFqU+/yrRnrHPVTlgy42/+IzbOdaFDVlyLgI/wDlf+FCobXLX1cT0X5+7LMyH1mIy2xJdLfo8Q==}
+  vite@5.4.8:
+    resolution: {integrity: sha512-FqrItQ4DT1NC4zCUqMB4c4AZORMKIa0m8/URVCZ77OZ/QSNeJ54bU1vrFADbDsuwfIPcgknRkmqakQcgnL4GiQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -3320,14 +3320,14 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-react@4.3.1(vite@5.4.3)':
+  '@vitejs/plugin-react@4.3.1(vite@5.4.8)':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/plugin-transform-react-jsx-self': 7.24.7(@babel/core@7.25.2)
       '@babel/plugin-transform-react-jsx-source': 7.24.7(@babel/core@7.25.2)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.3
+      vite: 5.4.8
     transitivePeerDependencies:
       - supports-color
 
@@ -4829,15 +4829,15 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#6e4666fe3462f0534e90ed6bc075394dff1a1bde:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/2352f0bda53b4725ef1d2f51cd5774e4396a20d1:
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-stronghold-api@https://codeload.github.com/tauri-apps/tauri-plugin-stronghold/tar.gz/01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
+  tauri-plugin-stronghold-api@git+https://git@github.com:tauri-apps/tauri-plugin-stronghold.git#01c96db811e1e78fbcacc3c6bcfdfedf5370ecb4:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
@@ -4927,29 +4927,29 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  vite-plugin-svgr@4.2.0(rollup@4.21.2)(typescript@5.5.4)(vite@5.4.3):
+  vite-plugin-svgr@4.2.0(rollup@4.21.2)(typescript@5.5.4)(vite@5.4.8):
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.21.2)
       '@svgr/core': 8.1.0(typescript@5.5.4)
       '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.5.4))
-      vite: 5.4.3
+      vite: 5.4.8
     transitivePeerDependencies:
       - rollup
       - supports-color
       - typescript
 
-  vite-tsconfig-paths@5.0.1(typescript@5.5.4)(vite@5.4.3):
+  vite-tsconfig-paths@5.0.1(typescript@5.5.4)(vite@5.4.8):
     dependencies:
       debug: 4.3.7
       globrex: 0.1.2
       tsconfck: 3.1.3(typescript@5.5.4)
     optionalDependencies:
-      vite: 5.4.3
+      vite: 5.4.8
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.3:
+  vite@5.4.8:
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.45
