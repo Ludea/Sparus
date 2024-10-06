@@ -32,6 +32,7 @@ pub fn run() {
 
       Ok(())
     })
+    .plugin(tauri_plugin_os::init())
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = Config {
@@ -69,7 +70,6 @@ pub fn run() {
       .plugin(tauri_plugin_shell::init())
       .plugin(tauri_plugin_store::Builder::default().build())
       .plugin(tauri_plugin_process::init())
-      .plugin(tauri_plugin_os::init())
       .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
       .plugin(tauri_plugin_autostart::init(
         MacosLauncher::LaunchAgent,
