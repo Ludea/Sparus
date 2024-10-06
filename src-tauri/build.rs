@@ -20,7 +20,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   tonic_build::configure()
     .skip_protoc_run()
     .file_descriptor_set_path(&file_descriptor_path)
-    .compile(&["proto/echo.proto"], &["proto"])
+    .compile_protos(&["proto/echo.proto"], &["proto"])
     .unwrap();
 
   Ok(())
