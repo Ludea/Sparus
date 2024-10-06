@@ -59,33 +59,35 @@ function Footer() {
 
   const { setGlobalError } = useContext(SparusErrorContext);
 
-  appConfigDir()
-    .then((dir) => setLocalConfig(dir))
-    .catch((err: string) => setGlobalError(err));
-  const store = new Store(`${localConfig}.settings.sparus`);
-
   useEffect(() => {
-    store.load().catch((err: string) => setGlobalError(err));
-    store
-      .get<string>("game_url")
-      .then((value) => {
-        if (value) setRepositoryUrl(value);
-      })
-      .catch((err: string) => setGlobalError(err));
+    if (platform() !== "android") {
+      appConfigDir()
+        .then((dir) => setLocalConfig(dir))
+        .catch((err: string) => setGlobalError(err));
+      const store = new Store(`${localConfig}.settings.sparus`);
 
-    store
-      .get<string>("workspace_path")
-      .then((value) => {
-        if (value) setWorkspacePath(value);
-      })
-      .catch((err: string) => setGlobalError(err));
+      store.load().catch((err: string) => setGlobalError(err));
+      store
+        .get<string>("game_url")
+        .then((value) => {
+          if (value) setRepositoryUrl(value);
+        })
+        .catch((err: string) => setGlobalError(err));
 
-    store
-      .get<string>("game_name")
-      .then((value) => {
-        if (value) setGameName(value);
-      })
-      .catch((err: string) => setGlobalError(err));
+      store
+        .get<string>("workspace_path")
+        .then((value) => {
+          if (value) setWorkspacePath(value);
+        })
+        .catch((err: string) => setGlobalError(err));
+
+      store
+        .get<string>("game_name")
+        .then((value) => {
+          if (value) setGameName(value);
+        })
+        .catch((err: string) => setGlobalError(err));
+    }
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(

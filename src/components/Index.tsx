@@ -1,10 +1,10 @@
 import Footer from "components/Footer";
 
 // Tauri api
-import { platform } from "@tauri-apps/plugin-os";
+// import { platform } from "@tauri-apps/plugin-os";
 
 function Index() {
-  return platform() !== "android" || platform() !== "ios" ? <Footer /> : null;
+  return <Footer />;
 }
 
 export default Index;
