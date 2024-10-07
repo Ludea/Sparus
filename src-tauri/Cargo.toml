@@ -34,7 +34,6 @@ tokio-stream = "0.1"
 rust-argon2 = "2.1.0"
 getrandom = "0.2.15"
 async-lock = "3.4.0"
-tauri-plugin-os = "2.0.0"
 tauri-plugin-stronghold = "2.0.0"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
@@ -44,6 +43,7 @@ tauri-plugin-single-instance = "2.0.0"
 tauri-plugin-autostart = "2.0.0"
 tauri-plugin-shell = "2.0.0"
 tauri-plugin-store = "2.0.0"
+tauri-plugin-os = "2.0.0"
 
 [features]
 default = [ "custom-protocol" ]

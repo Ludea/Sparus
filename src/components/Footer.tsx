@@ -26,6 +26,9 @@ interface UpdateEvent {
   applied_output_bytes_per_sec: number;
 }
 
+const userAgent = navigator.userAgent.toLowerCase();
+const isMobile = userAgent.includes("android") || userAgent.includes("iphone");
+
 const convertReadableData = (data: number): string => {
   if (data > 1024 && data < 1024 * 1024) {
     return `${String(Math.floor((data / 1024) * 100) / 100)} kiB`;
@@ -60,7 +63,7 @@ function Footer() {
   const { setGlobalError } = useContext(SparusErrorContext);
 
   useEffect(() => {
-    if (platform() !== "android") {
+    if (!isMobile) {
       appConfigDir()
         .then((dir) => setLocalConfig(dir))
         .catch((err: string) => setGlobalError(err));
