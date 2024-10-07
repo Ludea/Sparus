@@ -64,7 +64,7 @@ jobs:
           target: ${{ matrix.platform.rust_target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}      
+          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - name: Upload file
         uses: softprops/action-gh-release@v2.0.8
         with:
