@@ -9,7 +9,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-12, ubuntu-22.04, windows-2022]
+        platform:
+          - os: ubuntu-latest
+            rust_target: x86_64-unknown-linux-gnu
+            target: linux_x86_64
+          - os: macos-latest
+            rust_target: x86_64-apple-darwin
+            target: macos_x86_64
+          - os: macos-latest
+            rust_target: aarch64-apple-darwin
+            target: macos_aarch64
+          - os: windows-latest
+            rust_target: x86_64-pc-windows-msvc
+            target: windows_x86_64
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -17,37 +29,42 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+          target: ${{ matrix.platform.rust_target }}
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
+          workspaces: src-tauri/
       - name: install webkit2gtk (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies
-        run: yarn
-      - name: install app dependencies
-        run: yarn
+        run: pnpm install
       - name: Prettier
-        run: yarn prettier
+        run: pnpm prettier
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
       - name: Build interface
-        run: yarn build
+        run: pnpm build
       - name: fmt
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
-      - uses: JonasKruckenberg/tauri-build@v1.5.11
+      - uses: JonasKruckenberg/tauri-build@next
         id: build
+        with:
+          target: ${{ matrix.platform.rust_target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}      
       - name: Upload file
         uses: softprops/action-gh-release@v2.0.8
         with:
