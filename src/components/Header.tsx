@@ -45,7 +45,6 @@ function Header() {
       <Grid
         container
         size={2}
-        justify="flex-end"
         sx={{
           display: {
             sm: "block",
