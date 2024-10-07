@@ -34,7 +34,7 @@ function Header() {
         ) : null}
       </Grid>
       <Grid
-        size={8}
+        size={9}
         sx={{ height: 50 }}
         onMouseDown={() => {
           getCurrentWindow()
@@ -44,14 +44,13 @@ function Header() {
       />
       <Grid
         container
-        size={4}
+        size={2}
+        justify="flex-end"
         sx={{
           display: {
             sm: "block",
             xs: "none",
           },
-          position: "absolute",
-          right: 0,
         }}
       >
         <IconButton
