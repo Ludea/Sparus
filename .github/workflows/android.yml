@@ -81,6 +81,6 @@ jobs:
           BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
         with:
-          name: Sparus-${{ env.SHORT_SHA }}.zip
+          name: Sparus-${{ env.SHORT_SHA }}
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
           if-no-files-found: error
