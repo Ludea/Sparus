@@ -81,6 +81,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
       updater::update_available,
+      updater::check_if_installed,
     ])
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");

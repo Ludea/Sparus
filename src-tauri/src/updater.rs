@@ -7,7 +7,7 @@ use libspeedupdate::{
 };
 use semver::Version;
 use serde::Serialize;
-use std::{future, path::Path, sync::Arc};
+use std::{fs, future, io, path::Path, sync::Arc};
 use tauri::{command, AppHandle, Emitter, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
@@ -16,7 +16,14 @@ use tokio::{
 
 #[derive(serde::Serialize)]
 pub enum UpdateErr {
+  Io(String),
   UpdateErr { description: String },
+}
+
+impl From<io::Error> for UpdateErr {
+  fn from(err: io::Error) -> Self {
+    UpdateErr::Io(err.to_string())
+  }
 }
 
 impl From<UpdateError> for UpdateErr {
@@ -164,14 +171,9 @@ pub async fn update_workspace(
   auth: Option<(&str, &str)>,
   goal_version: Option<String>,
 ) -> Result<(), UpdateErr> {
-  let repo = AutoRepository::new(repository_url, auth)
-    .map_err(|_| "error")
-    .unwrap();
-  let workspace = Arc::new(Mutex::new(
-    Workspace::open(Path::new(workspace_path))
-      .map_err(|_| "error")
-      .unwrap(),
-  ));
+  let repo = AutoRepository::new(repository_url, auth)?;
+
+  let workspace = Arc::new(Mutex::new(Workspace::open(Path::new(workspace_path))?));
 
   let (send, response) = oneshot::channel();
   spawner.spawn(Task::UpdateWorkspace {
@@ -211,6 +213,23 @@ pub async fn update_available<R: Runtime>(
     }
     Err(value) => Err(value),
   }
+}
+
+#[command]
+pub fn check_if_installed(path: String) -> Result<(), &'static str> {
+  let path = Path::new(&path);
+  if path.is_dir() {
+    let entries = fs::read_dir(path);
+    if let Ok(entries) = entries {
+      for entry in entries {
+        if entry.is_ok() {
+          return Ok(());
+        }
+      }
+    }
+    return Err("Not installed");
+  }
+  Err("folder doesn't exist")
 }
 
 async fn latest_remote_version(

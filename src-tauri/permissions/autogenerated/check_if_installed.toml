@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-check-if-installed"
+description = "Enables the check_if_installed command without any pre-configured scope."
+commands.allow = ["check_if_installed"]
+
+[[permission]]
+identifier = "deny-check-if-installed"
+description = "Denies the check_if_installed command without any pre-configured scope."
+commands.deny = ["check_if_installed"]

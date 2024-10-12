@@ -376,6 +376,11 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the check_if_installed command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-check-if-installed"
+        },
+        {
           "description": "Enables the update_available command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-available"
@@ -384,6 +389,11 @@
           "description": "Enables the update_workspace command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-workspace"
+        },
+        {
+          "description": "Denies the check_if_installed command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-check-if-installed"
         },
         {
           "description": "Denies the update_available command without any pre-configured scope.",
