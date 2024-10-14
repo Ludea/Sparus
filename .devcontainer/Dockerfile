@@ -1,0 +1,1 @@
+FROM ghcr.io/lapce/lapdev-devcontainer-vnc
