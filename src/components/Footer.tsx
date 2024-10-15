@@ -222,10 +222,7 @@ function Footer() {
         justifyContent="center"
       >
         {gameState === "not_installed" ? (
-          <Paper
-            sx={{ position: "fixed", bottom: "10%" }}
-            elevation={3}
-          >
+          <Paper sx={{ position: "fixed", bottom: "10%" }} elevation={3}>
             Download: {downloadedBytesStart} / {downloadedBytesEnd} @
             {downloadedBytesPerSec}/s <br /> Write : {appliedOutputBytesStart} /
             {appliedOutputBytesEnd} @ {appliedOutputBytesPerSec}/s
