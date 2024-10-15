@@ -30,8 +30,8 @@ function Options() {
   useEffect(() => {
     store.load().catch((err: string) => setGlobalError(err));
     store
-      .get("game_url")
-      .then((value) => setGameURL(value))
+      .get<string>("game_url")
+      .then((value: string | null) => setGameURL(value))
       .catch((err: string) => setGlobalError(err));
     store
       .get<string>("launcher_url")

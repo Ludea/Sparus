@@ -45,8 +45,8 @@ function Footer() {
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState<boolean>(false);
   const [gameRunning, setGameRunning] = useState<boolean>(false);
-  const [workspacePath, setWorkspacePath] = useState<string>();
-  const [gameName, setGameName] = useState<string>();
+  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [gameName, setGameName] = useState<string>("");
   const [repositoryUrl, setRepositoryUrl] = useState<string>();
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
@@ -224,7 +224,6 @@ function Footer() {
         {gameState === "not_installed" ? (
           <Paper
             sx={{ position: "fixed", bottom: "10%" }}
-            justifyContent="center"
             elevation={3}
           >
             Download: {downloadedBytesStart} / {downloadedBytesEnd} @
