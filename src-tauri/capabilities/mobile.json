@@ -1,0 +1,18 @@
+{
+    "identifier": "mobile-capability",
+    "description": "Capability for mobile",
+    "platforms": ["iOS", "android"],
+    "local": true,
+    "windows": [
+      "main"
+    ],
+    "permissions": [
+      "core:path:default",
+      "core:event:default",
+      "core:window:default",
+      "core:app:default",
+      "core:resources:default",
+      "core:menu:default"
+    ]
+  }
+  
