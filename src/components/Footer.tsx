@@ -1,19 +1,17 @@
 import { useState, useEffect, useContext } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import LoadingButton from "@mui/lab/LoadingButton";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
+import Paper from "@mui/material/Paper";
 
 // Context
-import SparusErrorContext from "utils/Context";
+import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 
 // Tauri api
 import { invoke } from "@tauri-apps/api/core";
-import { appConfigDir } from "@tauri-apps/api/path";
 import { listen } from "@tauri-apps/api/event";
 import { Command } from "@tauri-apps/plugin-shell";
 import { platform } from "@tauri-apps/plugin-os";
-import { Store } from "tauri-plugin-store-api";
 
 interface UpdateEvent {
   download: number;
@@ -25,9 +23,6 @@ interface UpdateEvent {
   applied_output_bytes_end: number;
   applied_output_bytes_per_sec: number;
 }
-
-const userAgent = navigator.userAgent.toLowerCase();
-const isMobile = userAgent.includes("android") || userAgent.includes("iphone");
 
 const convertReadableData = (data: number): string => {
   if (data > 1024 && data < 1024 * 1024) {
@@ -48,49 +43,46 @@ function Footer() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(0);
   const [gameState, setGameState] = useState("not_installed");
-  const [gameLoading, setGameLoading] = useState(false);
-  const [workspacePath, setWorkspacePath] = useState<string>("");
-  const [gameName, setGameName] = useState<string>("");
-  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
+  const [gameLoading, setGameLoading] = useState<boolean>(false);
+  const [gameRunning, setGameRunning] = useState<boolean>(false);
+  const [workspacePath, setWorkspacePath] = useState<string>();
+  const [gameName, setGameName] = useState<string>();
+  const [repositoryUrl, setRepositoryUrl] = useState<string>();
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
   const [downloadedBytesPerSec, setDownloadedBytesPerSec] = useState("");
   const [appliedOutputBytesStart, setAppliedOutputBytesStart] = useState("");
   const [appliedOutputBytesEnd, setAppliedOutputBytesEnd] = useState("");
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
-  const [localConfig, setLocalConfig] = useState<string>("");
 
   const { setGlobalError } = useContext(SparusErrorContext);
+  const store = useContext(SparusStoreContext);
 
   useEffect(() => {
-    if (!isMobile) {
-      appConfigDir()
-        .then((dir) => setLocalConfig(dir))
-        .catch((err: string) => setGlobalError(err));
-      const store = new Store(`${localConfig}.settings.sparus`);
+    invoke("check_if_installed", { path: gameName })
+      .then(() => setGameState("installed"))
+      .catch(() => setGameState("not_installed"));
 
-      store.load().catch((err: string) => setGlobalError(err));
-      store
-        .get<string>("game_url")
-        .then((value) => {
-          if (value) setRepositoryUrl(value);
-        })
-        .catch((err: string) => setGlobalError(err));
+    store
+      .get<string>("game_url")
+      .then((value) => {
+        if (value) setRepositoryUrl(value);
+      })
+      .catch((err: string) => setGlobalError(err));
 
-      store
-        .get<string>("workspace_path")
-        .then((value) => {
-          if (value) setWorkspacePath(value);
-        })
-        .catch((err: string) => setGlobalError(err));
+    store
+      .get<string>("workspace_path")
+      .then((value) => {
+        if (value) setWorkspacePath(value);
+      })
+      .catch((err: string) => setGlobalError(err));
 
-      store
-        .get<string>("game_name")
-        .then((value) => {
-          if (value) setGameName(value);
-        })
-        .catch((err: string) => setGlobalError(err));
-    }
+    store
+      .get<string>("game_name")
+      .then((value) => {
+        if (value) setGameName(value);
+      })
+      .catch((err: string) => setGlobalError(err));
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -122,120 +114,126 @@ function Footer() {
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
     }).catch((err: string) => setGlobalError(err));
-  });
+  }, [gameName, store, setGlobalError]);
 
   const spawn = () => {
     let extension;
     let shell: string;
-    let arg: string;
+    let arg: string[];
 
     switch (platform()) {
       case "windows":
         extension = ".exe";
         shell = "cmd";
-        arg = "/C";
+        arg = ["/C"];
         break;
       case "macos":
         extension = ".app";
         shell = "sh";
-        arg = "-c";
+        arg = ["-c"];
         break;
       case "linux":
         extension = ".sh";
         shell = "sh";
-        arg = "-c";
+        arg = ["-c"];
         break;
       default:
         extension = "";
         shell = "";
-        arg = "";
+        arg = [""];
         break;
     }
 
-    Command.create(shell, [arg, workspacePath + gameName + extension])
-      .execute()
+    const command = Command.create(shell, [
+      ...arg,
+      "start ".concat(workspacePath, "/", gameName, extension),
+    ]);
+
+    command
+      .spawn()
+      .then(() => {
+        setGameRunning(true);
+      })
       .catch((err: string) => setGlobalError(err));
   };
 
   return (
-    <Box
+    <Grid
+      size={11}
+      container
+      justifyContent="center"
+      alignItems="center"
+      spacing={4}
       sx={{
-        display: "flex",
-        flexGrow: 1,
-        alignItems: "flex-end",
         position: "fixed",
-        bottom: "0%",
-        width: "100%",
+        bottom: "10%",
+        display: {
+          sm: "flex",
+          xs: "none",
+        },
       }}
     >
-      <Grid container spacing={2}>
-        <Grid item xs={1} />
-        <Grid item display="flex" justifyContent="flex-start" xs={10}>
-          {gameLoading ? (
-            <LinearProgress
-              variant="determinate"
-              value={buffer}
-              valueBuffer={progress}
-              sx={{
-                height: 20,
-                borderRadius: 5,
-                width: "80%",
-              }}
-            />
-          ) : null}
-          {gameState === "not_installed" ? (
-            <LoadingButton
-              variant="contained"
-              color="primary"
-              loading={gameLoading}
-              // loadingPosition="end"
-              onClick={() => {
-                setGameLoading(true);
-                invoke("update_workspace", {
-                  workspacePath,
-                  repositoryUrl,
-                })
-                  .then(() => {
-                    setGameState("installed");
-                    setGameLoading(false);
-                  })
-                  .catch((err: string) => setGlobalError(err));
-              }}
-              sx={{
-                display: {
-                  sm: "block",
-                  xs: "none",
-                },
-                position: "fixed",
-                right: "130px",
-                bottom: "70px",
-              }}
-            >
-              Install
-            </LoadingButton>
-          ) : null}
-          {gameState === "installed" ? (
-            <LoadingButton
-              variant="contained"
-              color="primary"
-              onClick={() => spawn()}
-              sx={{
-                position: "fixed",
-                right: "130px",
-                bottom: "70px",
-              }}
-            >
-              Play
-            </LoadingButton>
-          ) : null}
-        </Grid>
-        <Grid item display="flex" justifyContent="flex-start" xs={6}>
-          {gameState === "installing"
-            ? `Download: ${downloadedBytesStart} / ${downloadedBytesEnd} @ ${downloadedBytesPerSec}/s Write : ${appliedOutputBytesStart} / ${appliedOutputBytesEnd} @ ${appliedOutputBytesPerSec}/s`
-            : null}
-        </Grid>
+      <Grid size={8}>
+        {gameState === "not_installed" ? (
+          <LinearProgress
+            variant="buffer"
+            value={buffer}
+            valueBuffer={progress}
+            sx={{
+              height: 20,
+              borderRadius: 5,
+            }}
+          />
+        ) : null}
       </Grid>
-    </Box>
+      <Grid>
+        <LoadingButton
+          variant="contained"
+          color="primary"
+          disabled={gameRunning}
+          loading={gameLoading}
+          loadingIndicator="Loading... "
+          onClick={() => {
+            if (gameState === "not_installed") {
+              setGameLoading(!gameLoading);
+              setGameState("installing");
+              invoke("update_workspace", {
+                workspacePath,
+                repositoryUrl,
+              })
+                .then(() => {
+                  setGameState("installed");
+                  setGameLoading(false);
+                })
+                .catch((err: string) => setGlobalError(err));
+            }
+            if (gameState === "installed") {
+              spawn();
+            }
+          }}
+        >
+          {gameState !== "installed" ? "Install" : "Play"}
+        </LoadingButton>
+      </Grid>
+      <Grid
+        size={11}
+        sx={{ border: "3px red solid" }}
+        alignItems="center"
+        justifyContent="center"
+      >
+        {gameState === "not_installed" ? (
+          <Paper
+            sx={{ position: "fixed", bottom: "10%" }}
+            justifyContent="center"
+            elevation={3}
+          >
+            Download: {downloadedBytesStart} / {downloadedBytesEnd} @
+            {downloadedBytesPerSec}/s <br /> Write : {appliedOutputBytesStart} /
+            {appliedOutputBytesEnd} @ {appliedOutputBytesPerSec}/s
+          </Paper>
+        ) : null}
+      </Grid>
+    </Grid>
   );
 }
 

@@ -10,13 +10,13 @@ import MinimizeIcon from "@mui/icons-material/Minimize";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 // Components
-import SparusContext from "utils/Context";
+import { SparusErrorContext } from "utils/Context";
 
 // Tauri api
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 function Header() {
-  const { setGlobalError } = useContext(SparusContext);
+  const { setGlobalError } = useContext(SparusErrorContext);
   const navigate = useNavigate();
   const location = useLocation();
 

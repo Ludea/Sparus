@@ -7,7 +7,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "components/Header";
 import { DesktopRoutes, MobileRoutes } from "routes";
 import DesktopBackground from "assets/DesktopBackground.jpg";
-import SparusErrorContext from "utils/Context";
+import { SparusErrorContext, StoreProvider } from "utils/Context";
 
 function App() {
   const [globalError, setGlobalError] = useState("");
@@ -26,7 +26,6 @@ function App() {
 
   useEffect(() => {
     if (import.meta.env.DEV) {
-      // window.addEventListener("contextmenu", event => event.preventDefault());
       window.addEventListener("keydown", (event) => {
         if (
           event.key === "F5" ||
@@ -41,43 +40,45 @@ function App() {
 
   return (
     <SparusErrorContext.Provider value={errorCache}>
-      <ThemeProvider theme={theme}>
-        <Grid
-          container
-          spacing={0}
-          m={-1}
-          sx={{
-            height: 600,
-            width: 800,
-            backgroundSize: "cover",
-            backgroundImage: `url(${DesktopBackground})`,
-            display: {
-              sm: "block",
-              xs: "none",
-            },
-          }}
-        >
-          <Grid>
-            <Header />
+      <StoreProvider>
+        <ThemeProvider theme={theme}>
+          <Grid
+            container
+            spacing={0}
+            m={-1}
+            sx={{
+              height: 600,
+              width: 800,
+              backgroundSize: "cover",
+              backgroundImage: `url(${DesktopBackground})`,
+              display: {
+                sm: "block",
+                xs: "none",
+              },
+            }}
+          >
+            <Grid>
+              <Header />
+            </Grid>
+            {DesktopRouting}
           </Grid>
-          {DesktopRouting}
-        </Grid>
-        <Grid
-          container
-          spacing={0}
-          m={-1}
-          sx={{
-            height: "100vh",
-            width: "100vw",
-            display: {
-              sm: "none",
-              xs: "block",
-            },
-          }}
-        >
-          {MobileRouting}
-        </Grid>
-      </ThemeProvider>
+          <Grid
+            container
+            spacing={0}
+            m={-1}
+            sx={{
+              height: "100vh",
+              width: "100vw",
+              display: {
+                sm: "none",
+                xs: "block",
+              },
+            }}
+          >
+            {MobileRouting}{" "}
+          </Grid>
+        </ThemeProvider>
+      </StoreProvider>
     </SparusErrorContext.Provider>
   );
 }

@@ -9,13 +9,11 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 
 // Components
-import SparusContext from "utils/Context";
+import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 
 // Tauri api
-import { appConfigDir } from "@tauri-apps/api/path";
 import { remove } from "@tauri-apps/plugin-fs";
 import { enable, disable } from "tauri-plugin-autostart-api";
-import { Store } from "tauri-plugin-store-api";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,22 +23,15 @@ function Options() {
   const [autostart, setAutostart] = useState<boolean>();
   const [launcherURL, setLauncherURL] = useState<string | null>("");
   const [workspacePath, setWorkspacePath] = useState<string | null>("");
-  const [localConfig, setLocalConfig] = useState<string>("");
 
-  const { setGlobalError } = useContext(SparusContext);
-
-  appConfigDir()
-    .then((dir) => setLocalConfig(dir))
-    .catch((err: string) => setGlobalError(err));
-  const store = new Store(`${localConfig}.settings.sparus`);
+  const { setGlobalError } = useContext(SparusErrorContext);
+  const store = useContext(SparusStoreContext);
 
   useEffect(() => {
     store.load().catch((err: string) => setGlobalError(err));
     store
-      .get<string>("game_url")
-      .then((value: string | null) => {
-        setGameURL(value);
-      })
+      .get("game_url")
+      .then((value) => setGameURL(value))
       .catch((err: string) => setGlobalError(err));
     store
       .get<string>("launcher_url")
