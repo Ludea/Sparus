@@ -63,7 +63,7 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
-        run: pnpm tauri android build
+        run: pnpm tauri android build --apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
@@ -71,5 +71,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-${{ env.SHORT_SHA }}.zip
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: gen/android/app/build/outputs/bundle/universalRelease/*.apk
           if-no-files-found: error
