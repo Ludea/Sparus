@@ -12,6 +12,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Command } from "@tauri-apps/plugin-shell";
 import { platform } from "@tauri-apps/plugin-os";
+import { Typography } from "@mui/material";
 
 interface UpdateEvent {
   download: number;
@@ -174,7 +175,7 @@ function Footer() {
       }}
     >
       <Grid size={8}>
-        {gameState === "not_installed" ? (
+        {downloadedBytesStart ? (
           <LinearProgress
             variant="buffer"
             value={buffer}
@@ -182,6 +183,7 @@ function Footer() {
             sx={{
               height: 20,
               borderRadius: 5,
+              backgroundColor: (theme) => theme.palette.grey[300],
             }}
           />
         ) : null}
@@ -215,20 +217,25 @@ function Footer() {
           {gameState !== "installed" ? "Install" : "Play"}
         </LoadingButton>
       </Grid>
-      <Grid
-        size={11}
-        sx={{ border: "3px red solid" }}
-        alignItems="center"
-        justifyContent="center"
-      >
-        {gameState === "not_installed" ? (
-          <Paper sx={{ position: "fixed", bottom: "10%" }} elevation={3}>
-            Download: {downloadedBytesStart} / {downloadedBytesEnd} @
-            {downloadedBytesPerSec}/s <br /> Write : {appliedOutputBytesStart} /
-            {appliedOutputBytesEnd} @ {appliedOutputBytesPerSec}/s
+      {downloadedBytesStart ? (
+        <Grid
+          size={11}
+          sx={{ display: "flex" }}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Paper
+            sx={{ position: "fixed", bottom: "8%", backgroundColor: "#393e46" }}
+            elevation={3}
+          >
+            <Typography sx={{ color: "white" }}>
+              Download: {downloadedBytesStart} / {downloadedBytesEnd} @
+              {downloadedBytesPerSec}/s <br /> Write : {appliedOutputBytesStart}{" "}
+              /{appliedOutputBytesEnd} @ {appliedOutputBytesPerSec}/s
+            </Typography>
           </Paper>
-        ) : null}
-      </Grid>
+        </Grid>
+      ) : null}
     </Grid>
   );
 }
