@@ -183,7 +183,11 @@ function Footer() {
             sx={{
               height: 20,
               borderRadius: 5,
-              backgroundColor: (theme) => theme.palette.grey[300],
+              "& .MuiLinearProgress-dashed": {
+                backgroundColor: "lightgrey",
+                backgroundImage: "none",
+                animation: "none",
+              },
             }}
           />
         ) : null}
