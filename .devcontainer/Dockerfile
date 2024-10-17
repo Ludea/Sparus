@@ -10,6 +10,7 @@ RUN apt-get update && apt install -y --no-install-recommends \
     libssl-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev \ 
-    nodejs
+    nodejs \
+    git
 
 RUN corepack enable pnpm
