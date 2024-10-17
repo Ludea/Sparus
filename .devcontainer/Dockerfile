@@ -1,4 +1,4 @@
-FROM ghcr.io/lapce/lapdev-devcontainer-vnc
+FROM ghcr.io/lapce/lapdev-devcontainer-gnome
 
 RUN apt-get update && apt install -y --no-install-recommends \
     libwebkit2gtk-4.1-dev \
