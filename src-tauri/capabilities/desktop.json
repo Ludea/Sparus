@@ -19,6 +19,8 @@
     "core:window:allow-start-dragging",
     "allow-check-if-installed", 
     "allow-update-workspace",
+    "store:default",
+    "notification:default",
     {
       "identifier": "shell:allow-spawn",
       "allow": [

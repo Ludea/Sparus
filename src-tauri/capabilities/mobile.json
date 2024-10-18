@@ -12,7 +12,9 @@
       "core:window:default",
       "core:app:default",
       "core:resources:default",
-      "core:menu:default"
+      "core:menu:default",
+      "store:default",
+      "notification:default"
     ]
   }
   

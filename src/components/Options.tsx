@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Slide from "@mui/material/Slide";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -19,33 +18,40 @@ import { enable, disable } from "tauri-plugin-autostart-api";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 function Options() {
-  const [gameURL, setGameURL] = useState<string | null>("");
+  const [gameURL, setGameURL] = useState<string>("");
   const [autostart, setAutostart] = useState<boolean>();
-  const [launcherURL, setLauncherURL] = useState<string | null>("");
-  const [workspacePath, setWorkspacePath] = useState<string | null>("");
+  const [launcherURL, setLauncherURL] = useState<string>("");
+  const [workspacePath, setWorkspacePath] = useState<string>("");
 
   const { setGlobalError } = useContext(SparusErrorContext);
   const store = useContext(SparusStoreContext);
 
   useEffect(() => {
-    store.load().catch((err: string) => setGlobalError(err));
     store
       .get<string>("game_url")
-      .then((value: string | null) => setGameURL(value))
+      .then((value) => {
+        if (value) setGameURL(value);
+      })
       .catch((err: string) => setGlobalError(err));
     store
       .get<string>("launcher_url")
-      .then((value: string | null) => {
-        setLauncherURL(value);
+      .then((value) => {
+        if (value) setLauncherURL(value);
       })
       .catch((err: string) => setGlobalError(err));
     store
       .get<string>("workspace_path")
-      .then((value: string | null) => {
-        setWorkspacePath(value);
+      .then((value) => {
+        if (value) setWorkspacePath(value);
       })
       .catch((err: string) => setGlobalError(err));
-  });
+    store
+      .get<boolean>("autostart")
+      .then((value) => {
+        if (value) setAutostart(value);
+      })
+      .catch((err: string) => setGlobalError(err));
+  }, [setGlobalError, store]);
 
   return (
     <Slide direction="right" in mountOnEnter unmountOnExit>
@@ -77,7 +83,12 @@ function Options() {
             type="text"
             variant="standard"
             value={gameURL}
-            onChange={(event) => setGameURL(event.target.value)}
+            onChange={(event) => {
+              setGameURL(event.target.value);
+              store
+                .set("game_url", event.target.value)
+                .catch((err: string) => setGlobalError(err));
+            }}
           />
           <TextField
             autoFocus
@@ -87,7 +98,12 @@ function Options() {
             type="text"
             variant="standard"
             value={launcherURL}
-            onChange={(event) => setLauncherURL(event.target.value)}
+            onChange={(event) => {
+              setLauncherURL(event.target.value);
+              store
+                .set("launcher_url", event.target.value)
+                .catch((err: string) => setGlobalError(err));
+            }}
           />
           <TextField
             autoFocus
@@ -97,7 +113,12 @@ function Options() {
             type="text"
             variant="standard"
             value={workspacePath}
-            onChange={(event) => setWorkspacePath(event.target.value)}
+            onChange={(event) => {
+              setWorkspacePath(event.target.value);
+              store
+                .set("workspace_path", event.target.value)
+                .catch((err: string) => setGlobalError(err));
+            }}
           />
           <FormControlLabel
             control={
@@ -105,9 +126,12 @@ function Options() {
                 checked={autostart}
                 onChange={(event) => {
                   setAutostart(event.target.checked);
-                  if (event.target.checked) {
+                  if (autostart) {
                     enable().catch((err: string) => setGlobalError(err));
                   } else disable().catch((err: string) => setGlobalError(err));
+                  store
+                    .set("autostart", event.target.value)
+                    .catch((err: string) => setGlobalError(err));
                 }}
                 inputProps={{ "aria-label": "controlled" }}
               />
@@ -115,25 +139,6 @@ function Options() {
             label="Start Sparus on system boot"
           />
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          onClick={() => {
-            store
-              .set("game_url", gameURL)
-              .catch((err: string) => setGlobalError(err));
-            store
-              .set("launcher_url", launcherURL)
-              .catch((err: string) => setGlobalError(err));
-            store
-              .set("workspace_path", workspacePath)
-              .catch((err: string) => setGlobalError(err));
-            store.save().catch((err: string) => setGlobalError(err));
-          }}
-        >
-          Save
-        </Button>
         <IconButton
           aria-label="delete"
           onClick={() => {

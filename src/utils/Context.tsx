@@ -1,5 +1,5 @@
 import { ReactNode, createContext } from "react";
-import { Store } from "tauri-plugin-store-api";
+import { LazyStore } from "@tauri-apps/plugin-store";
 
 type SparusError = {
   globalError: string;
@@ -11,7 +11,9 @@ const SparusErrorContext = createContext<SparusError>({
   setGlobalError: () => {},
 });
 
-const store = new Store("Sparus.json");
+const store = new LazyStore("Sparus.json", {
+  autoSave: true,
+});
 
 const SparusStoreContext = createContext(store);
 
