@@ -60,7 +60,7 @@ function Options() {
         alignItems="flex-start"
         direction="column"
         sx={{
-          backgroundColor: "#363f45",
+          backgroundColor: "#D3D3D3",
           height: 550,
           position: "fixed",
           top: 50,
