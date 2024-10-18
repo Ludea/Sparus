@@ -12,7 +12,7 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 
 // Tauri api
 import { remove } from "@tauri-apps/plugin-fs";
-import { enable, disable } from "tauri-plugin-autostart-api";
+import { enable, disable } from "@tauri-apps/plugin-autostart";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";

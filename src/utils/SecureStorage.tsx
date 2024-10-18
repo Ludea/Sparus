@@ -1,4 +1,4 @@
-import { Stronghold, Client } from "tauri-plugin-stronghold-api";
+import { Stronghold, Client } from "@tauri-apps/plugin-stronghold";
 import { appDataDir } from "@tauri-apps/api/path";
 
 export const initStronghold = async () => {
