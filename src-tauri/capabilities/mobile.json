@@ -13,8 +13,7 @@
       "core:app:default",
       "core:resources:default",
       "core:menu:default",
-      "store:default",
-      "notification:default"
+      "store:default"
     ]
   }
   
