@@ -11,7 +11,7 @@ RUN apt-get update && apt install -y --no-install-recommends \
     libayatana-appindicator3-dev \
     librsvg2-dev \ 
     nodejs \
-    npn \
+    npm \
     git
 
 RUN npm install -g pnpm
