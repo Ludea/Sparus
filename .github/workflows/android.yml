@@ -70,6 +70,6 @@ jobs:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Sparus-${{ env.SHORT_SHA }}.zip
+          name: Sparus-${{ env.SHORT_SHA }}
           path: src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
           if-no-files-found: error

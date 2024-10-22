@@ -74,6 +74,6 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.platform.target }}.zip
+          name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.platform.target }}
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
           if-no-files-found: error
