@@ -118,31 +118,20 @@ function Footer() {
   }, [gameName, store, setGlobalError]);
 
   const spawn = () => {
-    let extension;
-    let shell: string;
-    let arg: string[];
+    let extension = "";
+    let shell: string = "";
+    let arg: string[] = [""];
 
-    switch (platform()) {
-      case "windows":
-        extension = ".exe";
-        shell = "cmd";
-        arg = ["/C"];
-        break;
-      case "macos":
-        extension = ".app";
-        shell = "sh";
-        arg = ["-c"];
-        break;
-      case "linux":
-        extension = ".sh";
-        shell = "sh";
-        arg = ["-c"];
-        break;
-      default:
-        extension = "";
-        shell = "";
-        arg = [""];
-        break;
+    const host = platform();
+
+    if (host === "windows") {
+      extension = ".exe";
+      shell = "cmd";
+      arg = ["/C"];
+    } else if (host === "linux" || host === "macos") {
+      extension = "";
+      shell = "sh";
+      arg = ["-c"];
     }
 
     const command = Command.create(shell, [
