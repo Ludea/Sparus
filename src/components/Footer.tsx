@@ -164,7 +164,7 @@ function Footer() {
       }}
     >
       <Grid size={8}>
-        {downloadedBytesStart ? (
+        {downloadedBytesStart && gameState === "installing" ? (
           <LinearProgress
             variant="buffer"
             value={buffer}
@@ -210,7 +210,7 @@ function Footer() {
           {gameState !== "installed" ? "Install" : "Play"}
         </LoadingButton>
       </Grid>
-      {downloadedBytesStart ? (
+      {downloadedBytesStart && gameState === "installing" ? (
         <Grid
           size={11}
           sx={{ display: "flex" }}
