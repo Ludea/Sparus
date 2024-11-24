@@ -28,3 +28,4 @@ pnpm-lock.yaml
 /src-tauri/Cargo.lock
 
 .vscode
+game/
