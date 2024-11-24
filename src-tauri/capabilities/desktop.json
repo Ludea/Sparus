@@ -19,6 +19,7 @@
     "core:window:allow-start-dragging",
     "allow-check-if-installed", 
     "allow-update-workspace",
+    "allow-get-current-path",
     "store:default",
     "notification:default",
     {

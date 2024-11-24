@@ -14,6 +14,8 @@ import { Command } from "@tauri-apps/plugin-shell";
 import { platform } from "@tauri-apps/plugin-os";
 import { Typography } from "@mui/material";
 
+const host = platform();
+
 interface UpdateEvent {
   download: number;
   write: number;
@@ -75,6 +77,16 @@ function Footer() {
       .get<string>("workspace_path")
       .then((value) => {
         if (value) setWorkspacePath(value);
+        else
+          invoke<string>("get_current_path")
+            .then((path) => {
+              const gameSubPath = host === "windows" ? "\\game" : "/game";
+              store
+                .set("workspace_path", path.concat(gameSubPath))
+                .catch((err: string) => setGlobalError(err));
+              setWorkspacePath(path.concat(gameSubPath));
+            })
+            .catch((err: string) => setGlobalError(err));
       })
       .catch((err: string) => setGlobalError(err));
 
@@ -121,8 +133,6 @@ function Footer() {
     let extension = "";
     let shell: string = "";
     let arg: string[] = [""];
-
-    const host = platform();
 
     if (host === "windows") {
       extension = ".exe";
