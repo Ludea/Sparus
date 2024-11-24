@@ -1,6 +1,6 @@
 use argon2::{hash_raw, Config, Variant, Version};
+use std::{env, fs, io, path::Path};
 use tauri::command;
-use std::{env, fs, path::Path, io};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -14,7 +14,7 @@ mod updater;
 
 #[derive(serde::Serialize)]
 pub enum IOErr {
-  Io(String), 
+  Io(String),
 }
 
 impl From<io::Error> for IOErr {
@@ -24,7 +24,7 @@ impl From<io::Error> for IOErr {
 }
 
 #[command]
-fn get_current_path() -> Result<String, IOErr>{
+fn get_current_path() -> Result<String, IOErr> {
   let path = env::current_dir()?;
   Ok(path.to_string_lossy().to_string())
 }
