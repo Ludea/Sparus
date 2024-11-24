@@ -381,6 +381,11 @@
           "const": "allow-check-if-installed"
         },
         {
+          "description": "Enables the check_if_installed command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-current-path"
+        },
+        {
           "description": "Enables the update_available command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-available"
@@ -394,6 +399,11 @@
           "description": "Denies the check_if_installed command without any pre-configured scope.",
           "type": "string",
           "const": "deny-check-if-installed"
+        },
+        {
+          "description": "Denies the check_if_installed command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-current-path"
         },
         {
           "description": "Denies the update_available command without any pre-configured scope.",

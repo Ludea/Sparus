@@ -1,5 +1,6 @@
 use argon2::{hash_raw, Config, Variant, Version};
-use std::{env, fs, path::Path};
+use tauri::command;
+use std::{env, fs, path::Path, io};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -10,6 +11,23 @@ mod rpc;
 #[cfg(desktop)]
 mod tray;
 mod updater;
+
+#[derive(serde::Serialize)]
+pub enum IOErr {
+  Io(String), 
+}
+
+impl From<io::Error> for IOErr {
+  fn from(err: io::Error) -> Self {
+    IOErr::Io(err.to_string())
+  }
+}
+
+#[command]
+fn get_current_path() -> Result<String, IOErr>{
+  let path = env::current_dir()?;
+  Ok(path.to_string_lossy().to_string())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -82,6 +100,7 @@ pub fn run() {
       updater::update_workspace,
       updater::update_available,
       updater::check_if_installed,
+      get_current_path
     ])
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
