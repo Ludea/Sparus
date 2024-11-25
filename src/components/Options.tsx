@@ -14,10 +14,13 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 import { remove } from "@tauri-apps/plugin-fs";
 import { enable, disable } from "@tauri-apps/plugin-autostart";
 import { open } from "@tauri-apps/plugin-dialog";
+import { platform } from "@tauri-apps/plugin-os";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
+
+const host = platform();
 
 function Options() {
   const [gameURL, setGameURL] = useState<string>("");
@@ -136,9 +139,11 @@ function Options() {
                   })
                     .then((dir) => {
                       if (dir) {
-                        setWorkspacePath(dir);
+                        const gameSubPath =
+                          host === "windows" ? "\\game" : "/game";
+                        setWorkspacePath(dir.concat(gameSubPath));
                         store
-                          .set("workspace_path", dir)
+                          .set("workspace_path", dir.concat(gameSubPath))
                           .catch((err: string) => setGlobalError(err));
                       }
                     })
