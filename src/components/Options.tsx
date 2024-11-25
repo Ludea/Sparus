@@ -13,9 +13,11 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 // Tauri api
 import { remove } from "@tauri-apps/plugin-fs";
 import { enable, disable } from "@tauri-apps/plugin-autostart";
+import { open } from "@tauri-apps/plugin-dialog";
 
 // Icons
 import DeleteIcon from "@mui/icons-material/Delete";
+import FolderIcon from "@mui/icons-material/Folder";
 
 function Options() {
   const [gameURL, setGameURL] = useState<string>("");
@@ -65,6 +67,7 @@ function Options() {
           position: "fixed",
           top: 50,
           zIndex: 30,
+          width: 410,
         }}
       >
         <Box
@@ -105,21 +108,47 @@ function Options() {
                 .catch((err: string) => setGlobalError(err));
             }}
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="game_path"
-            label="Installation Path"
-            type="text"
-            variant="standard"
-            value={workspacePath}
-            onChange={(event) => {
-              setWorkspacePath(event.target.value);
-              store
-                .set("workspace_path", event.target.value)
-                .catch((err: string) => setGlobalError(err));
-            }}
-          />
+          <Grid container>
+            <Grid size={11}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="game_path"
+                label="Installation Path"
+                type="text"
+                variant="standard"
+                value={workspacePath}
+                onChange={(event) => {
+                  setWorkspacePath(event.target.value);
+                  store
+                    .set("workspace_path", event.target.value)
+                    .catch((err: string) => setGlobalError(err));
+                }}
+              />
+            </Grid>
+            <Grid size={1} alignContent="end">
+              <IconButton
+                aria-label="folder"
+                onClick={() => {
+                  open({
+                    multiple: false,
+                    directory: true,
+                  })
+                    .then((dir) => {
+                      if (dir) {
+                        setWorkspacePath(dir);
+                        store
+                          .set("workspace_path", dir)
+                          .catch((err: string) => setGlobalError(err));
+                      }
+                    })
+                    .catch((err: string) => setGlobalError(err));
+                }}
+              >
+                <FolderIcon fontSize="large" />
+              </IconButton>
+            </Grid>
+          </Grid>
           <FormControlLabel
             control={
               <Checkbox

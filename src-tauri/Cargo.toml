@@ -36,6 +36,7 @@ getrandom = "0.2.15"
 async-lock = "3.4.0"
 tauri-plugin-stronghold = "2.0.0"
 tauri-plugin-store = "2.1.0"
+tauri-plugin-dialog = "2"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 tauri-plugin-notification = "2.0.0"

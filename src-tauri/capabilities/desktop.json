@@ -20,6 +20,8 @@
     "allow-check-if-installed", 
     "allow-update-workspace",
     "allow-get-current-path",
+    "dialog:allow-open",
+    "dialog:default",
     "store:default",
     "notification:default",
     {
