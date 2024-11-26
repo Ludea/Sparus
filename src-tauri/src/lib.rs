@@ -1,5 +1,5 @@
 use argon2::{hash_raw, Config, Variant, Version};
-#[cfg(target_os = "linux")]
+#[cfg(target_family = "unix")]
 use std::os::unix::fs::PermissionsExt;
 use std::{env, fs, io, path::Path};
 use tauri::command;
