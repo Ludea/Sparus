@@ -84,7 +84,7 @@
           }
         },
         "permissions": {
-          "description": "List of permissions attached to this capability.\n\nMust include the plugin name as prefix in the form of `${plugin-name}:${permission-name}`. For commands directly implemented in the application itself only `${permission-name}` is required.\n\n## Example\n\n```json [ \"core:default\", \"shell:allow-open\", \"dialog:open\", { \"identifier\": \"fs:allow-write-text-file\", \"allow\": [{ \"path\": \"$HOME/test.txt\" }] } ] ```",
+          "description": "List of permissions attached to this capability.\n\nMust include the plugin name as prefix in the form of `${plugin-name}:${permission-name}`. For commands directly implemented in the application itself only `${permission-name}` is required.\n\n## Example\n\n```json [ \"core:default\", \"shell:allow-open\", \"dialog:open\", { \"identifier\": \"fs:allow-write-text-file\", \"allow\": [{ \"path\": \"$HOME/test.txt\" }] } ```",
           "type": "array",
           "items": {
             "$ref": "#/definitions/PermissionEntry"
@@ -386,6 +386,11 @@
           "const": "allow-get-current-path"
         },
         {
+          "description": "Enables the get_game_exe_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-game-exe-name"
+        },
+        {
           "description": "Enables the update_available command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-available"
@@ -404,6 +409,11 @@
           "description": "Denies the get_current_path command without any pre-configured scope.",
           "type": "string",
           "const": "deny-get-current-path"
+        },
+        {
+          "description": "Denies the get_game_exe_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-game-exe-name"
         },
         {
           "description": "Denies the update_available command without any pre-configured scope.",

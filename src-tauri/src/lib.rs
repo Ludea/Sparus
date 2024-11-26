@@ -1,4 +1,6 @@
 use argon2::{hash_raw, Config, Variant, Version};
+#[cfg(target_os = "linux")]
+use std::os::unix::fs::PermissionsExt;
 use std::{env, fs, io, path::Path};
 use tauri::command;
 #[cfg(desktop)]
@@ -27,6 +29,26 @@ impl From<io::Error> for IOErr {
 fn get_current_path() -> Result<String, IOErr> {
   let path = env::current_dir()?;
   Ok(path.to_string_lossy().to_string())
+}
+
+#[command]
+fn get_game_exe_name() -> Result<String, String> {
+  let folder = "./game";
+  if let Ok(entries) = fs::read_dir(folder) {
+    for entry in entries {
+      if let Ok(entry) = entry {
+        let path = entry.path();
+        if path.is_file() && is_executable(&path) {
+          return Ok(path.file_name().unwrap().to_string_lossy().to_string());
+        } else {
+          return Err("Game exe not found".to_string());
+        }
+      }
+      return Err("".to_string());
+    }
+    return Err("".to_string());
+  }
+  return Err("".to_string());
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -101,7 +123,8 @@ pub fn run() {
       updater::update_workspace,
       updater::update_available,
       updater::check_if_installed,
-      get_current_path
+      get_current_path,
+      get_game_exe_name
     ])
     .build(tauri::tauri_build_context!())
     .expect("error while building tauri application");
@@ -114,4 +137,20 @@ pub fn run() {
       }
     }
   });
+}
+
+fn is_executable(path: &Path) -> bool {
+  #[cfg(not(target_os = "windows"))]
+  if let Ok(metadata) = path.metadata() {
+    let permissions = metadata.permissions();
+    permissions.mode() & 0o111 != 0
+  } else {
+    false
+  }
+  #[cfg(target_os = "windows")]
+  if let Some(extension) = path.extension() {
+    extension == "exe"
+  } else {
+    false
+  }
 }

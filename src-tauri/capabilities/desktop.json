@@ -20,6 +20,7 @@
     "allow-check-if-installed", 
     "allow-update-workspace",
     "allow-get-current-path",
+    "allow-get-game-exe-name", 
     "dialog:allow-open",
     "dialog:default",
     "store:default",
