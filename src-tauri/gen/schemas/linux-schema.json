@@ -386,6 +386,11 @@
           "const": "allow-get-current-path"
         },
         {
+          "description": "Enables the get_game_exe_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-game-exe-name"
+        },
+        {
           "description": "Enables the update_available command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-available"
@@ -404,6 +409,11 @@
           "description": "Denies the get_current_path command without any pre-configured scope.",
           "type": "string",
           "const": "deny-get-current-path"
+        },
+        {
+          "description": "Denies the get_game_exe_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-game-exe-name"
         },
         {
           "description": "Denies the update_available command without any pre-configured scope.",

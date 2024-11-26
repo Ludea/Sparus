@@ -32,10 +32,10 @@ fn get_current_path() -> Result<String, IOErr> {
 }
 
 #[command]
-fn get_game_exe_name() -> Result<String, String> {
-  let folder = "./game";
-  if let Ok(entries) = fs::read_dir(folder) {
-    for entry in entries {
+fn get_game_exe_name(path: String) -> Result<String, String> {
+  let folder = path;
+  if let Ok(mut entries) = fs::read_dir(folder) {
+    if let Some(entry) = entries.next() {
       if let Ok(entry) = entry {
         let path = entry.path();
         if path.is_file() && is_executable(&path) {
@@ -44,11 +44,12 @@ fn get_game_exe_name() -> Result<String, String> {
           return Err("Game exe not found".to_string());
         }
       }
-      return Err("".to_string());
+      return Err("No game installed".to_string());
     }
-    return Err("".to_string());
+    Err("Unable to read dir".to_string())
+  } else {
+    Err("Unable to read dir".to_string())
   }
-  return Err("".to_string());
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

@@ -62,10 +62,6 @@ function Footer() {
   const store = useContext(SparusStoreContext);
 
   useEffect(() => {
-    invoke("check_if_installed", { path: gameName })
-      .then(() => setGameState("installed"))
-      .catch(() => setGameState("not_installed"));
-
     store
       .get<string>("game_url")
       .then((value) => {
@@ -90,12 +86,16 @@ function Footer() {
       })
       .catch((err: string) => setGlobalError(err));
 
-    store
-      .get<string>("game_name")
-      .then((value) => {
-        if (value) setGameName(value);
+    invoke("check_if_installed", { path: workspacePath })
+      .then(() => {
+        invoke("get_game_exe_name", {
+          path: workspacePath,
+        })
+          .then((name) => setGameName(name))
+          .catch((err) => setGlobalError(err));
+        setGameState("installed");
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch(() => setGameState("not_installed"));
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -127,7 +127,7 @@ function Footer() {
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
     }).catch((err: string) => setGlobalError(err));
-  }, [gameName, store, setGlobalError]);
+  }, [gameName, store, setGlobalError, workspacePath]);
 
   const spawn = () => {
     let extension = "";
