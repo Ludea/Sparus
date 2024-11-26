@@ -88,11 +88,11 @@ function Footer() {
 
     invoke("check_if_installed", { path: workspacePath })
       .then(() => {
-        invoke("get_game_exe_name", {
+        invoke<string>("get_game_exe_name", {
           path: workspacePath,
         })
           .then((name) => setGameName(name))
-          .catch((err) => setGlobalError(err));
+          .catch((err: string) => setGlobalError(err));
         setGameState("installed");
       })
       .catch(() => setGameState("not_installed"));
