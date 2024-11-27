@@ -194,10 +194,9 @@ function Footer() {
           color="primary"
           disabled={gameRunning}
           loading={gameLoading}
-          loadingIndicator="Loading... "
           onClick={() => {
             if (gameState === "not_installed") {
-              setGameLoading(!gameLoading);
+              setGameLoading(true);
               setGameState("installing");
               invoke("update_workspace", {
                 workspacePath,
