@@ -206,7 +206,11 @@ function Footer() {
                   setGameState("installed");
                   setGameLoading(false);
                 })
-                .catch((err: string) => setGlobalError(err));
+                .catch((err: string) => {
+                  setGameState("not_installed ");
+                  setGameLoading(false);
+                  setGlobalError(err);
+                });
             }
             if (gameState === "installed") {
               spawn();
