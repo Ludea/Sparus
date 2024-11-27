@@ -163,7 +163,7 @@ function Footer() {
       spacing={4}
       sx={{
         position: "fixed",
-        bottom: "10%",
+        bottom: "15%",
         display: {
           sm: "flex",
           xs: "none",
@@ -219,7 +219,7 @@ function Footer() {
       {downloadedBytesStart && gameState === "installing" ? (
         <Grid
           size={11}
-          sx={{ display: "flex" }}
+          sx={{ display: "flex", position: "fixed", bottom: "8%" }}
           alignItems="center"
           justifyContent="center"
         >
