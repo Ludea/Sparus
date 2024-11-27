@@ -130,23 +130,20 @@ function Footer() {
   }, [gameName, store, setGlobalError, workspacePath]);
 
   const spawn = () => {
-    let extension = "";
     let shell: string = "";
     let arg: string[] = [""];
 
     if (host === "windows") {
-      extension = ".exe";
       shell = "cmd";
       arg = ["/C"];
     } else if (host === "linux" || host === "macos") {
-      extension = "";
       shell = "sh";
       arg = ["-c"];
     }
 
     const command = Command.create(shell, [
       ...arg,
-      "start ".concat(workspacePath, "/", gameName, extension),
+      "start ".concat(workspacePath, "/", gameName),
     ]);
 
     command
