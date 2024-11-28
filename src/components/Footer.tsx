@@ -3,6 +3,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Grid from "@mui/material/Grid2";
 import Paper from "@mui/material/Paper";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 
 // Context
 import { SparusErrorContext, SparusStoreContext } from "utils/Context";
@@ -12,7 +15,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Command } from "@tauri-apps/plugin-shell";
 import { platform } from "@tauri-apps/plugin-os";
-import { Typography } from "@mui/material";
 
 const host = platform();
 
@@ -60,6 +62,7 @@ function Footer() {
 
   const { setGlobalError } = useContext(SparusErrorContext);
   const store = useContext(SparusStoreContext);
+  const theme = useTheme();
 
   useEffect(() => {
     store
@@ -171,7 +174,7 @@ function Footer() {
       }}
     >
       <Grid size={8}>
-        {downloadedBytesStart && gameState === "installing" ? (
+        {gameState === "installing" ? (
           <LinearProgress
             variant="buffer"
             value={buffer}
@@ -194,6 +197,12 @@ function Footer() {
           color="primary"
           disabled={gameRunning}
           loading={gameLoading}
+          sx={{
+            "&.Mui-disabled": {
+              backgroundColor: theme.palette.primary.main,
+            },
+          }}
+          loadingIndicator={<CircularProgress color="secondary" size={22} />}
           onClick={() => {
             if (gameState === "not_installed") {
               setGameLoading(true);
@@ -205,6 +214,7 @@ function Footer() {
                 .then(() => {
                   setGameState("installed");
                   setGameLoading(false);
+                  setAppliedOutputBytesPerSec("");
                 })
                 .catch((err: string) => {
                   setGameState("not_installed ");
@@ -220,7 +230,7 @@ function Footer() {
           {gameState !== "installed" ? "Install" : "Play"}
         </LoadingButton>
       </Grid>
-      {downloadedBytesStart && gameState === "installing" ? (
+      {gameState === "installing" ? (
         <Grid
           size={11}
           sx={{ display: "flex", position: "fixed", bottom: "8%" }}
@@ -232,9 +242,11 @@ function Footer() {
             elevation={3}
           >
             <Typography sx={{ color: "white" }}>
-              Download: {downloadedBytesStart} / {downloadedBytesEnd} @
-              {downloadedBytesPerSec}/s <br /> Write : {appliedOutputBytesStart}{" "}
-              /{appliedOutputBytesEnd} @ {appliedOutputBytesPerSec}/s
+              Download: {downloadedBytesStart} / {downloadedBytesEnd} @{" "}
+              {downloadedBytesPerSec}/s
+              <br />
+              Write : {appliedOutputBytesStart} / {appliedOutputBytesEnd} @{" "}
+              {appliedOutputBytesPerSec}/s
             </Typography>
           </Paper>
         </Grid>
