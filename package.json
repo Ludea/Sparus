@@ -52,5 +52,5 @@
     "build": "tsc && vite build",
     "serve": "vite preview",
     "tauri": "tauri"
-  },
+  }
 }
