@@ -37,25 +37,33 @@ function Options() {
       .then((value) => {
         if (value) setGameURL(value);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
     store
       .get<string>("launcher_url")
       .then((value) => {
         if (value) setLauncherURL(value);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
     store
       .get<string>("workspace_path")
       .then((value) => {
         if (value) setWorkspacePath(value);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
     store
       .get<boolean>("autostart")
       .then((value) => {
         if (value) setAutostart(value);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
   }, [setGlobalError, store]);
 
   return (
@@ -93,7 +101,9 @@ function Options() {
               setGameURL(event.target.value);
               store
                 .set("game_url", event.target.value)
-                .catch((err: string) => setGlobalError(err));
+                .catch((err: unknown) => {
+                  setGlobalError(err);
+                });
             }}
           />
           <TextField
@@ -108,7 +118,9 @@ function Options() {
               setLauncherURL(event.target.value);
               store
                 .set("launcher_url", event.target.value)
-                .catch((err: string) => setGlobalError(err));
+                .catch((err: unknown) => {
+                  setGlobalError(err);
+                });
             }}
           />
           <Grid container>
@@ -125,7 +137,9 @@ function Options() {
                   setWorkspacePath(event.target.value);
                   store
                     .set("workspace_path", event.target.value)
-                    .catch((err: string) => setGlobalError(err));
+                    .catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
                 }}
               />
             </Grid>
@@ -144,10 +158,14 @@ function Options() {
                         setWorkspacePath(dir.concat(gameSubPath));
                         store
                           .set("workspace_path", dir.concat(gameSubPath))
-                          .catch((err: string) => setGlobalError(err));
+                          .catch((err: unknown) => {
+                            setGlobalError(err);
+                          });
                       }
                     })
-                    .catch((err: string) => setGlobalError(err));
+                    .catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
                 }}
               >
                 <FolderIcon fontSize="large" />
@@ -161,11 +179,18 @@ function Options() {
                 onChange={(event) => {
                   setAutostart(event.target.checked);
                   if (autostart) {
-                    enable().catch((err: string) => setGlobalError(err));
-                  } else disable().catch((err: string) => setGlobalError(err));
+                    enable().catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
+                  } else
+                    disable().catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
                   store
                     .set("autostart", event.target.value)
-                    .catch((err: string) => setGlobalError(err));
+                    .catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
                 }}
                 inputProps={{ "aria-label": "controlled" }}
               />
@@ -176,9 +201,9 @@ function Options() {
         <IconButton
           aria-label="delete"
           onClick={() => {
-            remove("game", { recursive: true }).catch((err: string) =>
-              setGlobalError(err),
-            );
+            remove("game", { recursive: true }).catch((err: unknown) => {
+              setGlobalError(err);
+            });
           }}
         >
           <DeleteIcon />

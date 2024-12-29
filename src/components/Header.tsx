@@ -27,7 +27,9 @@ function Header() {
           <IconButton
             color="primary"
             aria-label="back to Home page"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+            }}
           >
             <ArrowBackIosIcon fontSize="large" />
           </IconButton>
@@ -39,7 +41,9 @@ function Header() {
         onMouseDown={() => {
           getCurrentWindow()
             .startDragging()
-            .catch((err: string) => setGlobalError(err));
+            .catch((err: unknown) => {
+              setGlobalError(err);
+            });
         }}
       />
       <Grid
@@ -55,7 +59,9 @@ function Header() {
         <IconButton
           color="primary"
           aria-label="Settings"
-          onClick={() => navigate("/options")}
+          onClick={() => {
+            navigate("/options");
+          }}
         >
           <SettingsIcon />
         </IconButton>
@@ -65,7 +71,9 @@ function Header() {
           onClick={() => {
             getCurrentWindow()
               .minimize()
-              .catch((err: string) => setGlobalError(err));
+              .catch((err: unknown) => {
+                setGlobalError(err);
+              });
           }}
         >
           <MinimizeIcon />
@@ -76,7 +84,9 @@ function Header() {
           onClick={() => {
             getCurrentWindow()
               .hide()
-              .catch((err: string) => setGlobalError(err));
+              .catch((err: unknown) => {
+                setGlobalError(err);
+              });
           }}
         >
           <ClearIcon />

@@ -70,7 +70,9 @@ function Footer() {
       .then((value) => {
         if (value) setRepositoryUrl(value);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
 
     store
       .get<string>("workspace_path")
@@ -82,23 +84,35 @@ function Footer() {
               const gameSubPath = host === "windows" ? "\\game" : "/game";
               store
                 .set("workspace_path", path.concat(gameSubPath))
-                .catch((err: string) => setGlobalError(err));
+                .catch((err: unknown) => {
+                  setGlobalError(err);
+                });
               setWorkspacePath(path.concat(gameSubPath));
             })
-            .catch((err: string) => setGlobalError(err));
+            .catch((err: unknown) => {
+              setGlobalError(err);
+            });
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
 
     invoke("check_if_installed", { path: workspacePath })
       .then(() => {
         invoke<string>("get_game_exe_name", {
           path: workspacePath,
         })
-          .then((name) => setGameName(name))
-          .catch((err: string) => setGlobalError(err));
+          .then((name) => {
+            setGameName(name);
+          })
+          .catch((err: unknown) => {
+            setGlobalError(err);
+          });
         setGameState("installed");
       })
-      .catch(() => setGameState("not_installed"));
+      .catch(() => {
+        setGameState("not_installed");
+      });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -129,11 +143,13 @@ function Footer() {
       setAppliedOutputBytesPerSec(
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
-    }).catch((err: string) => setGlobalError(err));
+    }).catch((err: unknown) => {
+      setGlobalError(err);
+    });
   }, [gameName, store, setGlobalError, workspacePath]);
 
   const spawn = () => {
-    let shell: string = "";
+    let shell = "";
     let arg: string[] = [""];
 
     if (host === "windows") {
@@ -154,7 +170,9 @@ function Footer() {
       .then(() => {
         setGameRunning(true);
       })
-      .catch((err: string) => setGlobalError(err));
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
   };
 
   return (
@@ -216,7 +234,7 @@ function Footer() {
                   setGameLoading(false);
                   setAppliedOutputBytesPerSec("");
                 })
-                .catch((err: string) => {
+                .catch((err: unknown) => {
                   setGameState("not_installed ");
                   setGameLoading(false);
                   setGlobalError(err);

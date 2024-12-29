@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import AppBar from "@mui/material/AppBar";
@@ -49,7 +49,9 @@ function MobileIndex() {
           variant="fullWidth"
           value={currentTab}
           aria-label="menu tab"
-          onChange={(_, tab: number) => setCurrentTab(tab)}
+          onChange={(_, tab: number) => {
+            setCurrentTab(tab);
+          }}
         >
           <Tab icon={<HomeIcon fontSize="large" />} aria-label="home" />
           <Tab

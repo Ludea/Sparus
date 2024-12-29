@@ -13,7 +13,7 @@ export const initStronghold = async () => {
   const client: Client = await stronghold
     .loadClient(clientName)
     .catch(async () =>
-      stronghold.createClient(clientName).catch((err: string) => {
+      stronghold.createClient(clientName).catch((err: unknown) => {
         throw new Error(err);
       }),
     );
@@ -28,7 +28,7 @@ export const Save = async (client: Client, key: string, value: string) => {
   const store = client.getStore();
   await store
     .insert(key, Array.from(new TextEncoder().encode(value)))
-    .catch((err: string) => {
+    .catch((err: unknown) => {
       throw new Error(err);
     });
 };
@@ -40,7 +40,7 @@ export const Load = (client: Client, key: string) => {
     .then((value) => {
       if (value) new TextDecoder().decode(new Uint8Array(value));
     })
-    .catch((err: string) => {
+    .catch((err: unknown) => {
       throw new Error(err);
     });
 };
