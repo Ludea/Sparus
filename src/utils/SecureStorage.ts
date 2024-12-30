@@ -10,11 +10,11 @@ export const initStronghold = async () => {
 
   const clientName = "sparus";
 
-  const client: Client = await stronghold
+  const client: Client | void = await stronghold
     .loadClient(clientName)
     .catch(async () =>
       stronghold.createClient(clientName).catch((err: unknown) => {
-        throw new Error(err);
+        if (typeof err === "string") throw new Error(err);
       }),
     );
 
@@ -29,7 +29,7 @@ export const Save = async (client: Client, key: string, value: string) => {
   await store
     .insert(key, Array.from(new TextEncoder().encode(value)))
     .catch((err: unknown) => {
-      throw new Error(err);
+      if (typeof err === "string") throw new Error(err);
     });
 };
 
@@ -41,6 +41,6 @@ export const Load = (client: Client, key: string) => {
       if (value) new TextDecoder().decode(new Uint8Array(value));
     })
     .catch((err: unknown) => {
-      throw new Error(err);
+      if (typeof err === "string") throw new Error(err);
     });
 };
