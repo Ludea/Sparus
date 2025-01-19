@@ -10,11 +10,11 @@ export const initStronghold = async () => {
 
   const clientName = "sparus";
 
-  const client: Client | void = await stronghold
+  const client =  await stronghold
     .loadClient(clientName)
     .catch(async () =>
       stronghold.createClient(clientName).catch((err: unknown) => {
-        if (typeof err === "string") throw new Error(err);
+        if (typeof err === "string") throw new Error(err)
       }),
     );
 
