@@ -245,6 +245,7 @@ function Footer() {
                   gameName,
                   "/",
                   platform,
+                  "/",
                 ),
               })
                 .then(() => {
