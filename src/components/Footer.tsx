@@ -14,9 +14,10 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Command } from "@tauri-apps/plugin-shell";
-import { platform } from "@tauri-apps/plugin-os";
+import { arch, platform } from "@tauri-apps/plugin-os";
 
 const host = platform();
+const architecture = arch();
 
 interface UpdateEvent {
   download: number;
@@ -51,7 +52,7 @@ function Footer() {
   const [gameLoading, setGameLoading] = useState<boolean>(false);
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [workspacePath, setWorkspacePath] = useState<string>("");
-  const [gameName, setGameName] = useState<string>("");
+  const [gameName, setGameName] = useState<string>("kataster");
   const [repositoryUrl, setRepositoryUrl] = useState<string>();
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
@@ -63,6 +64,29 @@ function Footer() {
   const { setGlobalError } = useContext(SparusErrorContext);
   const store = useContext(SparusStoreContext);
   const theme = useTheme();
+
+  let platform = "";
+  let shell = "";
+  let arg: string[] = [""];
+
+  if (host === "windows") {
+    shell = "cmd";
+    arg = ["/C"];
+    platform = "win64";
+  } else if (host === "linux") {
+    platform = "linux";
+    shell = "sh";
+    arg = ["-c"];
+  } else if (host === "macos") {
+    shell = "sh";
+    arg = ["-c"];
+    if (architecture === "x86_64") {
+      platform = "macos_x86_64";
+    }
+    if (architecture === "aarch64") {
+      platform = "macos_arm64";
+    }
+  }
 
   useEffect(() => {
     store
@@ -149,17 +173,6 @@ function Footer() {
   }, [gameName, store, setGlobalError, workspacePath]);
 
   const spawn = () => {
-    let shell = "";
-    let arg: string[] = [""];
-
-    if (host === "windows") {
-      shell = "cmd";
-      arg = ["/C"];
-    } else if (host === "linux" || host === "macos") {
-      shell = "sh";
-      arg = ["-c"];
-    }
-
     const command = Command.create(shell, [
       ...arg,
       "start ".concat(workspacePath, "/", gameName),
@@ -227,7 +240,12 @@ function Footer() {
               setGameState("installing");
               invoke("update_workspace", {
                 workspacePath,
-                repositoryUrl,
+                repositoryUrl: repositoryUrl?.concat(
+                  "/",
+                  gameName,
+                  "/",
+                  platform,
+                ),
               })
                 .then(() => {
                   setGameState("installed");
