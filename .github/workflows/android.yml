@@ -63,13 +63,24 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - name: build Apk
-        run: pnpm tauri android build --apk --target aarch64
+        run: pnpm tauri android build --target aarch64 --split-per-abi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - uses: filippoLeporati93/android-release-signer@v1
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-${{ env.SHORT_SHA }}
-          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
           if-no-files-found: error
