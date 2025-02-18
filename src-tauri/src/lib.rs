@@ -88,7 +88,7 @@ pub fn run() {
           Err(_) => {
             if !Path::new("salt.txt").exists() {
               let mut buf = [0u8, 16];
-              getrandom::getrandom(&mut buf).unwrap();
+              getrandom::fill(&mut buf).unwrap();
               fs::write("salt.txt", buf).unwrap();
               String::from_utf8(buf.to_vec()).unwrap()
             } else {
