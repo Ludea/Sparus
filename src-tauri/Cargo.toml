@@ -34,9 +34,10 @@ tokio-stream = "0.1"
 rust-argon2 = "2.1.0"
 getrandom = "0.3.1"
 async-lock = "3.4.0"
-tauri-plugin-stronghold = "2.0.0"
-tauri-plugin-store = "2.1.0"
-tauri-plugin-dialog = "2"
+tauri-plugin-stronghold = "2.1"
+tauri-plugin-store = "2.1"
+tauri-plugin-dialog = "2.1"
+tauri-plugin-os = "2.1"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 tauri-plugin-notification = "2.0.0"
@@ -44,7 +45,6 @@ tauri-plugin-process = "2.0.0"
 tauri-plugin-single-instance = "2.0.0"
 tauri-plugin-autostart = "2.0.0"
 tauri-plugin-shell = "2.0.0"
-tauri-plugin-os = "2.0.0"
 
 [features]
 default = [ "custom-protocol" ]
