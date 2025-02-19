@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import LoadingButton from "@mui/lab/LoadingButton";
+import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid2";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -175,7 +175,7 @@ function Footer() {
   const spawn = () => {
     const command = Command.create(shell, [
       ...arg,
-      "start ".concat(workspacePath, "/", gameName),
+      workspacePath.concat("/", gameName),
     ]);
 
     command
@@ -223,10 +223,10 @@ function Footer() {
         ) : null}
       </Grid>
       <Grid>
-        <LoadingButton
+        <Button
           variant="contained"
           color="primary"
-          disabled={gameRunning}
+          //disabled={gameRunning}
           loading={gameLoading}
           sx={{
             "&.Mui-disabled": {
@@ -265,7 +265,7 @@ function Footer() {
           }}
         >
           {gameState !== "installed" ? "Install" : "Play"}
-        </LoadingButton>
+        </Button>
       </Grid>
       {gameState === "installing" ? (
         <Grid
