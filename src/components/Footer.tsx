@@ -50,7 +50,6 @@ function Footer() {
   const [buffer, setBuffer] = useState(0);
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState<boolean>(false);
-  const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [gameName, setGameName] = useState<string>("kataster");
   const [repositoryUrl, setRepositoryUrl] = useState<string>();
@@ -178,14 +177,9 @@ function Footer() {
       workspacePath.concat("/", gameName),
     ]);
 
-    command
-      .spawn()
-      .then(() => {
-        setGameRunning(true);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
+    command.spawn().catch((err: unknown) => {
+      setGlobalError(err);
+    });
   };
 
   return (
