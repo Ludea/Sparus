@@ -13,7 +13,7 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 // Tauri api
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { Command } from "@tauri-apps/plugin-shell";
+import { Command, SpawnOptions } from "@tauri-apps/plugin-shell";
 import { arch, platform } from "@tauri-apps/plugin-os";
 
 const host = platform();
@@ -172,13 +172,17 @@ function Footer() {
   }, [gameName, store, setGlobalError, workspacePath]);
 
   const spawn = () => {
-    const command = Command.create(shell, [
-      ...arg,
-      workspacePath.concat("/", gameName),
-    ]);
+    const opts: SpawnOptions = {
+      env: { CARGO_MANIFEST_DIR: workspacePath },
+    };
+    const command = Command.create(
+      shell,
+      [...arg, workspacePath.concat("/", gameName)],
+      opts,
+    );
 
     command.spawn().catch((err: unknown) => {
-      setGlobalError(err);
+      console.log(err);
     });
   };
 
