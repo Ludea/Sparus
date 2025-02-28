@@ -192,7 +192,11 @@ function Options() {
                       setGlobalError(err);
                     });
                 }}
-                inputProps={{ "aria-label": "controlled" }}
+                slotProps={{
+                  input: {
+                    "aria-label": "controlled",
+                  },
+                }}
               />
             }
             label="Start Sparus on system boot"
