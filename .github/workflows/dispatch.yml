@@ -10,7 +10,7 @@ on:
       content:
         description: "Default value for store"
         required: true
-        default: '{"game_name:": ""}'
+        default: '{"game_name": ""}'
 
 jobs:
   build:
@@ -35,7 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Create json store
-        run: echo '${{ inputs.content }}' > '${{ inputs.filename }}'
+        run: |
+          echo '${{ inputs.content }}' > '${{ inputs.filename }}'
+          jq '.' ${{ inputs.filename }} > ${{ inputs.filename }}.tmp && mv ${{ inputs.filename }}.tmp ${{ inputs.filename }}
       - name: check if default file is created
         run: cat ${{ inputs.filename }}
       - name: setup node
