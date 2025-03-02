@@ -36,8 +36,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create json store
         run: |
-          echo '${{ inputs.content }}' > '${{ inputs.filename }}'
-          jq '.' ${{ inputs.filename }} > ${{ inputs.filename }}.tmp && mv ${{ inputs.filename }}.tmp ${{ inputs.filename }}
+          echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
+          jq '.' ${{ inputs.filename }}.tmp > ${{ inputs.filename }}
       - name: check if default file is created
         run: cat ${{ inputs.filename }}
       - name: setup node
