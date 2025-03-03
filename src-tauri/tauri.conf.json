@@ -18,7 +18,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": [],
+    "resources": {
+      "Sparus.json": "Sparus.json"
+    },
     "externalBin": [],
     "copyright": "",
     "category": "Game",

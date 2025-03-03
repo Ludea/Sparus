@@ -1,8 +1,12 @@
 use argon2::{hash_raw, Config, Variant, Version};
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::PermissionsExt;
-use std::{env, fs, io, path::Path};
+use std::{
+  env, fs, io,
+  path::{Path, PathBuf},
+};
 use tauri::command;
+use tauri::Manager;
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -63,11 +67,20 @@ pub fn run() {
 
   builder = tauri::Builder::default()
     .manage(spawner)
-    .setup(|_app| {
+    .setup(|app| {
+      let config_dir = app.path().app_data_dir().unwrap();
+      fs::create_dir_all(&config_dir).unwrap();
+      let default_store_file = PathBuf::from("Sparus.json");
+      let store_file_destination = config_dir.join("Sparus.json");
+      if !store_file_destination.exists() {
+        fs::copy(&default_store_file, &store_file_destination)
+          .expect("Cannot copy default Store file");
+      }
+
       tauri::async_runtime::spawn(rpc::start_rpc_client());
       #[cfg(desktop)]
       {
-        let handle = _app.handle();
+        let handle = app.handle();
         tray::create_tray(handle)?;
       }
 
