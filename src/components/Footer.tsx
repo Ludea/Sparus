@@ -51,7 +51,7 @@ function Footer() {
   const [gameState, setGameState] = useState("not_installed");
   const [gameLoading, setGameLoading] = useState<boolean>(false);
   const [workspacePath, setWorkspacePath] = useState<string>("");
-  const [gameName, setGameName] = useState<string>("kataster");
+  const [gameName, setGameName] = useState<string>("");
   const [repositoryUrl, setRepositoryUrl] = useState<string>();
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
@@ -88,6 +88,15 @@ function Footer() {
   }
 
   useEffect(() => {
+    store
+      .get<string>("game_name")
+      .then((name) => {
+        if (name) setGameName(name);
+      })
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
+
     store
       .get<string>("game_url")
       .then((value) => {
