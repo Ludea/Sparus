@@ -16,6 +16,8 @@ jobs:
       - name: Set short sha
         shell: bash
         run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+      - name: Set Sparus-sample as default store file
+        run: mv src-tauri/Sparus-sample.json src-tauri/Sparus.json
       - name: setup node
         uses: actions/setup-node@v4
         with:

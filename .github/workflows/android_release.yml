@@ -9,6 +9,8 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
+      - name: Set Sparus-sample as default store file
+        run: mv src-tauri/Sparus-sample.json src-tauri/Sparus.json
       - name: setup node
         uses: actions/setup-node@v4
         with:

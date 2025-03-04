@@ -16,6 +16,8 @@ To build Sparus, you need some packages:
 - `sudo apt update && sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev librsvg2-dev` (only for Linux)
 
 ### Build
+#### Prerequis
+You have to copy or move `Sparus-sample.json` to `Sparus.json` into `src-tauri` folder
 
 dev mode: `yarn tauri dev`  
 production mode: `yarn tauri build`
