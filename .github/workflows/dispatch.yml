@@ -41,7 +41,7 @@ jobs:
       - name: check if default file is created
         run: cat ${{ inputs.filename }}
       - name: Download Background image
-        run: curl --output-dir src/assets -LJO ${{ secrets.STORE_URL }}
+        run: curl --output-dir src/assets -LJO ${{ secrets.STORE_URL }}/DesktopBackground.jpg
       - name: Check downloaded image
         run: ls -l src/assets
       - name: setup node
