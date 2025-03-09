@@ -38,13 +38,10 @@ jobs:
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
           jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
-      - run: cat src-tauri/${{ inputs.filename }}
       - name: Get game name
         run: echo "GAME_NAME=$(jq -r '.game_name' src-tauri/${{ inputs.filename }})" >> $GITHUB_ENV
       - name: Download Background image
         run: curl --output-dir src/assets -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/DesktopBackground.jpg
-      - name: Check downloaded image
-        run: ls -l src/assets
       - name: setup node
         uses: actions/setup-node@v4
         with:
@@ -86,6 +83,6 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Sparus-${{ matrix.platform.target }}
+          name: Sparus_${{ matrix.platform.target }}
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
           if-no-files-found: error
