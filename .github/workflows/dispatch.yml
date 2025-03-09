@@ -1,4 +1,4 @@
-name: Build custom launcher 
+name: Build custom launcher
 
 on:
   workflow_dispatch:
