@@ -38,6 +38,7 @@ jobs:
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
           jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
+      - run: cat src-tauri/${{ inputs.filename }}
       - name: Get game name
         run: echo "GAME_NAME=$(jq -r '.game_name' src-tauri/${{ inputs.filename }}) >> $GITHUB_ENV
       - name: Download Background image
