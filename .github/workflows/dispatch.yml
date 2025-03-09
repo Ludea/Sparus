@@ -38,8 +38,6 @@ jobs:
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
           jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
-      - name: check if default file is created
-        run: cat ${{ inputs.filename }}
       - name: Get game name
         run: echo "GAME_NAME=$(jq -r '.game_name' Sparus.json) >> $GITHUB_ENV
       - name: Download Background image
