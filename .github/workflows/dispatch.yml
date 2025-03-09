@@ -37,7 +37,7 @@ jobs:
       - name: Create json store
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
-          jq '.' ${{ inputs.filename }}.tmp > ${{ inputs.filename }}
+          jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
       - name: check if default file is created
         run: cat ${{ inputs.filename }}
       - name: Download Background image
