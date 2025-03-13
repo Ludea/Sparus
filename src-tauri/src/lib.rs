@@ -5,8 +5,9 @@ use std::{
   env, fs, io,
   path::{Path, PathBuf},
 };
-use tauri::command;
-use tauri::Manager;
+use tauri::{command, Manager};
+use tauri_plugin_store::StoreExt;
+
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -76,6 +77,8 @@ pub fn run() {
         fs::copy(&default_store_file, &store_file_destination)
           .expect("Cannot copy default Store file");
       }
+
+      app.store("Sparus.json")?;
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
       #[cfg(desktop)]
