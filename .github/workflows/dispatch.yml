@@ -86,6 +86,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
+      - name: Upload Binaries to Update Server
+        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus_${{ matrix.platform.target }}
