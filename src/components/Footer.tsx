@@ -250,7 +250,7 @@ function Footer() {
                 repositoryUrl: repositoryUrl?.concat(
                   "/",
                   gameName,
-                  "/",
+                  "/game/",
                   platform,
                   "/",
                 ),
