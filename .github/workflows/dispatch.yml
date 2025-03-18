@@ -43,8 +43,8 @@ jobs:
         run: echo "GAME_NAME=$(jq -r '.game_name' src-tauri/${{ inputs.filename }})" >> $GITHUB_ENV
       - name: Download Background image and logo
         run: |
-          curl --output-dir src/assets -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/DesktopBackground.jpg
-          curl --output-dir src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/icon.png
+          curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/DesktopBackground.jpg
+          curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/icon.png
       - name: setup node
         uses: actions/setup-node@v4
         with:
