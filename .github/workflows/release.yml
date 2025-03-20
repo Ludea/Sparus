@@ -71,3 +71,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+      - name: "Build Changelog"
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          mode: "COMMIT"
+          configuration: "release_note_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
