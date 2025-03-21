@@ -32,6 +32,7 @@ jobs:
         with:
           mode: "COMMIT"
           failOnError: true
+          ignorePreReleases: false
           configuration: ".github/release_note_config.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
