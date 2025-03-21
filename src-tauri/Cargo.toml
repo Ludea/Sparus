@@ -1,6 +1,6 @@
 [package]
 name = "sparus"
-version = "0.2.0"
+version = "0.3.2"
 description = "Start and keep your game up-to-date with Sparus game launcher "
 authors = [ "Ludea" ]
 license = "Apache-2.0"
