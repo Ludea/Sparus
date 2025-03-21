@@ -32,7 +32,7 @@ jobs:
         with:
           mode: "COMMIT"
           failOnError: true
-          configuration: "release_note_config.json"
+          configuration: ".github/release_note_config.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set Sparus-sample as default store file
