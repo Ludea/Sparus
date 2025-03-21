@@ -21,15 +21,19 @@ jobs:
           - os: ubuntu-latest
             rust_target: x86_64-unknown-linux-gnu
             target: linux_x86_64
+            host: linux
           - os: macos-latest
             rust_target: x86_64-apple-darwin
             target: macos_x86_64
+            host: macos_x86_64
           - os: macos-latest
             rust_target: aarch64-apple-darwin
             target: macos_aarch64
+            host: macos_arm64
           - os: windows-latest
             rust_target: x86_64-pc-windows-msvc
             target: windows_x86_64
+            host: win64
 
     runs-on: ${{ matrix.platform.os }}
     steps:
@@ -87,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - name: Upload Binaries to Update Server
-        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries
+        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries/{{ matrix.platform.host }}
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus_${{ matrix.platform.target }}
