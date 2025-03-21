@@ -25,6 +25,7 @@ jobs:
 
     runs-on: ${{ matrix.platform.os }}
     steps:
+      - uses: actions/checkout@v4
       - name: "Build Changelog"
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v5
@@ -34,7 +35,6 @@ jobs:
           configuration: "release_note_config.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v4
       - name: Set Sparus-sample as default store file
         run: mv src-tauri/Sparus-sample.json src-tauri/Sparus.json
       - name: setup node
