@@ -16,7 +16,7 @@ jobs:
           - os: macos-13
             rust_target: x86_64-apple-darwin
             target: macos_x86_64
-          - os: macos-13-xlarge
+          - os: macos-13
             rust_target: aarch64-apple-darwin
             target: macos_aarch64
           - os: windows-2019
