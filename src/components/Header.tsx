@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Icons

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import TextField from "@mui/material/TextField";
 import Slide from "@mui/material/Slide";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
