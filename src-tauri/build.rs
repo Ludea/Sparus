@@ -2,7 +2,7 @@ use protox::prost::Message;
 use std::{env, fs, path::PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-  fs::rename("Sparus-sample.json", "Sparus.json")?;
+  fs::copy("Sparus-sample.json", "Sparus.json")?;
   
   let file_descriptors = protox::compile(["proto/echo.proto"], ["."]).unwrap();
 
