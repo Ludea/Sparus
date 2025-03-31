@@ -5,8 +5,13 @@ use std::{
   env, fs, io,
   path::{Path, PathBuf},
 };
-use tauri::{command, Manager};
+use tauri::{
+  command, path::BaseDirectory, utils::platform::current_exe, App, Manager, WebviewWindowBuilder,
+};
 use tauri_plugin_store::StoreExt;
+use tauri_runtime_verso::{
+  set_verso_path, set_verso_resource_directory, VersoRuntime, INVOKE_SYSTEM_SCRIPTS,
+};
 
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
@@ -66,8 +71,9 @@ pub fn run() {
   #[cfg(mobile)]
   let builder;
 
-  builder = tauri::Builder::default()
+  builder = tauri::Builder::<VersoRuntime>::new()
     .manage(spawner)
+    .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
@@ -81,6 +87,13 @@ pub fn run() {
       app.store("Sparus.json")?;
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+
+      setup_verso_paths(&app)?;
+
+      WebviewWindowBuilder::new(app, "main", Default::default())
+        .inner_size(900., 700.)
+        .build()?;
+
       #[cfg(desktop)]
       {
         let handle = app.handle();
@@ -170,4 +183,18 @@ fn is_executable(path: &Path) -> bool {
   } else {
     false
   }
+}
+
+fn setup_verso_paths(app: &App<VersoRuntime>) -> Result<(), Box<dyn std::error::Error>> {
+  let verso_resources_path = app
+    .path()
+    .resolve("verso-resources", BaseDirectory::Resource)?;
+  set_verso_resource_directory(verso_resources_path);
+  let verso_path = side_car_path("versoview").ok_or("Can't get verso path")?;
+  set_verso_path(verso_path);
+  Ok(())
+}
+
+fn side_car_path(name: &str) -> Option<PathBuf> {
+  Some(current_exe().ok()?.parent()?.join(name))
 }
