@@ -71,11 +71,11 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
 
   #[cfg(desktop)]
-  let mut app;
+  let mut builder: Builder<VersoRuntime>;
   #[cfg(mobile)]
-  let app;
+  let builder;
 
-  app = builder
+  builder = tauri::Builder::<VersoRuntime>::new()
     .manage(spawner)
     .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
@@ -139,7 +139,7 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
 
   #[cfg(desktop)]
   {
-    app
+    builder = builder
       .plugin(tauri_plugin_dialog::init())
       .plugin(tauri_plugin_notification::init())
       .plugin(tauri_plugin_shell::init())
@@ -152,7 +152,7 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
       ));
   }
 
-  app
+  let app = builder
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
       updater::update_available,
