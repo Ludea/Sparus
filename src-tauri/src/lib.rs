@@ -6,7 +6,8 @@ use std::{
   path::{Path, PathBuf},
 };
 use tauri::{
-  command, path::BaseDirectory, utils::platform::current_exe, App, Manager, WebviewWindowBuilder,
+  command, path::BaseDirectory, utils::platform::current_exe, App, Builder, Manager, Runtime,
+  WebviewWindowBuilder,
 };
 use tauri_plugin_store::StoreExt;
 use tauri_runtime_verso::{
@@ -61,17 +62,20 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
     Err("Unable to read dir".to_string())
   }
 }
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  let spawner = updater::LocalSpawner::new();
+  run_app(tauri::Builder::<VersoRuntime>::new())
+}
+
+pub fn run_app<R: Runtime>(builder: Builder<R>) {
+  let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
 
   #[cfg(desktop)]
-  let mut builder;
+  let mut app;
   #[cfg(mobile)]
-  let builder;
+  let app;
 
-  builder = tauri::Builder::<VersoRuntime>::new()
+  app = builder
     .manage(spawner)
     .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
@@ -88,7 +92,7 @@ pub fn run() {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
 
-      setup_verso_paths(&app)?;
+      setup_verso_paths(app)?;
 
       WebviewWindowBuilder::new(app, "main", Default::default())
         .inner_size(900., 700.)
@@ -135,7 +139,7 @@ pub fn run() {
 
   #[cfg(desktop)]
   {
-    builder = builder
+    app
       .plugin(tauri_plugin_dialog::init())
       .plugin(tauri_plugin_notification::init())
       .plugin(tauri_plugin_shell::init())
@@ -148,7 +152,7 @@ pub fn run() {
       ));
   }
 
-  let app = builder
+  app
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
       updater::update_available,
@@ -157,7 +161,7 @@ pub fn run() {
       get_game_exe_name
     ])
     .build(tauri::tauri_build_context!())
-    .expect("error while building tauri application");
+    .expect("error while building Sparus");
 
   app.run(move |_app_handle, _event| {
     #[cfg(desktop)]
@@ -185,7 +189,7 @@ fn is_executable(path: &Path) -> bool {
   }
 }
 
-fn setup_verso_paths(app: &App<VersoRuntime>) -> Result<(), Box<dyn std::error::Error>> {
+fn setup_verso_paths<R: Runtime>(app: &App<R>) -> Result<(), Box<dyn std::error::Error>> {
   let verso_resources_path = app
     .path()
     .resolve("verso-resources", BaseDirectory::Resource)?;
