@@ -67,15 +67,10 @@ pub fn run() {
   run_app(tauri::Builder::<VersoRuntime>::new())
 }
 
-pub fn run_app<R: Runtime>(builder: Builder<R>) {
+pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
 
-  #[cfg(desktop)]
-  let mut builder: Builder<VersoRuntime>;
-  #[cfg(mobile)]
-  let builder;
-
-  builder = tauri::Builder::<VersoRuntime>::new()
+  builder = builder
     .manage(spawner)
     .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
@@ -92,7 +87,7 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
 
-      setup_verso_paths(app)?;
+      setup_verso_paths(&app)?;
 
       WebviewWindowBuilder::new(app, "main", Default::default())
         .inner_size(900., 700.)
