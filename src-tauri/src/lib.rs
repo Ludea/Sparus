@@ -5,8 +5,14 @@ use std::{
   env, fs, io,
   path::{Path, PathBuf},
 };
-use tauri::{command, Manager};
+use tauri::{
+  command, path::BaseDirectory, utils::platform::current_exe, App, Builder, Manager, Runtime,
+  WebviewWindowBuilder,
+};
 use tauri_plugin_store::StoreExt;
+use tauri_runtime_verso::{
+  set_verso_path, set_verso_resource_directory, VersoRuntime, INVOKE_SYSTEM_SCRIPTS,
+};
 
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
@@ -56,18 +62,17 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
     Err("Unable to read dir".to_string())
   }
 }
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  let spawner = updater::LocalSpawner::new();
+  run_app(tauri::Builder::<VersoRuntime>::new())
+}
 
-  #[cfg(desktop)]
-  let mut builder;
-  #[cfg(mobile)]
-  let builder;
+pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
+  let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
 
-  builder = tauri::Builder::default()
+  builder = builder
     .manage(spawner)
+    .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
@@ -81,6 +86,13 @@ pub fn run() {
       app.store("Sparus.json")?;
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+
+      setup_verso_paths(&app)?;
+
+      WebviewWindowBuilder::new(app, "main", Default::default())
+        .inner_size(900., 700.)
+        .build()?;
+
       #[cfg(desktop)]
       {
         let handle = app.handle();
@@ -144,7 +156,7 @@ pub fn run() {
       get_game_exe_name
     ])
     .build(tauri::tauri_build_context!())
-    .expect("error while building tauri application");
+    .expect("error while building Sparus");
 
   app.run(move |_app_handle, _event| {
     #[cfg(desktop)]
@@ -170,4 +182,18 @@ fn is_executable(path: &Path) -> bool {
   } else {
     false
   }
+}
+
+fn setup_verso_paths<R: Runtime>(app: &App<R>) -> Result<(), Box<dyn std::error::Error>> {
+  let verso_resources_path = app
+    .path()
+    .resolve("verso-resources", BaseDirectory::Resource)?;
+  set_verso_resource_directory(verso_resources_path);
+  let verso_path = side_car_path("versoview").ok_or("Can't get verso path")?;
+  set_verso_path(verso_path);
+  Ok(())
+}
+
+fn side_car_path(name: &str) -> Option<PathBuf> {
+  Some(current_exe().ok()?.parent()?.join(name))
 }

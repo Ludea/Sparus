@@ -1,8 +1,12 @@
 use protox::prost::Message;
-use std::{env, fs, path::PathBuf};
+use std::{
+  env, fs,
+  path::{self, PathBuf},
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   fs::copy("Sparus-sample.json", "Sparus.json")?;
+  rename_verso();
 
   let file_descriptors = protox::compile(["proto/echo.proto"], ["."]).unwrap();
 
@@ -26,4 +30,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     .unwrap();
 
   Ok(())
+}
+
+fn rename_verso() {
+  let target_triple = std::env::var("TARGET").unwrap();
+  let base_path = PathBuf::from("../../verso/target/debug");
+  let ext = if cfg!(windows) { ".exe" } else { "" };
+
+  let from_path = path::absolute(base_path.join(format!("versoview{ext}"))).unwrap();
+  let to_path = path::absolute(base_path.join(format!("versoview-{target_triple}{ext}"))).unwrap();
+  fs::copy(&from_path, &to_path).unwrap();
+
+  println!("cargo:rerun-if-changed={}", from_path.display());
+  println!("cargo:rerun-if-changed={}", to_path.display());
 }

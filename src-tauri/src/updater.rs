@@ -65,9 +65,9 @@ struct DownloadInfos {
   applied_output_bytes_per_sec: Option<f64>,
 }
 
-pub enum Task {
+pub enum Task<R: Runtime> {
   UpdateWorkspace {
-    window: Window,
+    window: Window<R>,
     repo: AutoRepository,
     workspace: Arc<Mutex<Workspace>>,
     goal_version: Option<String>,
@@ -76,11 +76,11 @@ pub enum Task {
 }
 
 #[derive(Clone)]
-pub struct LocalSpawner {
-  send: mpsc::UnboundedSender<Task>,
+pub struct LocalSpawner<R: Runtime> {
+  send: mpsc::UnboundedSender<Task<R>>,
 }
 
-impl LocalSpawner {
+impl<R: Runtime> LocalSpawner<R> {
   pub fn new() -> Self {
     let (send, mut recv) = mpsc::unbounded_channel();
 
@@ -99,14 +99,14 @@ impl LocalSpawner {
     Self { send }
   }
 
-  pub fn spawn(&self, task: Task) {
+  pub fn spawn(&self, task: Task<R>) {
     if self.send.send(task).is_err() {
       panic!("Thread with LocalSet has shut down.")
     }
   }
 }
 
-async fn run_task(task: Task) {
+async fn run_task<R: Runtime>(task: Task<R>) {
   match task {
     Task::UpdateWorkspace {
       window,
@@ -163,9 +163,9 @@ async fn run_task(task: Task) {
 }
 
 #[command]
-pub async fn update_workspace(
-  window: Window,
-  spawner: tauri::State<'_, LocalSpawner>,
+pub async fn update_workspace<R: Runtime>(
+  window: Window<R>,
+  spawner: tauri::State<'_, LocalSpawner<R>>,
   workspace_path: &str,
   repository_url: &str,
   auth: Option<(&str, &str)>,

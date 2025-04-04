@@ -19,9 +19,12 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "Sparus.json": "Sparus.json"
+      "Sparus.json": "Sparus.json",
+      "../../verso/resources": "verso-resources"
     },
-    "externalBin": [],
+    "externalBin": [
+      "../../verso/target/debug/versoview"
+    ],
     "copyright": "",
     "category": "Game",
     "shortDescription": "",
@@ -50,6 +53,7 @@
   "identifier": "com.Sparus.dev",
   "plugins": {},
   "app": {
+    "withGlobalTauri": true,
     "security": {
       "csp": {
         "default-src": "'self'",
