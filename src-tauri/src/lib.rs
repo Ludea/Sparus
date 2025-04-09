@@ -64,6 +64,8 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 }
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+  set_verso_path("/workspaces/sparus/src-tauri/versoview-");
+  set_verso_resource_directory("verso-resources");
   run_app(tauri::Builder::<VersoRuntime>::new())
 }
 
@@ -87,10 +89,11 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
 
-      setup_verso_paths(&app)?;
+      //setup_verso_paths(&app)?;
 
       WebviewWindowBuilder::new(app, "main", Default::default())
         .inner_size(900., 700.)
+        .decorations(false)
         .build()?;
 
       #[cfg(desktop)]
@@ -184,16 +187,3 @@ fn is_executable(path: &Path) -> bool {
   }
 }
 
-fn setup_verso_paths<R: Runtime>(app: &App<R>) -> Result<(), Box<dyn std::error::Error>> {
-  let verso_resources_path = app
-    .path()
-    .resolve("verso-resources", BaseDirectory::Resource)?;
-  set_verso_resource_directory(verso_resources_path);
-  let verso_path = side_car_path("versoview").ok_or("Can't get verso path")?;
-  set_verso_path(verso_path);
-  Ok(())
-}
-
-fn side_car_path(name: &str) -> Option<PathBuf> {
-  Some(current_exe().ok()?.parent()?.join(name))
-}
