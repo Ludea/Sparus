@@ -5,10 +5,7 @@ use std::{
   env, fs, io,
   path::{Path, PathBuf},
 };
-use tauri::{
-  command, path::BaseDirectory, utils::platform::current_exe, App, Builder, Manager, Runtime,
-  WebviewWindowBuilder,
-};
+use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 use tauri_runtime_verso::{
   set_verso_path, set_verso_resource_directory, VersoRuntime, INVOKE_SYSTEM_SCRIPTS,
@@ -64,7 +61,7 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 }
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  set_verso_path("/workspaces/sparus/src-tauri/versoview-");
+  set_verso_path("versoview");
   set_verso_resource_directory("verso-resources");
   run_app(tauri::Builder::<VersoRuntime>::new())
 }
@@ -186,4 +183,3 @@ fn is_executable(path: &Path) -> bool {
     false
   }
 }
-
