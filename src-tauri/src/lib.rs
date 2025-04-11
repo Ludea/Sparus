@@ -61,8 +61,8 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 }
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  set_verso_path("versoview");
-  set_verso_resource_directory("verso-resources");
+  set_verso_path("./versoview");
+  set_verso_resource_directory("./resources");
   run_app(tauri::Builder::<VersoRuntime>::new())
 }
 
@@ -86,10 +86,9 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
 
-      //setup_verso_paths(&app)?;
 
       WebviewWindowBuilder::new(app, "main", Default::default())
-        .inner_size(900., 700.)
+        .inner_size(800., 600.)
         .decorations(false)
         .build()?;
 
