@@ -5,8 +5,11 @@ use std::{
   env, fs, io,
   path::{Path, PathBuf},
 };
-use tauri::{command, Manager};
+use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
+use tauri_runtime_verso::{
+  set_verso_path, set_verso_resource_directory, VersoRuntime, INVOKE_SYSTEM_SCRIPTS,
+};
 
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
@@ -56,18 +59,19 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
     Err("Unable to read dir".to_string())
   }
 }
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  let spawner = updater::LocalSpawner::new();
+  set_verso_path("./versoview");
+  set_verso_resource_directory("./resources");
+  run_app(tauri::Builder::<VersoRuntime>::new())
+}
 
-  #[cfg(desktop)]
-  let mut builder;
-  #[cfg(mobile)]
-  let builder;
+pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
+  let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
 
-  builder = tauri::Builder::default()
+  builder = builder
     .manage(spawner)
+    .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
@@ -81,6 +85,13 @@ pub fn run() {
       app.store("Sparus.json")?;
 
       tauri::async_runtime::spawn(rpc::start_rpc_client());
+
+
+      WebviewWindowBuilder::new(app, "main", Default::default())
+        .inner_size(800., 600.)
+        .decorations(false)
+        .build()?;
+
       #[cfg(desktop)]
       {
         let handle = app.handle();
@@ -144,7 +155,7 @@ pub fn run() {
       get_game_exe_name
     ])
     .build(tauri::tauri_build_context!())
-    .expect("error while building tauri application");
+    .expect("error while building Sparus");
 
   app.run(move |_app_handle, _event| {
     #[cfg(desktop)]
