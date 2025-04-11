@@ -6,8 +6,8 @@ use std::{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let versoview_output_path = ".";
-  if !Path::new(&format!("{}/{}", versoview_output_path, "versoview")).exists()
-    && Path::new(&format!("{}/{}", versoview_output_path, "versoview")).is_file()
+  if !Path::new(&format!("{}/{}", versoview_output_path, "./versoview")).exists()
+    && Path::new(&format!("{}/{}", versoview_output_path, "./versoview")).is_file()
   {
     versoview_build::download_and_extract_verso(versoview_output_path).unwrap();
     rename_verso(versoview_output_path);
