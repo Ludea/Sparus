@@ -12,7 +12,7 @@
       "timestampUrl": ""
     },
     "externalBin": [
-      "versoview"
+      "versoview/versoview"
     ],
     "icon": [
       "icons/32x32.png",
@@ -22,8 +22,7 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "Sparus.json": "Sparus.json",
-      "resources": "verso-resources"
+      "Sparus.json": "Sparus.json"
     },
     "copyright": "",
     "category": "Game",

@@ -1,17 +1,8 @@
 use protox::prost::Message;
-use std::{
-  env, fs,
-  path::{self, Path, PathBuf},
-};
+use std::{env, fs, path::PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let versoview_output_path = ".";
-  if !Path::new(&format!("{}/{}", versoview_output_path, "./versoview")).exists()
-    && Path::new(&format!("{}/{}", versoview_output_path, "./versoview")).is_file()
-  {
-    versoview_build::download_and_extract_verso(versoview_output_path).unwrap();
-    rename_verso(versoview_output_path);
-  }
+  tauri_runtime_verso_build::get_verso_as_external_bin().unwrap();
 
   fs::copy("Sparus-sample.json", "Sparus.json")?;
   let file_descriptors = protox::compile(["proto/echo.proto"], ["."]).unwrap();
@@ -36,18 +27,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     .unwrap();
 
   Ok(())
-}
-
-fn rename_verso(verso_path: &str) {
-  let target_triple = std::env::var("TARGET").unwrap();
-  let base_path = PathBuf::from(verso_path);
-  let ext = if cfg!(windows) { ".exe" } else { "" };
-
-  let from_path = path::absolute(base_path.join(format!("versoview{ext}"))).unwrap();
-  let to_path = path::absolute(base_path.join(format!("versoview-{target_triple}{ext}"))).unwrap();
-
-  fs::copy(&from_path, &to_path).unwrap();
-
-  println!("cargo:rerun-if-changed={}", from_path.display());
-  println!("cargo:rerun-if-changed={}", to_path.display());
 }
