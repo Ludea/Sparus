@@ -67,7 +67,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
   builder = builder
     .manage(spawner)
-    .invoke_system(INVOKE_SYSTEM_SCRIPTS.to_owned())
+    .invoke_system(INVOKE_SYSTEM_SCRIPTS)
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
