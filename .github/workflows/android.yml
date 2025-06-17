@@ -52,7 +52,7 @@ jobs:
               ln -sf "$new_target" "$link"
               echo "Changed $(basename "$link") from $current_target to $new_target"
           done
-      - name: Install yarn deps
+      - name: Install pnpm deps
         run: pnpm install
       - name: Prettier
         run: pnpm prettier
