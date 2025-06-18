@@ -16,7 +16,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = ["codegen"] }
 tonic-build = { version = "0.13.0", features = [] }
-protox = "0.8"
+protox = "0.9"
 
 [dependencies]
 once_cell = "1.16"
