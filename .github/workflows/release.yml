@@ -19,7 +19,7 @@ jobs:
           - os: macos-13
             rust_target: aarch64-apple-darwin
             target: macos_aarch64
-          - os: windows-2019
+          - os: windows-2022
             rust_target: x86_64-pc-windows-msvc
             target: windows_x86_64
 
