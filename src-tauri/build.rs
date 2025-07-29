@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   )
   .expect("failed to run tauri-build");
 
-  tonic_build::configure()
+  tonic_prost_build::configure()
     .skip_protoc_run()
     .file_descriptor_set_path(&file_descriptor_path)
     .compile_protos(&["proto/echo.proto"], &["proto"])
