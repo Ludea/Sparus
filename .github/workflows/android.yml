@@ -12,7 +12,7 @@ jobs:
   android_build:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set short sha
         shell: bash
         run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV

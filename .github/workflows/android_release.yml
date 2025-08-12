@@ -8,7 +8,7 @@ jobs:
   android_release:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set Sparus-sample as default store file
         run: mv src-tauri/Sparus-sample.json src-tauri/Sparus.json
       - name: setup node
