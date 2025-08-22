@@ -387,6 +387,12 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables call_plugin_function command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-call-plugin-function",
+          "markdownDescription": "Enables call_plugin_function command without any pre-configured scope."
+        },
+        {
           "description": "Enables the check_if_installed command without any pre-configured scope.",
           "type": "string",
           "const": "allow-check-if-installed",
@@ -415,6 +421,12 @@
           "type": "string",
           "const": "allow-update-workspace",
           "markdownDescription": "Enables the update_workspace command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the call_plugin_function command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-call-plugin-function",
+          "markdownDescription": "Denies the call_plugin_function command without any pre-configured scope."
         },
         {
           "description": "Denies the check_if_installed command without any pre-configured scope.",

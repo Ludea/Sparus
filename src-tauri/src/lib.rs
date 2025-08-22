@@ -14,6 +14,7 @@ use tauri_plugin_autostart::MacosLauncher;
 #[cfg(desktop)]
 use tauri::RunEvent;
 
+mod plugins;
 mod rpc;
 #[cfg(desktop)]
 mod tray;
@@ -60,6 +61,7 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
+  let plugins = plugins::PluginSystem::new();
 
   #[cfg(desktop)]
   let mut builder;
@@ -68,6 +70,7 @@ pub fn run() {
 
   builder = tauri::Builder::default()
     .manage(spawner)
+    .manage(plugins)
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
@@ -140,6 +143,7 @@ pub fn run() {
       updater::update_workspace,
       updater::update_available,
       updater::check_if_installed,
+      plugins::call_plugin_function,
       get_current_path,
       get_game_exe_name
     ])

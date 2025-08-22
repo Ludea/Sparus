@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-call-plugin-function"
+description = "Enables call_plugin_function command without any pre-configured scope."
+commands.allow = ["call_plugin_function"]
+
+[[permission]]
+identifier = "deny-call-plugin-function"
+description = "Denies the call_plugin_function command without any pre-configured scope."
+commands.deny = ["call_plugin_function"]
