@@ -17,17 +17,17 @@ impl WasiView for ComponentRunStates {
   }
 }
 
-#[derive(Clone)]
 pub struct PluginSystem {
   engine: Engine,
 }
 
 impl PluginSystem {
-  pub async fn new() -> Result<Self> {
+  pub fn new() -> Self {
     let mut config = Config::new();
     config.async_support(true);
-    let engine = Engine::new(&config)?;
-    Ok(Self { engine })
+    let engine =
+      Engine::new(&config).unwrap_or_else(|err| panic!("Unable to start wasm runtime: {}", err));
+    Self { engine }
   }
 
   async fn call(&self, plugin: String, function: String) -> Result<()> {

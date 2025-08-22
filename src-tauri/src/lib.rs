@@ -61,7 +61,7 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   let spawner = updater::LocalSpawner::new();
-  let plugins = plugins::PluginSystem::new();
+  let plugins_manager = plugins::PluginSystem::new();
 
   #[cfg(desktop)]
   let mut builder;
@@ -70,7 +70,7 @@ pub fn run() {
 
   builder = tauri::Builder::default()
     .manage(spawner)
-    .manage(plugins)
+    .manage(plugins_manager)
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
