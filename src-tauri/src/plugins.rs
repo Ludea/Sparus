@@ -60,9 +60,9 @@ pub async fn call_plugin_function(
   state: State<'_, PluginSystem>,
   plugin: String,
   function: String,
-) -> std::result::Result<(), ()> {
+) -> std::result::Result<(), String> {
   if let Err(err) = state.call(plugin, function).await {
-    println!("err: {:?}", err);
+    return Err(err.to_string());
   }
   Ok(())
 }
