@@ -11,9 +11,7 @@ const SparusErrorContext = createContext<SparusError>({
   setGlobalError: () => undefined,
 });
 
-const store = new LazyStore("Sparus.json", {
-  autoSave: true,
-});
+const store = new LazyStore("Sparus.json");
 
 const SparusStoreContext = createContext(store);
 
