@@ -3,6 +3,17 @@ use wasmtime::component::{Component, Linker, ResourceTable};
 use wasmtime::*;
 use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
 
+#[derive(serde::Serialize)]
+pub enum WasmtimeErr {
+  Wasmerr(String),
+}
+
+impl From<wasmtime::Error> for WasmtimeErr {
+  fn from(err: wasmtime::Error) -> Self {
+    WasmtimeErr::Wasmerr(err.to_string())
+  }
+}
+
 pub struct ComponentRunStates {
   pub wasi_ctx: WasiCtx,
   pub resource_table: ResourceTable,
@@ -30,7 +41,7 @@ impl PluginSystem {
     Self { engine }
   }
 
-  async fn call(&self, plugin: String, function: String) -> Result<()> {
+  async fn call(&self, plugin: String, function: String) -> Result<f32> {
     let file_path = "plugins";
     let mut linker = Linker::new(&self.engine);
     wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
@@ -44,14 +55,19 @@ impl PluginSystem {
     let plugin_full_path = file_path.to_owned() + "/" + &plugin + ".wasm";
     let component = Component::from_file(&self.engine, plugin_full_path)?;
     let instance = linker.instantiate_async(&mut store, &component).await?;
-    let mut result = [];
+    let mut result = [wasmtime::component::Val::U8(0)];
     if let Some(func) = instance.get_func(&mut store, function) {
       func.call_async(&mut store, &[], &mut result).await?;
-      println!("result : {:?}", result);
+      if let wasmtime::component::Val::Float32(f32_value) = result[0] {
+        Ok(f32_value)
+      } else {
+        let err = std::io::Error::other("error on returned value");
+        Err(err.into())
+      }
     } else {
-      println!("No func")
+      let err = std::io::Error::other("function does not exist");
+      Err(err.into())
     }
-    Ok(())
   }
 }
 
@@ -60,9 +76,7 @@ pub async fn call_plugin_function(
   state: State<'_, PluginSystem>,
   plugin: String,
   function: String,
-) -> std::result::Result<(), String> {
-  if let Err(err) = state.call(plugin, function).await {
-    return Err(err.to_string());
-  }
-  Ok(())
+) -> std::result::Result<f32, WasmtimeErr> {
+  let result = state.call(plugin, function).await?;
+  Ok(result)
 }
