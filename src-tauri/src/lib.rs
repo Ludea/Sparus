@@ -81,9 +81,19 @@ pub fn run() {
           .expect("Cannot copy default Store file");
       }
 
-      app.store("Sparus.json")?;
+      let store = app.store("Sparus.json")?;
+      let url = match store.get("launcher_url") {
+        Some(url_json) => {
+          if let tauri_plugin_store::JsonValue::String(url_string) = url_json {
+            url_string
+          } else {
+            "http://127.0.0.1:8112".to_string()
+          }
+        }
+        None => "http://127.0.0.1:8112".to_string(),
+      };
 
-      tauri::async_runtime::spawn(rpc::start_rpc_client());
+      tauri::async_runtime::spawn(rpc::start_rpc_client(url));
       #[cfg(desktop)]
       {
         let handle = app.handle();

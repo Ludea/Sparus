@@ -19,8 +19,8 @@ async fn streaming_echo(client: &mut LucleClient<Channel>, num: usize) {
   }
 }
 
-pub async fn start_rpc_client() -> Result<(), Box<dyn std::error::Error + Send>> {
-  if let Ok(mut client) = LucleClient::connect("http://127.0.0.1:50051").await {
+pub async fn start_rpc_client(url: String) -> Result<(), Box<dyn std::error::Error + Send>> {
+  if let Ok(mut client) = LucleClient::connect(url).await {
     streaming_echo(&mut client, 17).await;
   }
   Ok(())
