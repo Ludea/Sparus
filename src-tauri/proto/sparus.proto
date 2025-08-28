@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package sparus;
+
+service event {
+  rpc Sparus (Empty) returns (stream Message);
+}
+
+message Message {
+  string plugin = 1;
+}
+
+message Empty {}

@@ -4,7 +4,7 @@ use std::{env, fs, path::PathBuf};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   fs::copy("Sparus-sample.json", "Sparus.json")?;
 
-  let file_descriptors = protox::compile(["proto/echo.proto"], ["."]).unwrap();
+  let file_descriptors = protox::compile(["proto/sparus.proto"], ["."]).unwrap();
 
   let file_descriptor_path =
     PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR not set")).join("file_descriptor_set.bin");
@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   tonic_prost_build::configure()
     .skip_protoc_run()
     .file_descriptor_set_path(&file_descriptor_path)
-    .compile_protos(&["proto/echo.proto"], &["proto"])
+    .compile_protos(&["proto/sparus.proto"], &["proto"])
     .unwrap();
 
   Ok(())
