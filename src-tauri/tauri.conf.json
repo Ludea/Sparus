@@ -4,7 +4,8 @@
     "targets": [
       "msi",
       "deb",
-      "dmg"
+      "dmg",
+      "rpm"
     ],
     "windows": {
       "certificateThumbprint": null,
