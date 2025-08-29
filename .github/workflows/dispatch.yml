@@ -17,25 +17,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - os: ubuntu-latest
+        include:
+          - platform: ubuntu-latest
             rust_target: x86_64-unknown-linux-gnu
             target: linux_x86_64
             host: linux
-          - os: macos-latest
+          - platform: macos-latest
             rust_target: x86_64-apple-darwin
             target: macos_x86_64
             host: macos_x86_64
-          - os: macos-latest
+          - platform: macos-latest
             rust_target: aarch64-apple-darwin
             target: macos_aarch64
             host: macos_arm64
-          - os: windows-latest
+          - platform: windows-latest
             rust_target: x86_64-pc-windows-msvc
             target: windows_x86_64
             host: win64
 
-    runs-on: ${{ matrix.platform.os }}
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v5
       - name: Create json store
@@ -60,12 +60,12 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          target: ${{ matrix.platform.rust_target }}
+          target: ${{ matrix.rust_target }}
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri/
       - name: install webkit2gtk (ubuntu only)
-        if: matrix.platform.os == 'ubuntu-latest'
+        if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
@@ -86,7 +86,7 @@ jobs:
       - uses: JonasKruckenberg/tauri-build@next
         id: build
         with:
-          target: ${{ matrix.platform.rust_target }}
+          target: ${{ matrix.rust_target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
@@ -94,6 +94,6 @@ jobs:
         run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries/${{ matrix.platform.host }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Sparus_${{ matrix.platform.target }}
+          name: Sparus_${{ matrix.target }}
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
           if-no-files-found: error
