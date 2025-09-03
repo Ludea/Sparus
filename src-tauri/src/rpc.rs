@@ -11,7 +11,7 @@ use tonic::transport::Channel;
 #[derive(serde::Serialize, Debug)]
 pub enum DownloadError {
   Httperror(String),
-  Io(String)
+  Io(String),
 }
 
 impl From<std::io::Error> for DownloadError {
