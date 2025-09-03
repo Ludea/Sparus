@@ -103,6 +103,7 @@ pub fn run() {
       Ok(())
     })
     .plugin(tauri_plugin_os::init())
+    .plugin(tauri_plugin_http::init())
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = Config {

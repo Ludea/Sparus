@@ -41,6 +41,7 @@ tauri-plugin-stronghold = "2.1"
 tauri-plugin-store = "2.1"
 tauri-plugin-dialog = "2.1"
 tauri-plugin-os = "2.1"
+tauri-plugin-http = "2.1"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 tauri-plugin-notification = "2.0.0"

@@ -6,8 +6,15 @@ service event {
   rpc Sparus (Empty) returns (stream Message);
 }
 
+enum EventType {
+  INSTALL = 0;
+  UPDATE = 1;
+  DELETE = 2;
+}
+
 message Message {
   string plugin = 1;
+  EventType event_type = 2;
 }
 
 message Empty {}
