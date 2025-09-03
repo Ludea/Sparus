@@ -26,32 +26,36 @@ impl From<reqwest::Error> for DownloadError {
   }
 }
 
-async fn start_streaming(client: &mut EventClient<Channel>) -> Result<(), DownloadError> {
+async fn start_streaming(
+  client: &mut EventClient<Channel>,
+  url: String,
+) -> Result<(), DownloadError> {
   let mut stream = client.sparus(Empty {}).await.unwrap().into_inner();
 
   while let Ok(Some(item)) = stream.message().await {
+    let plugin_name = item.plugin;
+    let url = format!("{}/plugins/{}", url, plugin_name);
     let event = EventType::try_from(item.event_type);
     if event == Ok(EventType::Install) {
-      if let Err(err) = download_file("").await {
+      if let Err(err) = download_file(url, plugin_name).await {
         println!("error: {:?}", err);
       }
-      println!("\treceived: {:?}", item.plugin);
     }
   }
   Ok(())
 }
 
 pub async fn start_rpc_client(url: String) -> Result<(), DownloadError> {
-  if let Ok(mut client) = EventClient::connect(url).await {
-    start_streaming(&mut client).await?;
+  if let Ok(mut client) = EventClient::connect(url.clone()).await {
+    start_streaming(&mut client, url).await?;
   }
   Ok(())
 }
 
-async fn download_file(url: &'static str) -> Result<(), DownloadError> {
+async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadError> {
   let response = reqwest::get(url).await?;
   let mut stream = response.bytes_stream();
-  let mut file = File::create("foo").await?;
+  let mut file = File::create(format!("{}.wasm", plugin_name)).await?;
   while let Some(chunk) = stream.next().await {
     let data = chunk?;
     file.write_all(&data).await?;
