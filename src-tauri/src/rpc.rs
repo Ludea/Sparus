@@ -60,7 +60,7 @@ async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadE
   let response = reqwest::get(url).await?;
   let mut stream = response.bytes_stream();
   let plugins_dir = Path::new("plugins");
-  fs::create_dir(plugins_dir).await?;
+  fs::create_dir_all(plugins_dir).await?;
   let file_path = plugins_dir.join(format!("{}.wasm", &plugin_name));
   let mut file = File::create(file_path).await?;
   while let Some(chunk) = stream.next().await {
