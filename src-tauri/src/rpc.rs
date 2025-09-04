@@ -4,8 +4,12 @@ pub mod sparus {
 
 use futures::StreamExt;
 use sparus::{event_client::EventClient, Empty, EventType};
+use std::path::Path;
 use tauri_plugin_http::reqwest;
-use tokio::{fs::File, io::AsyncWriteExt};
+use tokio::{
+  fs::{self, File},
+  io::AsyncWriteExt,
+};
 use tonic::transport::Channel;
 
 #[derive(serde::Serialize, Debug)]
@@ -55,7 +59,10 @@ pub async fn start_rpc_client(url: String) -> Result<(), DownloadError> {
 async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadError> {
   let response = reqwest::get(url).await?;
   let mut stream = response.bytes_stream();
-  let mut file = File::create(format!("{}.wasm", plugin_name)).await?;
+  let plugins_dir = Path::new("plugins");
+  fs::create_dir(plugins_dir).await?;
+  let file_path = plugins_dir.join(format!("{}.wasm", &plugin_name));
+  let mut file = File::create(file_path).await?;
   while let Some(chunk) = stream.next().await {
     let data = chunk?;
     file.write_all(&data).await?;
