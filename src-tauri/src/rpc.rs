@@ -2,6 +2,7 @@ pub mod sparus {
   tonic::include_proto!("sparus");
 }
 
+use crate::rpc::reqwest::StatusCode;
 use futures::StreamExt;
 use sparus::{event_client::EventClient, Empty, EventType};
 use std::path::Path;
@@ -58,14 +59,18 @@ pub async fn start_rpc_client(url: String) -> Result<(), DownloadError> {
 
 async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadError> {
   let response = reqwest::get(url).await?;
-  let mut stream = response.bytes_stream();
-  let plugins_dir = Path::new("plugins");
-  fs::create_dir_all(plugins_dir).await?;
-  let file_path = plugins_dir.join(format!("{}.wasm", &plugin_name));
-  let mut file = File::create(file_path).await?;
-  while let Some(chunk) = stream.next().await {
-    let data = chunk?;
-    file.write_all(&data).await?;
+  if response.status() == StatusCode::OK {
+    let mut stream = response.bytes_stream();
+    let plugins_dir = Path::new("plugins");
+    fs::create_dir_all(plugins_dir).await?;
+    let file_path = plugins_dir.join(format!("{}.wasm", &plugin_name));
+    let mut file = File::create(file_path).await?;
+    while let Some(chunk) = stream.next().await {
+      let data = chunk?;
+      file.write_all(&data).await?;
+    }
+    Ok(())
+  } else {
+    Err(DownloadError::Httperror("Plugin not found".to_string()))
   }
-  Ok(())
 }
