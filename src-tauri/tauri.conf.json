@@ -22,7 +22,9 @@
     "resources": {
       "Sparus.json": "Sparus.json"
     },
-    "externalBin": [],
+     "externalBin": [
+      "versoview/versoview"
+    ],
     "copyright": "",
     "category": "Game",
     "shortDescription": "",
@@ -51,22 +53,13 @@
   "identifier": "com.Sparus.dev",
   "plugins": {},
   "app": {
+    "withGlobalTauri": true,
     "security": {
       "csp": {
         "default-src": "'self'",
         "connect-src": "ipc: http://ipc.localhost",
         "style-src": "'unsafe-inline' 'self'"
       }
-    },
-    "windows": [
-      {
-        "title": "Sparus",
-        "width": 800,
-        "height": 600,
-        "resizable": false,
-        "decorations": false,
-        "fullscreen": false
-      }
-    ]
+    }
   }
 }
