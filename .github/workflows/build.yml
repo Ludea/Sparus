@@ -30,6 +30,7 @@ jobs:
           - platform: ubuntu-latest
             rust_target: aarch64-linux-android
             target: aarch64
+            mobile: android
 
     runs-on: ${{ matrix.platform }}
     steps:
