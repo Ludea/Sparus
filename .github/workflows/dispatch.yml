@@ -50,7 +50,7 @@ jobs:
           curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/DesktopBackground.jpg
           curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/icon.png
       - name: setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
       - uses: pnpm/action-setup@v4
