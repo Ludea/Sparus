@@ -89,7 +89,7 @@ jobs:
       - uses: Ludea/tauri-build@next
         id: build
         with:
-          target: ${{ matrix.rust_target }}
+          target: ${{ matrix.android && matrix.target || matrix.rust_target }}
           mobile: ${{ matrix.android }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
