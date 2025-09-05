@@ -26,6 +26,9 @@ jobs:
           - platform: windows-latest
             rust_target: x86_64-pc-windows-msvc
             target: windows_x86_64
+          - platform: ubuntu-latest
+            rust_target: aarch64-linux-android
+            target: aarch64
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -33,6 +36,22 @@ jobs:
       - name: Set short sha
         shell: bash
         run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+      - name: Setup Java
+        if: matrix.android
+        uses: actions/setup-java@v5
+        with:
+          distribution: "zulu"
+          java-version: "17"
+      - name: Setup Android SDK
+        if: matrix.android
+        uses: android-actions/setup-android@v3
+      - name: Setup Android NDK
+        if: matrix.android
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r26d
+          link-to-sdk: true
       - name: setup node
         uses: actions/setup-node@v5
         with:
@@ -69,11 +88,26 @@ jobs:
         id: build
         with:
           target: ${{ matrix.rust_target }}
+          mobile: ${{ matrix.android }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - uses: filippoLeporati93/android-release-signer@v1
+        if: matrix.android
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
         with:
           name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.target }}
-          path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
-          if-no-files-found: error
+          path: |
+            ${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}
+            ${{steps.sign_app.outputs.signedReleaseFile}}
