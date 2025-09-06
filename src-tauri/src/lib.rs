@@ -9,7 +9,7 @@ use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(desktop)]
-use tauri_runtime_verso::{VersoRuntime, INVOKE_SYSTEM_SCRIPTS};
+use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
 
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
@@ -64,7 +64,7 @@ fn get_game_exe_name(path: String) -> Result<String, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   #[cfg(desktop)]
-  run_app(tauri::Builder::<VersoRuntime>::new());
+  run_app(tauri_runtime_verso::builder());
   #[cfg(mobile)]
   run_app(tauri::Builder::<Runtime>::new());
 }
