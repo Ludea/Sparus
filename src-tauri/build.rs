@@ -2,7 +2,7 @@ use protox::prost::Message;
 use std::{env, fs, path::PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-  #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))
+  #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
   tauri_runtime_verso_build::get_verso_as_external_bin().unwrap();
 
   fs::copy("Sparus-sample.json", "Sparus.json")?;
