@@ -1,6 +1,8 @@
 use tauri::{command, State};
-use wasmtime::component::{Component, Linker, ResourceTable};
-use wasmtime::*;
+use wasmtime::{
+  component::{Component, Linker, ResourceTable},
+  *,
+};
 use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
 
 #[derive(serde::Serialize)]

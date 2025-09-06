@@ -7,6 +7,8 @@ use std::{
 };
 use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
+
+#[cfg(desktop)]
 use tauri_runtime_verso::{VersoRuntime, INVOKE_SYSTEM_SCRIPTS};
 
 #[cfg(desktop)]
