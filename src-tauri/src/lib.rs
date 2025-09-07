@@ -66,7 +66,7 @@ pub fn run() {
   #[cfg(desktop)]
   run_app(tauri_runtime_verso::builder());
   #[cfg(mobile)]
-  run_app(tauri::Builder::<Runtime>::new());
+  run_app(tauri::Builder::default());
 }
 
 pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
