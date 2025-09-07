@@ -19,7 +19,7 @@ tonic-prost-build = "0.14.0"
 protox = "0.9"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.build-dependencies]
-tauri-runtime-verso-build = { git = "https://github.com/versotile-org/tauri-runtime-verso" }
+tauri-runtime-verso-build = { git = "https://github.com/ludea/tauri-runtime-verso", branch = "mobile" }
 
 [dependencies]
 once_cell = "1.16"
