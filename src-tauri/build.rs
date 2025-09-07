@@ -3,8 +3,9 @@ use std::{env, fs, path::PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+  println!("Test : {}", target_os);
   if target_os != "android" || target_os != "ios" {
-    tauri_runtime_verso_build::get_verso_as_external_bin().unwrap();
+    let _ = tauri_runtime_verso_build::get_verso_as_external_bin();
   }
 
   fs::copy("Sparus-sample.json", "Sparus.json")?;
