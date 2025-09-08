@@ -9,11 +9,11 @@ use tauri::{command, Builder, Manager, Runtime};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(desktop)]
-use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
-#[cfg(desktop)]
 use tauri::WebviewWindowBuilder;
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
+#[cfg(desktop)]
+use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
 
 #[cfg(desktop)]
 use tauri::RunEvent;
