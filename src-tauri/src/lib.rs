@@ -9,14 +9,11 @@ use tauri::{command, Builder, Manager, Runtime};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(desktop)]
-use tauri::WebviewWindowBuilder;
+use tauri::{RunEvent, WebviewWindowBuilder};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 #[cfg(desktop)]
 use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
-
-#[cfg(desktop)]
-use tauri::RunEvent;
 
 mod plugins;
 mod rpc;
@@ -105,13 +102,12 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
       tauri::async_runtime::spawn(rpc::start_rpc_client(url));
 
       #[cfg(desktop)]
-      WebviewWindowBuilder::new(app, "main", Default::default())
-        .inner_size(800., 600.)
-        .decorations(false)
-        .build()?;
-
-      #[cfg(desktop)]
       {
+        WebviewWindowBuilder::new(app, "main", Default::default())
+          .inner_size(800., 600.)
+          .decorations(false)
+          .build()?;
+
         let handle = app.handle();
         tray::create_tray(handle)?;
       }
