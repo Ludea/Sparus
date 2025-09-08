@@ -69,14 +69,16 @@ pub fn run() {
   run_app(tauri::Builder::default());
 }
 
-pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
+pub fn run_app<R: Runtime>(builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager = plugins::PluginSystem::new();
+
+  #[cfg(desktop)]
+  let mut builder = builder.invoke_system(INVOKE_SYSTEM_SCRIPTS);
 
   builder = builder
     .manage(spawner)
     .manage(plugins_manager)
-    .invoke_system(INVOKE_SYSTEM_SCRIPTS)
     .setup(|app| {
       let config_dir = app.path().app_data_dir().unwrap();
       fs::create_dir_all(&config_dir).unwrap();
@@ -101,6 +103,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(url));
 
+      #[cfg(desktop)]
       WebviewWindowBuilder::new(app, "main", Default::default())
         .inner_size(800., 600.)
         .decorations(false)
