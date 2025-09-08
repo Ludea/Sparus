@@ -54,6 +54,10 @@ tauri-plugin-autostart = "2.0.0"
 tauri-plugin-shell = "2.0.0"
 tauri-runtime-verso = { git = "https://github.com/versotile-org/tauri-runtime-verso" }
 
+
+[target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
+tauri = "2.0.0"
+
 [features]
 default = [ "custom-protocol" ]
 custom-protocol = [ "tauri/custom-protocol" ]
