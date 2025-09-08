@@ -67,12 +67,9 @@ pub fn run() {
   run_app(tauri::Builder::default());
 }
 
-pub fn run_app<R: Runtime>(builder: Builder<R>) {
+pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager = plugins::PluginSystem::new();
-
-  #[cfg(desktop)]
-  let mut builder = builder.invoke_system(INVOKE_SYSTEM_SCRIPTS);
 
   builder = builder
     .manage(spawner)
@@ -149,6 +146,7 @@ pub fn run_app<R: Runtime>(builder: Builder<R>) {
   #[cfg(desktop)]
   {
     builder = builder
+      .invoke_system(INVOKE_SYSTEM_SCRIPTS)
       .plugin(tauri_plugin_dialog::init())
       .plugin(tauri_plugin_notification::init())
       .plugin(tauri_plugin_shell::init())
