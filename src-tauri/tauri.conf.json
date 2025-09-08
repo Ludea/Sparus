@@ -22,9 +22,6 @@
     "resources": {
       "Sparus.json": "Sparus.json"
     },
-     "externalBin": [
-      "versoview/versoview"
-    ],
     "copyright": "",
     "category": "Game",
     "shortDescription": "",
