@@ -113,6 +113,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     })
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_http::init())
+    .plugin(tauri_plugin_store::Builder::default().build())
     .plugin(
       tauri_plugin_stronghold::Builder::new(|password| {
         let config = Config {
@@ -150,7 +151,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       .plugin(tauri_plugin_dialog::init())
       .plugin(tauri_plugin_notification::init())
       .plugin(tauri_plugin_shell::init())
-      .plugin(tauri_plugin_store::Builder::default().build())
       .plugin(tauri_plugin_process::init())
       .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
       .plugin(tauri_plugin_autostart::init(
