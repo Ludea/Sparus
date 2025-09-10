@@ -115,4 +115,3 @@ jobs:
           files: |
             "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
             ${{steps.sign_app.outputs.signedFile}}
-
