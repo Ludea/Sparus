@@ -22,6 +22,10 @@ jobs:
           - platform: windows-2022
             rust_target: x86_64-pc-windows-msvc
             target: windows_x86_64
+          - platform: ubuntu-latest
+            rust_target: aarch64-linux-android
+            target: aarch64
+            android: true
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -36,8 +40,22 @@ jobs:
           configuration: ".github/release_note_config.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set Sparus-sample as default store file
-        run: mv src-tauri/Sparus-sample.json src-tauri/Sparus.json
+      - name: Setup Java
+        if: matrix.android
+        uses: actions/setup-java@v5
+        with:
+          distribution: "zulu"
+          java-version: "17"
+      - name: Setup Android SDK
+        if: matrix.android
+        uses: android-actions/setup-android@v3
+      - name: Setup Android NDK
+        if: matrix.android
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r26d
+          link-to-sdk: true
       - name: setup node
         uses: actions/setup-node@v5
         with:
@@ -73,11 +91,28 @@ jobs:
       - uses: Ludea/tauri-build@next
         id: build
         with:
-          target: ${{ matrix.rust_target }}
+          target: ${{ matrix.android && matrix.target || matrix.rust_target }}
+          mobile: ${{ matrix.android }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - uses: ilharp/sign-android-release@v2
+        if: matrix.android
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDir: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
+          signingKey: ${{ secrets.SIGNING_KEY }}
+          keyAlias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
       - name: Upload file
         uses: softprops/action-gh-release@v2
         with:
-          files: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+          files: |
+            "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+            ${{steps.sign_app.outputs.signedFile}}
+

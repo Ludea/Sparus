@@ -92,14 +92,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - uses: filippoLeporati93/android-release-signer@v1
+      - uses: ilharp/sign-android-release@v2
         if: matrix.android
         name: Sign app APK
         id: sign_app
         with:
-          releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
+          releaseDir: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
+          signingKey: ${{ secrets.SIGNING_KEY }}
+          keyAlias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
@@ -109,4 +109,4 @@ jobs:
           name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.android && 'android_' || '' }}${{ matrix.target }}
           path: |
             ${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}
-            ${{steps.sign_app.outputs.signedReleaseFile}}
+            ${{steps.sign_app.outputs.signedFile}}
