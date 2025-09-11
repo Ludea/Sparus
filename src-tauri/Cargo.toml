@@ -5,9 +5,7 @@ description = "Start and keep your game up-to-date with Sparus game launcher "
 authors = [ "Ludea" ]
 license = "Apache-2.0"
 repository = "https://github.com/Ludea/Sparus"
-default-run = "sparus"
 edition = "2021"
-build = "build.rs"
 
 [lib]
 name = "libsparus"

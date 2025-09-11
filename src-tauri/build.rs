@@ -13,11 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   fs::write(&file_descriptor_path, file_descriptors.encode_to_vec()).unwrap();
 
   tauri_build::try_build(
-    tauri_build::Attributes::new()
-      .codegen(tauri_build::CodegenContext::new())
-      .app_manifest(
-        tauri_build::AppManifest::new().commands(&["update_workspace", "update_available"]),
-      ),
+    tauri_build::Attributes::new().codegen(tauri_build::CodegenContext::new()),
   )
   .expect("failed to run tauri-build");
 
