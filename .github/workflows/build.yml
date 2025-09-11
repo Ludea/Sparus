@@ -108,6 +108,4 @@ jobs:
         with:
           name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.android && 'android_' || '' }}${{ matrix.target }}
           if-no-files-found: error
-          path: |
-            "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
-            ${{steps.sign_app.outputs.signedFile}}
+          path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
