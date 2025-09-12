@@ -105,7 +105,14 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
+        if: !matrix.android
         with:
-          name: Sparus-${{ env.SHORT_SHA }}-${{ matrix.android && 'android_' || '' }}${{ matrix.target }}
+          name: Sparus-${{ env.SHORT_SHA }}_${{ matrix.target }}
           if-no-files-found: error
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+      - uses: actions/upload-artifact@v4
+        if: matrix.android
+        with:
+          name: Sparus-${{ env.SHORT_SHA }}-android_${{ matrix.target }}
+          if-no-files-found: error
+          path: ${{steps.sign_app.outputs.signedFile}}
