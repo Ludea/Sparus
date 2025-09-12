@@ -39,16 +39,16 @@ jobs:
         shell: bash
         run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
       - name: Setup Java
-        if: matrix.android
+        if: ${{ matrix.android }}
         uses: actions/setup-java@v5
         with:
           distribution: "zulu"
           java-version: "17"
       - name: Setup Android SDK
-        if: matrix.android
+        if: ${{ matrix.android }}
         uses: android-actions/setup-android@v3
       - name: Setup Android NDK
-        if: matrix.android
+        if: ${{ matrix.android }}
         uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
@@ -93,7 +93,7 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       - uses: ilharp/sign-android-release@v2
-        if: matrix.android
+        if: ${{ matrix.android }}
         name: Sign app APK
         id: sign_app
         with:
@@ -105,13 +105,13 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
       - uses: actions/upload-artifact@v4
-        if: !matrix.android
+        if: ${{ !matrix.android }}
         with:
           name: Sparus-${{ env.SHORT_SHA }}_${{ matrix.target }}
           if-no-files-found: error
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
       - uses: actions/upload-artifact@v4
-        if: matrix.android
+        if: ${{ matrix.android }}
         with:
           name: Sparus-${{ env.SHORT_SHA }}-android_${{ matrix.target }}
           if-no-files-found: error
