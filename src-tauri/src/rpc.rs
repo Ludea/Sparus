@@ -4,7 +4,8 @@ pub mod sparus {
 
 use crate::rpc::reqwest::StatusCode;
 use futures::StreamExt;
-use sparus::{event_client::EventClient, Empty, EventType};
+use sparus::{event_client::EventClient, EventType, Plugins};
+use std::collections::HashMap;
 use std::path::Path;
 use tauri_plugin_http::reqwest;
 use tokio::{
@@ -35,7 +36,15 @@ async fn start_streaming(
   client: &mut EventClient<Channel>,
   url: String,
 ) -> Result<(), DownloadError> {
-  let mut stream = client.sparus(Empty {}).await.unwrap().into_inner();
+  let plugins = get_list_plugins_with_versions();
+
+  let mut stream = client
+    .sparus(Plugins {
+      list_plugin: plugins,
+    })
+    .await
+    .unwrap()
+    .into_inner();
 
   while let Ok(Some(item)) = stream.message().await {
     let plugin_name = item.plugin;
@@ -73,4 +82,31 @@ async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadE
   } else {
     Err(DownloadError::Httperror("Plugin not found".to_string()))
   }
+}
+
+fn get_list_plugins_with_versions() -> HashMap<String, f32> {
+  let plugins_path = Path::new("plugins");
+  let mut list_plugins = HashMap::new();
+  if plugins_path.is_dir() {
+    for entry in std::fs::read_dir(plugins_path).unwrap() {
+      let entry = entry.unwrap();
+      let file_path = entry.path();
+      if file_path.is_file() {
+        if let Some(extension) = file_path.clone().extension() {
+          if extension == "wasm" {
+            //TODO: get version
+            list_plugins.insert(
+              file_path
+                .file_stem()
+                .unwrap()
+                .to_string_lossy()
+                .into_owned(),
+              1.0,
+            );
+          }
+        }
+      }
+    }
+  }
+  list_plugins
 }

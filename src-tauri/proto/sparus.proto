@@ -3,7 +3,7 @@ syntax = "proto3";
 package sparus;
 
 service event {
-  rpc Sparus (Empty) returns (stream Message);
+  rpc Sparus (Plugins) returns (stream Message);
 }
 
 enum EventType {
@@ -17,4 +17,6 @@ message Message {
   EventType event_type = 2;
 }
 
-message Empty {}
+message Plugins {
+  map<string, float> list_plugin = 1;
+}
