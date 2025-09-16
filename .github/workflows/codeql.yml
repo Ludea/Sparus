@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
         - language: rust
-          build-mode: autobuild
+        - langage: typescript 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
