@@ -23,18 +23,18 @@ jobs:
       matrix:
         include:
         - language: rust
-        - langage: typescript 
+        - language: typescript 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Initialize Codeql for rust
-      if: ${{ matrix.language.rust }}
+      if: ${{ matrix.language == 'rust' }}
       uses: github/codeql-action/init@v3
       with:
         languages: rust
         source-root: src-tauri
     - name: Initialize Codeql for typescript
-      if: ${{ matrix.language.typescript }}
+      if: ${{ matrix.language == 'typescript' }}
       uses: github/codeql-action/init@v3
       with:
         languages: typescript
