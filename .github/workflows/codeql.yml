@@ -28,13 +28,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Initialize Codeql for rust
-      if: ${{ matrix.langage.rust }}
+      if: ${{ matrix.language.rust }}
       uses: github/codeql-action/init@v3
       with:
         languages: rust
         source-root: src-tauri
     - name: Initialize Codeql for typescript
-      if: ${{ matrix.langage.typescript }}
+      if: ${{ matrix.language.typescript }}
       uses: github/codeql-action/init@v3
       with:
         languages: typescript
