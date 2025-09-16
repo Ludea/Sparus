@@ -27,11 +27,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Initialize CodeQL
+    - name: Initialize Codeql for rust
+      if: ${{ matrix.langage.rust }}
       uses: github/codeql-action/init@v3
       with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+        languages: rust
+        source-root: src-tauri
+    - name: Initialize Codeql for typescript
+      if: ${{ matrix.langage.typescript }}
+      uses: github/codeql-action/init@v3
+      with:
+        languages: typescript
         source-root: src
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
