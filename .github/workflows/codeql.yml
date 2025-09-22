@@ -2,11 +2,11 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '18 18 * * 2'
+    - cron: "18 18 * * 2"
 
 jobs:
   analyze:
@@ -22,24 +22,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - language: rust
-        - language: typescript 
+          - language: rust
+          - language: typescript
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
-    - name: Initialize Codeql for rust
-      if: ${{ matrix.language == 'rust' }}
-      uses: github/codeql-action/init@v3
-      with:
-        languages: rust
-        source-root: src-tauri
-    - name: Initialize Codeql for typescript
-      if: ${{ matrix.language == 'typescript' }}
-      uses: github/codeql-action/init@v3
-      with:
-        languages: typescript
-        source-root: src
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Initialize Codeql for rust
+        if: ${{ matrix.language == 'rust' }}
+        uses: github/codeql-action/init@v3
+        with:
+          languages: rust
+          source-root: src-tauri
+      - name: Initialize Codeql for typescript
+        if: ${{ matrix.language == 'typescript' }}
+        uses: github/codeql-action/init@v3
+        with:
+          languages: typescript
+          source-root: src
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
