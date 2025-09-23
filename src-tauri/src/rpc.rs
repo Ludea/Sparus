@@ -2,6 +2,7 @@ pub mod sparus {
   tonic::include_proto!("sparus");
 }
 
+use crate::plugins::PluginSystem;
 use crate::rpc::reqwest::StatusCode;
 use futures::StreamExt;
 use sparus::{event_client::EventClient, EventType, Plugins};
@@ -33,10 +34,11 @@ impl From<reqwest::Error> for DownloadError {
 }
 
 async fn start_streaming(
+  runtime: PluginSystem,
   client: &mut EventClient<Channel>,
   url: String,
 ) -> Result<(), DownloadError> {
-  let plugins = get_list_plugins_with_versions();
+  let plugins = get_list_plugins_with_versions(runtime).await;
 
   let mut stream = client
     .sparus(Plugins {
@@ -59,9 +61,9 @@ async fn start_streaming(
   Ok(())
 }
 
-pub async fn start_rpc_client(url: String) -> Result<(), DownloadError> {
+pub async fn start_rpc_client(runtime: PluginSystem, url: String) -> Result<(), DownloadError> {
   if let Ok(mut client) = EventClient::connect(url.clone()).await {
-    start_streaming(&mut client, url).await?;
+    start_streaming(runtime, &mut client, url).await?;
   }
   Ok(())
 }
@@ -84,7 +86,7 @@ async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadE
   }
 }
 
-fn get_list_plugins_with_versions() -> HashMap<String, f32> {
+async fn get_list_plugins_with_versions(runtime: PluginSystem) -> HashMap<String, String> {
   let plugins_path = Path::new("plugins");
   let mut list_plugins = HashMap::new();
   if plugins_path.is_dir() {
@@ -94,15 +96,15 @@ fn get_list_plugins_with_versions() -> HashMap<String, f32> {
       if file_path.is_file() {
         if let Some(extension) = file_path.clone().extension() {
           if extension == "wasm" {
-            //TODO: get version
-            list_plugins.insert(
-              file_path
-                .file_stem()
-                .unwrap()
-                .to_string_lossy()
-                .into_owned(),
-              1.0,
-            );
+            let plugin_name = file_path
+              .file_stem()
+              .unwrap()
+              .to_string_lossy()
+              .into_owned();
+            let version = runtime
+              .call(plugin_name.clone(), "get-version".to_string())
+              .await;
+            list_plugins.insert(plugin_name, version.unwrap());
           }
         }
       }

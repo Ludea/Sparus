@@ -18,5 +18,5 @@ message Message {
 }
 
 message Plugins {
-  map<string, float> list_plugin = 1;
+  map<string, string> list_plugin = 1;
 }

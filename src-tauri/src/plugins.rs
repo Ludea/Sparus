@@ -43,7 +43,7 @@ impl PluginSystem {
     Self { engine }
   }
 
-  async fn call(&self, plugin: String, function: String) -> Result<f32> {
+  pub async fn call(&self, plugin: String, function: String) -> Result<String> {
     let file_path = "plugins";
     let mut linker = Linker::new(&self.engine);
     wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
@@ -57,11 +57,11 @@ impl PluginSystem {
     let plugin_full_path = file_path.to_owned() + "/" + &plugin + ".wasm";
     let component = Component::from_file(&self.engine, plugin_full_path)?;
     let instance = linker.instantiate_async(&mut store, &component).await?;
-    let mut result = [wasmtime::component::Val::U8(0)];
+    let mut result = [wasmtime::component::Val::String(String::new())];
     if let Some(func) = instance.get_func(&mut store, function) {
       func.call_async(&mut store, &[], &mut result).await?;
-      if let wasmtime::component::Val::Float32(f32_value) = result[0] {
-        Ok(f32_value)
+      if let wasmtime::component::Val::String(value) = result[0].clone() {
+        Ok(value)
       } else {
         let err = std::io::Error::other("error on returned value");
         Err(err.into())
@@ -78,7 +78,7 @@ pub async fn call_plugin_function(
   state: State<'_, PluginSystem>,
   plugin: String,
   function: String,
-) -> std::result::Result<f32, WasmtimeErr> {
+) -> std::result::Result<String, WasmtimeErr> {
   let result = state.call(plugin, function).await?;
   Ok(result)
 }
