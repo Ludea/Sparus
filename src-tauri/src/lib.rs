@@ -71,6 +71,9 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager: plugins::PluginSystem = plugins::PluginSystem::new();
 
+  #[cfg(debug_assertions)]
+  tauri_runtime_verso::set_verso_devtools_port(8000);
+
   builder = builder
     .manage(spawner)
     .setup(|app| {
