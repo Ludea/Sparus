@@ -23,7 +23,7 @@
     "internal-ip": "^8.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-i18next": "^15.0.1",
+    "react-i18next": "^16.0.0",
     "react-router-dom": "^7.1.5"
   },
   "devDependencies": {
