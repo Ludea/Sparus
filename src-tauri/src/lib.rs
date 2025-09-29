@@ -1,10 +1,7 @@
 use argon2::{hash_raw, Config, Variant, Version};
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::PermissionsExt;
-use std::{
-  env, fs, io,
-  path::{Path, PathBuf},
-};
+use std::{env, fs, io, path::Path};
 use tauri::{command, Builder, Manager, Runtime};
 use tauri_plugin_store::StoreExt;
 
@@ -12,6 +9,8 @@ use tauri_plugin_store::StoreExt;
 use tauri::{RunEvent, WebviewWindowBuilder};
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
+#[cfg(mobile)]
+use tauri_plugin_fs::FsExt;
 #[cfg(desktop)]
 use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
 
@@ -71,18 +70,51 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager: plugins::PluginSystem = plugins::PluginSystem::new();
 
-  #[cfg(debug_assertions)]
+  #[cfg(all(debug_assertions, desktop))]
   tauri_runtime_verso::set_verso_devtools_port(8000);
 
   builder = builder
     .manage(spawner)
     .setup(|app| {
-      let config_dir = app.path().app_data_dir().unwrap();
-      fs::create_dir_all(&config_dir).unwrap();
-      let default_store_file = PathBuf::from("Sparus.json");
-      let store_file_destination = config_dir.join("Sparus.json");
+      let config_file = "Sparus.json";
+      let store_file_destination;
+      let store_file_content;
+
+      #[cfg(mobile)]
+      {
+        let resource_dir_file = app
+          .path()
+          .resource_dir()
+          .expect("Unable to access to resource directory")
+          .join(config_file);
+        store_file_content = app.fs().read_to_string(&resource_dir_file)?;
+        store_file_destination = app
+          .path()
+          .app_data_dir()
+          .expect("Unable to access to config directory")
+          .join(config_file);
+      }
+
+      #[cfg(desktop)]
+      {
+        let config_dir = app
+          .path()
+          .app_data_dir()
+          .expect("Unable to access to config directory");
+        store_file_content = fs::read_to_string(config_file)?;
+        store_file_destination = config_dir.join(config_file);
+
+        WebviewWindowBuilder::new(app, "main", Default::default())
+          .inner_size(800., 600.)
+          .decorations(false)
+          .build()?;
+
+        let handle = app.handle();
+        tray::create_tray(handle)?;
+      }
+
       if !store_file_destination.exists() {
-        fs::copy(&default_store_file, &store_file_destination)
+        fs::write(&store_file_destination, &store_file_content)
           .expect("Cannot copy default Store file");
       }
 
@@ -99,17 +131,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       };
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(plugins_manager, url));
-
-      #[cfg(desktop)]
-      {
-        WebviewWindowBuilder::new(app, "main", Default::default())
-          .inner_size(800., 600.)
-          .decorations(false)
-          .build()?;
-
-        let handle = app.handle();
-        tray::create_tray(handle)?;
-      }
 
       Ok(())
     })
@@ -145,6 +166,11 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       })
       .build(),
     );
+
+  #[cfg(mobile)]
+  {
+    builder = builder.plugin(tauri_plugin_fs::init());
+  }
 
   #[cfg(desktop)]
   {
