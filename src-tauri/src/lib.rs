@@ -106,6 +106,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
         WebviewWindowBuilder::new(app, "main", Default::default())
           .inner_size(800., 600.)
+          .title("Sparus")
           .decorations(false)
           .build()?;
 
