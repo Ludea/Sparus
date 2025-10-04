@@ -19,6 +19,7 @@ use tonic::transport::Channel;
 pub enum DownloadError {
   Httperror(String),
   Io(String),
+  Rpc(String),
 }
 
 impl From<std::io::Error> for DownloadError {
@@ -40,22 +41,21 @@ async fn start_streaming(
 ) -> Result<(), DownloadError> {
   let plugins = get_list_plugins_with_versions(runtime).await;
 
-  let mut stream = client
+  let response = client
     .sparus(Plugins {
       list_plugin: plugins,
     })
     .await
-    .unwrap()
-    .into_inner();
+    .map_err(|err| DownloadError::Rpc(err.to_string()))?;
+
+  let mut stream = response.into_inner();
 
   while let Ok(Some(item)) = stream.message().await {
     let plugin_name = item.plugin;
     let url = format!("{}/plugins/{}", url, plugin_name);
     let event = EventType::try_from(item.event_type);
     if event == Ok(EventType::Install) {
-      if let Err(err) = download_file(url, plugin_name).await {
-        println!("error: {:?}", err);
-      }
+      download_file(url, plugin_name).await?;
     }
   }
   Ok(())
