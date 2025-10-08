@@ -120,7 +120,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       }
 
       let store = app.store("Sparus.json")?;
-      let url = match store.get("launcher_url") {
+      let cms_url = match store.get("launcher_url") {
         Some(url_json) => {
           if let tauri_plugin_store::JsonValue::String(url_string) = url_json {
             url_string
@@ -131,7 +131,34 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         None => "http://127.0.0.1:8112".to_string(),
       };
 
-      tauri::async_runtime::spawn(rpc::start_rpc_client(plugins_manager, url));
+      let plugins_url = match store.get("plugins_url") {
+        Some(url_json) => {
+          if let tauri_plugin_store::JsonValue::String(url_string) = url_json {
+            url_string
+          } else {
+            "http://127.0.0.1:8012".to_string()
+          }
+        }
+        None => "http://127.0.0.1:8012".to_string(),
+      };
+
+      let launcher_name = match store.get("launcher_name") {
+        Some(name_json) => {
+          if let tauri_plugin_store::JsonValue::String(launcher_name_string) = name_json {
+            launcher_name_string
+          } else {
+            "kataster".to_string()
+          }
+        }
+        None => "kataster".to_string(),
+      };
+
+      tauri::async_runtime::spawn(rpc::start_rpc_client(
+        plugins_manager,
+        cms_url,
+        plugins_url,
+        launcher_name,
+      ));
 
       Ok(())
     })

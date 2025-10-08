@@ -37,12 +37,13 @@ impl From<reqwest::Error> for DownloadError {
 async fn start_streaming(
   runtime: PluginSystem,
   client: &mut EventClient<Channel>,
-  url: String,
+  plugins_url: String,
+  launcher_name: String,
 ) -> Result<(), DownloadError> {
   let plugins = get_list_plugins_with_versions(runtime).await;
-
   let response = client
     .sparus(Plugins {
+      repository_name: launcher_name,
       list_plugin: plugins,
     })
     .await
@@ -52,23 +53,33 @@ async fn start_streaming(
 
   while let Ok(Some(item)) = stream.message().await {
     let plugin_name = item.plugin;
-    let url = format!("{}/plugins/{}", url, plugin_name);
+    let url = format!("{}/plugins/{}", plugins_url, plugin_name);
     let event = EventType::try_from(item.event_type);
-    if event == Ok(EventType::Install) {
-      download_file(url, plugin_name).await?;
+    match event {
+      Ok(EventType::Install) => download_and_write_file(url, plugin_name).await?,
+      Ok(EventType::Delete) => fs::remove_file(format!("plugins/{plugin_name}.wasm")).await?,
+      Ok(EventType::Update) => download_and_write_file(url, plugin_name).await?,
+      Err(err) => {
+        err.to_string();
+      }
     }
   }
   Ok(())
 }
 
-pub async fn start_rpc_client(runtime: PluginSystem, url: String) -> Result<(), DownloadError> {
-  if let Ok(mut client) = EventClient::connect(url.clone()).await {
-    start_streaming(runtime, &mut client, url).await?;
+pub async fn start_rpc_client(
+  runtime: PluginSystem,
+  cms_url: String,
+  plugins_url: String,
+  launcher_name: String,
+) -> Result<(), DownloadError> {
+  if let Ok(mut client) = EventClient::connect(cms_url).await {
+    start_streaming(runtime, &mut client, plugins_url, launcher_name).await?;
   }
   Ok(())
 }
 
-async fn download_file(url: String, plugin_name: String) -> Result<(), DownloadError> {
+async fn download_and_write_file(url: String, plugin_name: String) -> Result<(), DownloadError> {
   let response = reqwest::get(url).await?;
   if response.status() == StatusCode::OK {
     let mut stream = response.bytes_stream();
