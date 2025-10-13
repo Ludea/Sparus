@@ -13,7 +13,8 @@
       "core:app:default",
       "core:resources:default",
       "core:menu:default",
-      "store:default"
+      "store:default",
+      "allow-js-plugins-path"
     ]
   }
   

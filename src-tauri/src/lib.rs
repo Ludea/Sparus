@@ -221,6 +221,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       updater::update_available,
       updater::check_if_installed,
       plugins::call_plugin_function,
+      plugins::js_plugins_path,
       get_current_path,
       get_game_exe_name
     ])

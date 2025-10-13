@@ -1,4 +1,5 @@
-use tauri::{command, State};
+use tauri::{command, AppHandle, Manager, Runtime, State};
+use tokio::fs;
 use wasmtime::{
   component::{Component, Linker, ResourceTable},
   *,
@@ -6,13 +7,20 @@ use wasmtime::{
 use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
 
 #[derive(serde::Serialize)]
-pub enum WasmtimeErr {
+pub enum PluginsErr {
   Wasmerr(String),
+  IOerror(String),
 }
 
-impl From<wasmtime::Error> for WasmtimeErr {
+impl From<wasmtime::Error> for PluginsErr {
   fn from(err: wasmtime::Error) -> Self {
-    WasmtimeErr::Wasmerr(err.to_string())
+    PluginsErr::Wasmerr(err.to_string())
+  }
+}
+
+impl From<std::io::Error> for PluginsErr {
+  fn from(err: std::io::Error) -> Self {
+    PluginsErr::IOerror(err.to_string())
   }
 }
 
@@ -78,7 +86,35 @@ pub async fn call_plugin_function(
   state: State<'_, PluginSystem>,
   plugin: String,
   function: String,
-) -> std::result::Result<String, WasmtimeErr> {
+) -> std::result::Result<String, PluginsErr> {
   let result = state.call(plugin, function).await?;
   Ok(result)
+}
+
+#[command]
+pub async fn js_plugins_path<R: Runtime>(
+  app: AppHandle<R>,
+) -> std::result::Result<Vec<String>, PluginsErr> {
+  let plugins_dir = app
+    .path()
+    .app_data_dir()
+    .map_err(|err| std::io::Error::other(err.to_string()))?
+    .join("plugins");
+
+  if !plugins_dir.exists() {
+    return Ok(Vec::new());
+  }
+
+  let mut entries = fs::read_dir(&plugins_dir)
+    .await
+    .map_err(|err| std::io::Error::other(err.to_string()))?;
+
+  let mut plugins = Vec::new();
+
+  while let Ok(Some(entry)) = entries.next_entry().await.map_err(|err| err.to_string()) {
+    let path = entry.path().display().to_string();
+    plugins.push(path);
+  }
+
+  Ok(plugins)
 }

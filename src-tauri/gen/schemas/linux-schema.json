@@ -537,6 +537,12 @@
           "markdownDescription": "Enables the get_game_exe_name command without any pre-configured scope."
         },
         {
+          "description": "Get javascript plugins from plugins path.",
+          "type": "string",
+          "const": "allow-js-plugins-path",
+          "markdownDescription": "Get javascript plugins from plugins path."
+        },
+        {
           "description": "Enables the update_available command without any pre-configured scope.",
           "type": "string",
           "const": "allow-update-available",
@@ -571,6 +577,12 @@
           "type": "string",
           "const": "deny-get-game-exe-name",
           "markdownDescription": "Denies the get_game_exe_name command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the js_plugins_path command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-js-plugins-path",
+          "markdownDescription": "Denies the js_plugins_path command without any pre-configured scope."
         },
         {
           "description": "Denies the update_available command without any pre-configured scope.",

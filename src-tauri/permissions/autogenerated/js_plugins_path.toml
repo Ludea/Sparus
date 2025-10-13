@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-js-plugins-path"
+description = "Get javascript plugins from plugins path."
+commands.allow = ["js_plugins_path"]
+
+[[permission]]
+identifier = "deny-js-plugins-path"
+description = "Denies the js_plugins_path command without any pre-configured scope."
+commands.deny = ["js_plugins_path"]

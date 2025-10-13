@@ -22,6 +22,7 @@
     "allow-call-plugin-function",
     "allow-get-current-path",
     "allow-get-game-exe-name", 
+    "allow-js-plugins-path",
     "dialog:allow-open",
     "dialog:default",
     "store:default",
