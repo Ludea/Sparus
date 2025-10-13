@@ -112,8 +112,26 @@ pub async fn js_plugins_path<R: Runtime>(
   let mut plugins = Vec::new();
 
   while let Ok(Some(entry)) = entries.next_entry().await.map_err(|err| err.to_string()) {
-    let path = entry.path().display().to_string();
-    plugins.push(path);
+    let path = entry.path();
+    if path.is_dir() {
+      let mut sub_entries = fs::read_dir(&path)
+        .await
+        .map_err(|err| std::io::Error::other(err.to_string()))?;
+
+      while let Ok(Some(entry)) = sub_entries
+        .next_entry()
+        .await
+        .map_err(|err| err.to_string())
+      {
+        let path = entry.path();
+        if let Some(extension) = path.extension() {
+          if extension == "tsx" {
+            let path = entry.path().display().to_string();
+            plugins.push(path);
+          }
+        }
+      }
+    }
   }
 
   Ok(plugins)
