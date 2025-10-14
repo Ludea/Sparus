@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use tauri::{command, AppHandle, Manager, Runtime, State};
 use tokio::fs;
 use wasmtime::{
@@ -51,8 +52,13 @@ impl PluginSystem {
     Self { engine }
   }
 
-  pub async fn call(&self, plugin: String, function: String) -> Result<String> {
-    let file_path = "plugins";
+  pub async fn call(
+    &self,
+    app_data_dir: PathBuf,
+    plugin: String,
+    function: String,
+  ) -> Result<String> {
+    let file_path = app_data_dir.join("plugins");
     let mut linker = Linker::new(&self.engine);
     wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
 
@@ -62,7 +68,7 @@ impl PluginSystem {
       resource_table: ResourceTable::new(),
     };
     let mut store = Store::new(&self.engine, state);
-    let plugin_full_path = file_path.to_owned() + "/" + &plugin + ".wasm";
+    let plugin_full_path = file_path.display().to_string() + "/" + &plugin + ".wasm";
     let component = Component::from_file(&self.engine, plugin_full_path)?;
     let instance = linker.instantiate_async(&mut store, &component).await?;
     let mut result = [wasmtime::component::Val::String(String::new())];
@@ -84,10 +90,12 @@ impl PluginSystem {
 #[command]
 pub async fn call_plugin_function(
   state: State<'_, PluginSystem>,
+  app_data_dir: String,
   plugin: String,
   function: String,
 ) -> std::result::Result<String, PluginsErr> {
-  let result = state.call(plugin, function).await?;
+  let plugin_dir = PathBuf::from(app_data_dir);
+  let result = state.call(plugin_dir, plugin, function).await?;
   Ok(result)
 }
 

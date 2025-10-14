@@ -77,8 +77,12 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     .manage(spawner)
     .setup(|app| {
       let config_file = "Sparus.json";
-      let store_file_destination;
       let store_file_content;
+      let app_data_dir = app
+        .path()
+        .app_data_dir()
+        .expect("Unable to access to config directory");
+      let store_file_destination = app_data_dir.join(config_file);
 
       #[cfg(mobile)]
       {
@@ -88,21 +92,11 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
           .expect("Unable to access to resource directory")
           .join(config_file);
         store_file_content = app.fs().read_to_string(&resource_dir_file)?;
-        store_file_destination = app
-          .path()
-          .app_data_dir()
-          .expect("Unable to access to config directory")
-          .join(config_file);
       }
 
       #[cfg(desktop)]
       {
-        let config_dir = app
-          .path()
-          .app_data_dir()
-          .expect("Unable to access to config directory");
         store_file_content = fs::read_to_string(config_file)?;
-        store_file_destination = config_dir.join(config_file);
 
         WebviewWindowBuilder::new(app, "main", Default::default())
           .inner_size(800., 600.)
@@ -154,6 +148,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       };
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(
+        app_data_dir,
         plugins_manager,
         cms_url,
         plugins_url,
