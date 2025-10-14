@@ -104,8 +104,9 @@ async fn download_and_write_file(
   if response.status() == StatusCode::OK {
     let mut stream = response.bytes_stream();
     let plugins_dir = app_data_dir.join("plugins");
-    fs::create_dir_all(plugins_dir.clone()).await?;
-    let file_path = plugins_dir.join(format!("{}.wasm", &plugin_name));
+    let plugin_name_dir = plugins_dir.join("{plugin_name}");
+    fs::create_dir_all(plugin_name_dir.clone()).await?;
+    let file_path = plugin_name_dir.join(format!("{}.wasm", &plugin_name));
     let mut file = File::create(file_path).await?;
     while let Some(chunk) = stream.next().await {
       let data = chunk?;
