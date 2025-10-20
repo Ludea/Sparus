@@ -8,6 +8,7 @@ import Header from "components/Header";
 import { DesktopRoutes, MobileRoutes } from "routes";
 import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
+import { PluginManager } from "components/PluginManager";
 
 function App() {
   const [globalError, setGlobalError] = useState<unknown>();
@@ -58,6 +59,7 @@ function App() {
             }}
           >
             <Grid>
+              <PluginManager />
               <Header />
             </Grid>
             {DesktopRouting}
