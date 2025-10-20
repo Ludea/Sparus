@@ -133,7 +133,7 @@ pub async fn js_plugins_path<R: Runtime>(
       {
         let path = entry.path();
         if let Some(extension) = path.extension() {
-          if extension == "tsx" {
+          if extension == "js" {
             let path = entry.path().display().to_string();
             plugins.push(path);
           }
