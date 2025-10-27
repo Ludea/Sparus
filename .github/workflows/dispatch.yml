@@ -92,7 +92,7 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
       - name: Upload Binaries to Update Server
         run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries/${{ matrix.platform.host }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Sparus_${{ matrix.target }}
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
