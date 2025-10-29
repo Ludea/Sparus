@@ -11,6 +11,7 @@ use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
 pub enum PluginsErr {
   Wasmerr(String),
   IOerror(String),
+  StripPrefixError(String),
 }
 
 impl From<wasmtime::Error> for PluginsErr {
@@ -22,6 +23,12 @@ impl From<wasmtime::Error> for PluginsErr {
 impl From<std::io::Error> for PluginsErr {
   fn from(err: std::io::Error) -> Self {
     PluginsErr::IOerror(err.to_string())
+  }
+}
+
+impl From<std::path::StripPrefixError> for PluginsErr {
+  fn from(err: std::path::StripPrefixError) -> Self {
+    PluginsErr::StripPrefixError(err.to_string())
   }
 }
 
@@ -125,7 +132,6 @@ pub async fn js_plugins_path<R: Runtime>(
       let mut sub_entries = fs::read_dir(&path)
         .await
         .map_err(|err| std::io::Error::other(err.to_string()))?;
-
       while let Ok(Some(entry)) = sub_entries
         .next_entry()
         .await
@@ -134,7 +140,10 @@ pub async fn js_plugins_path<R: Runtime>(
         let path = entry.path();
         if let Some(extension) = path.extension() {
           if extension == "js" {
-            let path = entry.path().display().to_string();
+            let full_path = entry.path();
+            let relative_path = full_path.strip_prefix(plugins_dir.clone())?;
+            let path = relative_path.display().to_string();
+
             plugins.push(path);
           }
         }
