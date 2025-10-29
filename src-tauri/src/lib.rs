@@ -1,9 +1,19 @@
 use argon2::{hash_raw, Config, Variant, Version};
+use axum::Router;
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::PermissionsExt;
-use std::{env, fs, io, path::Path};
+use std::{
+  env, fs, io,
+  net::SocketAddr,
+  path::{Path, PathBuf},
+};
 use tauri::{command, Builder, Manager, Runtime};
 use tauri_plugin_store::StoreExt;
+use tower_http::{
+  cors::{Any, CorsLayer},
+  services::ServeDir,
+  trace::TraceLayer,
+};
 
 #[cfg(desktop)]
 use tauri::{RunEvent, WebviewWindowBuilder};
@@ -148,12 +158,13 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       };
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(
-        app_data_dir,
+        app_data_dir.clone(),
         plugins_manager,
         cms_url,
         plugins_url,
         launcher_name,
       ));
+      tauri::async_runtime::spawn(start_http_server(app_data_dir));
 
       Ok(())
     })
@@ -247,4 +258,25 @@ fn is_executable(path: &Path) -> bool {
   } else {
     false
   }
+}
+
+async fn start_http_server(app_data_dir: PathBuf) {
+  let js_plugins_path = app_data_dir.join("plugins");
+  let test = js_plugins_path.display().to_string();
+  let router = Router::new().nest_service("/plugins", ServeDir::new(test));
+  let addr = SocketAddr::from(([127, 0, 0, 1], 8012));
+  let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+  axum::serve(
+    listener,
+    router
+      .layer(
+        CorsLayer::new()
+          .allow_origin(Any)
+          .allow_headers(Any)
+          .expose_headers(Any),
+      )
+      .layer(TraceLayer::new_for_http()),
+  )
+  .await
+  .unwrap();
 }
