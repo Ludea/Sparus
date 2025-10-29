@@ -85,6 +85,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
   builder = builder
     .manage(spawner)
+    .manage(plugins_manager.clone())
     .setup(|app| {
       let config_file = "Sparus.json";
       let store_file_content;

@@ -46,6 +46,7 @@ impl WasiView for ComponentRunStates {
   }
 }
 
+#[derive(Clone)]
 pub struct PluginSystem {
   engine: Engine,
 }
