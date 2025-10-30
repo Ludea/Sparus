@@ -12,6 +12,7 @@ pub enum PluginsErr {
   Wasmerr(String),
   IOerror(String),
   StripPrefixError(String),
+  TauriError(String),
 }
 
 impl From<wasmtime::Error> for PluginsErr {
@@ -29,6 +30,12 @@ impl From<std::io::Error> for PluginsErr {
 impl From<std::path::StripPrefixError> for PluginsErr {
   fn from(err: std::path::StripPrefixError) -> Self {
     PluginsErr::StripPrefixError(err.to_string())
+  }
+}
+
+impl From<tauri::Error> for PluginsErr {
+  fn from(err: tauri::Error) -> Self {
+    PluginsErr::TauriError(err.to_string())
   }
 }
 
@@ -62,11 +69,10 @@ impl PluginSystem {
 
   pub async fn call(
     &self,
-    app_data_dir: PathBuf,
+    plugin_dir: PathBuf,
     plugin: String,
     function: String,
   ) -> Result<String> {
-    let file_path = app_data_dir.join("plugins");
     let mut linker = Linker::new(&self.engine);
     wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
 
@@ -76,7 +82,7 @@ impl PluginSystem {
       resource_table: ResourceTable::new(),
     };
     let mut store = Store::new(&self.engine, state);
-    let plugin_full_path = file_path.display().to_string() + "/" + &plugin + ".wasm";
+    let plugin_full_path = plugin_dir.display().to_string() + "/" + &plugin + ".wasm";
     let component = Component::from_file(&self.engine, plugin_full_path)?;
     let instance = linker.instantiate_async(&mut store, &component).await?;
     let mut result = [wasmtime::component::Val::String(String::new())];
@@ -96,14 +102,15 @@ impl PluginSystem {
 }
 
 #[command]
-pub async fn call_plugin_function(
+pub async fn call_plugin_function<R: Runtime>(
+  handle: AppHandle<R>,
   state: State<'_, PluginSystem>,
-  app_data_dir: String,
   plugin: String,
   function: String,
 ) -> std::result::Result<String, PluginsErr> {
-  let plugin_dir = PathBuf::from(app_data_dir);
-  let result = state.call(plugin_dir, plugin, function).await?;
+  let app_data_dir = handle.path().app_data_dir()?;
+  let plugins_dir = app_data_dir.join("plugins");
+  let result = state.call(plugins_dir, plugin, function).await?;
   Ok(result)
 }
 
