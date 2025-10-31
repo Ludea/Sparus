@@ -141,6 +141,7 @@ async fn get_list_plugins_with_versions(
                 plugins_path.clone(),
                 plugin_name.clone(),
                 "get-version".to_string(),
+                Vec::new(),
               )
               .await;
             list_plugins.insert(plugin_name, version.unwrap());
