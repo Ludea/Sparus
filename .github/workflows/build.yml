@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - portable
   pull_request:
     branches:
-      - main
+      - portable
 
 jobs:
   build:
@@ -93,6 +93,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - run: |
+          echo "${{ steps.build.outputs.artifacts }}"
       - uses: ilharp/sign-android-release@v2
         if: ${{ matrix.android }}
         name: Sign app APK
