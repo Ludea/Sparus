@@ -14,7 +14,7 @@ function App() {
   const [globalError, setGlobalError] = useState<unknown>();
 
   const theme = createTheme();
-  const DesktopRouting = useRoutes(DesktopRoutes("allo"));
+  const DesktopRouting = useRoutes(DesktopRoutes);
   const MobileRouting = useRoutes(MobileRoutes);
 
   const errorCache = useMemo(
@@ -39,10 +39,6 @@ function App() {
     }
   }, [globalError]);
 
-  const getSection = (text: string) => {
-    console.log("message from plugin: ", text);
-  };
-
   return (
     <SparusErrorContext.Provider value={errorCache}>
       <StoreProvider>
@@ -63,7 +59,7 @@ function App() {
             }}
           >
             <Grid>
-              <PluginManager section={getSection} />
+              <PluginManager />
               <Header />
             </Grid>
             {DesktopRouting}

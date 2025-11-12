@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { Plugins } from "components/Plugins";
 import { PluginsContext, usePluginsState } from "usePlugins";
 
-export const PluginManager: React.FC = ({ children }) => {
+export const PluginManager: React.FC = () => {
   const [pluginPaths, setPluginPaths] = useState<string[]>([]);
   const pluginsState = usePluginsState();
 
@@ -15,14 +15,11 @@ export const PluginManager: React.FC = ({ children }) => {
 
   return (
     <PluginsContext.Provider value={pluginsState}>
-      {/* Charge les plugins mais n'affiche rien directement */}
       <div style={{ display: "none" }}>
         {pluginPaths.map((path) => (
           <Plugins key={path} path={path} register={pluginsState.register} />
         ))}
       </div>
-
-      {children}
     </PluginsContext.Provider>
   );
 };
