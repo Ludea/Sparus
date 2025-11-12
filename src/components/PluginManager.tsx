@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Plugins } from "components/Plugins";
-import { PluginsContext, usePluginsState } from "usePlugins";
+import { PluginsProvider, usePluginsContext } from "usePlugins";
 
-export const PluginManager: React.FC = () => {
+const PluginLoader: React.FC = () => {
   const [pluginPaths, setPluginPaths] = useState<string[]>([]);
-  const pluginsState = usePluginsState();
+  const { register } = usePluginsContext();
 
   useEffect(() => {
     invoke<string[]>("js_plugins_path")
@@ -14,12 +14,19 @@ export const PluginManager: React.FC = () => {
   }, []);
 
   return (
-    <PluginsContext.Provider value={pluginsState}>
-      <div style={{ display: "none" }}>
-        {pluginPaths.map((path) => (
-          <Plugins key={path} path={path} register={pluginsState.register} />
-        ))}
-      </div>
-    </PluginsContext.Provider>
+    <div style={{ display: "none" }}>
+      {pluginPaths.map((path) => (
+        <Plugins key={path} path={path} register={register} />
+      ))}
+    </div>
+  );
+};
+
+export const PluginManager = ({ children }: { children: ReactNode }) => {
+  return (
+    <PluginsProvider>
+      <PluginLoader />
+      {children}
+    </PluginsProvider>
   );
 };
