@@ -14,10 +14,10 @@ export const Plugins = ({
   useEffect(() => {
     const base_url = "http://localhost:8012/plugins/";
     import(/* @vite-ignore */ base_url + path)
-      /* eslint-disable-next-line 
+      .then((mod) => {
+        /* eslint-disable-next-line 
            @typescript-eslint/no-unsafe-return, 
            @typescript-eslint/no-unsafe-member-access */
-      .then((mod) => {
         setComponent(() => mod.default);
       })
       .catch(console.error);
