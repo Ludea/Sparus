@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Plugins } from "components/Plugins";
+import { PluginsContext, usePluginsState } from "usePlugins";
 
-export const PluginManager: React.FC = () => {
-  const [plugins, setPlugins] = useState<string[]>([]);
+export const PluginManager: React.FC = ({ children }) => {
+  const [pluginPaths, setPluginPaths] = useState<string[]>([]);
+  const pluginsState = usePluginsState();
 
   useEffect(() => {
     invoke<string[]>("js_plugins_path")
-      .then((plugin: string[]) => {
-        setPlugins(plugin);
-      })
-      .catch((err: unknown) => {
-        console.log(err);
-      });
+      .then(setPluginPaths)
+      .catch(console.error);
   }, []);
 
   return (
-    <div>
-      {plugins.map((plugin) => (
-        <Plugins key={plugin} path={plugin} />
-      ))}
-    </div>
+    <PluginsContext.Provider value={pluginsState}>
+      {/* Charge les plugins mais n'affiche rien directement */}
+      <div style={{ display: "none" }}>
+        {pluginPaths.map((path) => (
+          <Plugins key={path} path={path} register={pluginsState.register} />
+        ))}
+      </div>
+
+      {children}
+    </PluginsContext.Provider>
   );
 };

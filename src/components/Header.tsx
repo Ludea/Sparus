@@ -2,6 +2,7 @@ import { useContext } from "react";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import { useNavigate, useLocation } from "react-router-dom";
+import { usePluginsContext } from "usePlugins";
 
 // Icons
 import ClearIcon from "@mui/icons-material/Clear";
@@ -19,9 +20,11 @@ function Header() {
   const { setGlobalError } = useContext(SparusErrorContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const { header } = usePluginsContext;
 
   return (
     <Grid container>
+      {header}
       <Grid size={1}>
         {location.pathname !== "/" ? (
           <IconButton

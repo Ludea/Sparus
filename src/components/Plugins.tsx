@@ -1,7 +1,19 @@
 import { useState, FC, useEffect } from "react";
+import type { ReactElement } from "react";
+import type { PluginPosition } from "usePlugins";
 
-export const Plugins = ({ path }: { path: string }) => {
-  const [Comp, setComponent] = useState<FC>();
+interface LoadedPluginProps {
+  register: (position: PluginPosition, element: ReactElement) => void;
+}
+
+export const Plugins = ({
+  path,
+  register,
+}: {
+  path: string;
+  register: LoadedPluginProps["register"];
+}) => {
+  const [Comp, setComponent] = useState<FC<LoadedPluginProps>>();
 
   useEffect(() => {
     const base_url = "http://localhost:8012/plugins/";
@@ -12,11 +24,10 @@ export const Plugins = ({ path }: { path: string }) => {
            @typescript-eslint/no-unsafe-member-access */
         setComponent(() => mod.default);
       })
-      .catch((err: unknown) => {
-        console.log(err);
-      });
+      .catch(console.error);
   }, [path]);
 
   if (!Comp) return null;
-  return <Comp />;
+
+  return <Comp register={register} />;
 };
