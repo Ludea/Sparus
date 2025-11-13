@@ -112,6 +112,7 @@ jobs:
       - name: Upload file
         uses: softprops/action-gh-release@v2
         with:
+          body: ${{ steps.build_changelog.changelog }}
           files: |
             "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
             ${{steps.sign_app.outputs.signedFile}}
