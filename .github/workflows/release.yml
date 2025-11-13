@@ -13,10 +13,10 @@ jobs:
           - platform: ubuntu-22.04
             rust_target: x86_64-unknown-linux-gnu
             target: linux_x86_64
-          - platform: macos-13
+          - platform: macos-14
             rust_target: x86_64-apple-darwin
             target: macos_x86_64
-          - platform: macos-13
+          - platform: macos-14
             rust_target: aarch64-apple-darwin
             target: macos_aarch64
           - platform: windows-2022
