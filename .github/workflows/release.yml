@@ -109,10 +109,15 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
-      - name: Upload file
+      - name: Upload Desktop assets
         uses: softprops/action-gh-release@v2
+        if: ${{ !matrix.android }}
         with:
           body: ${{ steps.build_changelog.outputs.changelog }}
-          files: |
-            "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
-            ${{steps.sign_app.outputs.signedFile}}
+          files: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
+      - name: Upload Mobile assets
+        uses: softprops/action-gh-release@v2
+        if: ${{ matrix.android }}
+        with:
+          body: ${{ steps.build_changelog.outputs.changelog }}
+          files: ${{steps.sign_app.outputs.signedFile}}
