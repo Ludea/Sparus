@@ -68,9 +68,6 @@ jobs:
         with:
           components: rustfmt, clippy
           target: ${{ matrix.rust_target }}
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri/
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
