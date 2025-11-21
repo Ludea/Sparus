@@ -30,7 +30,7 @@ jobs:
           - platform: ubuntu-latest
             rust_target: aarch64-linux-android
             target: aarch64
-            android: true
+            mobile: android
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -83,15 +83,17 @@ jobs:
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets -- -D warnings
-      - uses: Ludea/tauri-build@next
-        id: build
-        with:
-          target: ${{ matrix.android && matrix.target || matrix.rust_target }}
-          mobile: ${{ matrix.android }}
+      - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        with:
+          includeUpdaterJson: false
+          uploadUpdaterSignatures: false
+          uploadWorkflowArtifacts: true
+          workflowArtifactNamePattern: "Sparus-${{ env.SHORT_SHA }}_[platform]_[arch]-[bundle]"
+          mobile: "android"
       - uses: ilharp/sign-android-release@v2
         if: ${{ matrix.android }}
         name: Sign app APK
@@ -104,12 +106,6 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
-      - uses: actions/upload-artifact@v5
-        if: ${{ !matrix.android }}
-        with:
-          name: Sparus-${{ env.SHORT_SHA }}_${{ matrix.target }}
-          if-no-files-found: error
-          path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
       - uses: actions/upload-artifact@v5
         if: ${{ matrix.android }}
         with:
