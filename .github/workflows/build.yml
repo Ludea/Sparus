@@ -94,7 +94,7 @@ jobs:
           uploadWorkflowArtifacts: true
           workflowArtifactNamePattern: "Sparus-${{ env.SHORT_SHA }}_[platform]_[arch]-[bundle]"
           mobile: "android"
-          args: "--target ${{ matrix.target }}"
+          args: "--target ${{ matrix.rust_target }}"
       - uses: ilharp/sign-android-release@v2
         if: matrix.mobile == 'android'
         name: Sign app APK
