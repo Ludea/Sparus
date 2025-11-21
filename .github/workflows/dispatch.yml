@@ -37,7 +37,7 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Create json store
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
