@@ -89,7 +89,7 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         with:
-          includeUpdaterJson: false
+          uploadUpdaterJson: false
           uploadUpdaterSignatures: false
           uploadWorkflowArtifacts: true
           workflowArtifactNamePattern: "Sparus-${{ env.SHORT_SHA }}_[platform]_[arch]_[bundle]"
