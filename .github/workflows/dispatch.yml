@@ -3,6 +3,14 @@ name: Build custom launcher
 on:
   workflow_dispatch:
     inputs:
+      launcher_name:
+        description: "Launcher name" 
+        required: true
+        default: "Sparus"
+      repository:
+        description: "Repository name"
+        required: true
+        default: "Sparus"
       filename:
         description: "Store file"
         required: true
@@ -42,13 +50,10 @@ jobs:
         run: |
           echo '${{ inputs.content }}' > '${{ inputs.filename }}.tmp'
           jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
-      - name: Get game name
-        shell: bash
-        run: echo "GAME_NAME=$(jq -r '.game_name' src-tauri/${{ inputs.filename }})" >> $GITHUB_ENV
       - name: Download Background image and logo
         run: |
-          curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/DesktopBackground.jpg
-          curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/icon.png
+          curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/DesktopBackground.jpg
+          curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/icon.png
       - name: setup node
         uses: actions/setup-node@v6
         with:
@@ -93,12 +98,7 @@ jobs:
           uploadUpdaterJson: false
           uploadUpdaterSignatures: false
           uploadWorkflowArtifacts: true
-          workflowArtifactNamePattern: "Sparus_[platform]_[arch]_[bundle]"
+          workflowArtifactNamePattern: "${{ inputs.launcher_name }}_[platform]_[arch]_[bundle]"
           args: "--target ${{ matrix.rust_target }}"
       - name: Upload Binaries to Update Server
-        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ env.GAME_NAME }}/launcher/binaries/${{ matrix.host }}
-      - uses: actions/upload-artifact@v5
-        with:
-          name: Sparus_${{ matrix.target }}
-          path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
-          if-no-files-found: error
+        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }}
