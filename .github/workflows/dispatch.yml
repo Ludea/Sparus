@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       launcher_name:
-        description: "Launcher name" 
+        description: "Launcher name"
         required: true
         default: "Sparus"
       repository:
@@ -102,3 +102,4 @@ jobs:
           args: "--target ${{ matrix.rust_target }}"
       - name: Upload Binaries to Update Server
         run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }}
+
