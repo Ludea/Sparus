@@ -102,4 +102,3 @@ jobs:
           name: Sparus_${{ matrix.target }}
           path: "${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}"
           if-no-files-found: error
-
