@@ -85,15 +85,16 @@ jobs:
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
-      - uses: Ludea/tauri-build@next
-        id: build
-        with:
-          target: ${{ matrix.android && matrix.target || matrix.rust_target }}
-          mobile: ${{ matrix.android }}
+      - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        with:
+          uploadUpdaterJson: false
+          uploadUpdaterSignatures: false
+          mobile: ${{ matrix.mobile }}
+          args: "--target ${{ matrix.rust_target }}"
       - uses: ilharp/sign-android-release@v2
         if: matrix.android
         name: Sign app APK
