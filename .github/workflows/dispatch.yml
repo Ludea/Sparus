@@ -7,7 +7,7 @@ on:
         description: "Launcher name"
         required: true
         default: "Sparus"
-      repository:
+      repository_name:
         description: "Repository name"
         required: true
         default: "Sparus"
@@ -52,8 +52,8 @@ jobs:
           jq '.' ${{ inputs.filename }}.tmp > src-tauri/${{ inputs.filename }}
       - name: Download Background image and logo
         run: |
-          curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/DesktopBackground.jpg
-          curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/icon.png
+          curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/DesktopBackground.jpg
+          curl --output-dir --fail src-tauri/icons -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/icon.png
       - name: setup node
         uses: actions/setup-node@v6
         with:
@@ -100,5 +100,12 @@ jobs:
           uploadWorkflowArtifacts: true
           workflowArtifactNamePattern: "${{ inputs.launcher_name }}_[platform]_[arch]_[bundle]"
           args: "--target ${{ matrix.rust_target }}"
-      - name: Upload Binaries to Update Server
-        run: curl -X POST -F "file=@${{ join(fromJSON(steps.build.outputs.artifacts), '\n') }}" ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }}
+      - name: Upload artifacts Binaries to Update Server
+        run: |
+          FILES='${{ steps.build.outputs.artifactPaths }}'
+          echo "Artifacts JSON: $FILES"
+          mapfile -t paths < <(echo "$FILES" | jq -r '.[]')
+          for f in "${paths[@]}"; do
+           echo "Uploading: $f"
+           curl -X POST ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
+          done
