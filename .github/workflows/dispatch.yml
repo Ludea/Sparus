@@ -103,9 +103,9 @@ jobs:
       - name: Upload artifacts Binaries to Update Server
         run: |
           FILES='${{ steps.build.outputs.artifactPaths }}'
-          echo "Artifacts JSON: $FILES"
-          mapfile -t paths < <(echo "$FILES" | jq -r '.[]')
-          for f in "${paths[@]}"; do
+          FILES=$(echo "$FILES" | sed 's/^\[//; s/\]$//; s/"//g')
+          for f in ${FILES//,/ }; do
            echo "Uploading: $f"
            curl -X POST ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
           done
+
