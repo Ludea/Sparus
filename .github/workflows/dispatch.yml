@@ -107,6 +107,5 @@ jobs:
           FILES=$(echo "$FILES" | sed 's/^\[//; s/\]$//; s/"//g')
           for f in ${FILES//,/ }; do
            echo "Uploading: $f"
-           curl -X POST ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
+           curl --fail -X POST ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
           done
-
