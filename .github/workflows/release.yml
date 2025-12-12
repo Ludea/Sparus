@@ -92,8 +92,10 @@ jobs:
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         with:
+          releaseBody: ${{ steps.build_changelog.outputs.changelog }}
           uploadUpdaterJson: false
           uploadUpdaterSignatures: false
+          tagName: ${{ github.ref_name }}
           mobile: ${{ matrix.mobile }}
           args: "--target ${{ matrix.rust_target }}"
       - uses: ilharp/sign-android-release@v2
@@ -108,12 +110,6 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
-      - name: Upload Desktop assets
-        uses: softprops/action-gh-release@v2
-        if: ${{ !matrix.android }}
-        with:
-          body: ${{ steps.build_changelog.outputs.changelog }}
-          files: "${{ join(fromJSON(steps.build.outputs.artifactPaths), '\n') }}"
       - name: Upload Mobile assets
         uses: softprops/action-gh-release@v2
         if: ${{ matrix.android }}
