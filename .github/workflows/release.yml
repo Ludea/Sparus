@@ -86,6 +86,7 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
       - uses: tauri-apps/tauri-action@dev
+        id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
