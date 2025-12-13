@@ -109,4 +109,3 @@ jobs:
            echo "Uploading: $f"
            curl --fail -v ${{ secrets.STORE_URL }}/${{ inputs.repository }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
           done
-
