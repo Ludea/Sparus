@@ -11,16 +11,15 @@ jobs:
       matrix:
         include:
           - platform: ubuntu-22.04
-            rust_target: x86_64-unknown-linux-gnu
+            args: ""
           - platform: macos-14
-            rust_target: x86_64-apple-darwin
+            args: "--target x86_64-apple-darwin"
           - platform: macos-14
-            rust_target: aarch64-apple-darwin
+            args: "--target aarch64-apple-darwin"
           - platform: windows-2022
-            rust_target: x86_64-pc-windows-msvc
+            args: ""
           - platform: ubuntu-latest
-            # It's not rust_target but args for android target
-            rust_target: aarch64 --split-per-abi
+            args: "--target aarch64 --split-per-abi"
             target: aarch64
             android: true
 
@@ -64,7 +63,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          target: ${{ matrix.rust_target }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin'
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -94,7 +93,7 @@ jobs:
           uploadUpdaterSignatures: false
           tagName: ${{ github.ref_name }}
           mobile: ${{ matrix.mobile }}
-          args: "--target ${{ matrix.rust_target }}"
+          args: ${{ matrix.args }}
       - uses: ilharp/sign-android-release@v2
         if: matrix.android
         name: Sign app APK
