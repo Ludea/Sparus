@@ -92,7 +92,7 @@ jobs:
           mobile: ${{ matrix.mobile }}
           args: ${{ matrix.args }}
       - uses: ilharp/sign-android-release@v2
-        if: matrix.mobile == 'android'
+        if: matrix.mobile == 'android' && github.event_name == 'push'
         name: Sign app APK
         id: sign_app
         with:
