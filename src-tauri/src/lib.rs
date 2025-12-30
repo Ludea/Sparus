@@ -120,6 +120,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       }
 
       if !store_file_destination.exists() {
+        fs::create_dir_all(&app_data_dir).expect("Cannot create app data directory");
         fs::write(&store_file_destination, &store_file_content)
           .expect("Cannot copy default Store file");
       }
