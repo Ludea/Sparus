@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: ubuntu-22.04
+          - platform: ubuntu-24.04
             rust_target: x86_64-unknown-linux-gnu
             host: linux
           - platform: macos-14
