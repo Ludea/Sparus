@@ -6,7 +6,7 @@ use std::{
   net::SocketAddr,
   path::{Path, PathBuf},
 };
-use tauri::{command, Builder, Manager, Runtime};
+use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 use tower_http::{
   cors::{Any, CorsLayer},
@@ -15,7 +15,9 @@ use tower_http::{
 };
 
 #[cfg(desktop)]
-use tauri::{RunEvent, WebviewWindowBuilder};
+use tauri::RunEvent;
+#[cfg(mobile)]
+use tauri::WebviewUrl;
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 #[cfg(mobile)]
@@ -103,6 +105,9 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
           .join(config_file);
         store_file_content = app.fs().read_to_string(&resource_dir_file)?;
       }
+
+      #[cfg(mobile)]
+      WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
 
       #[cfg(desktop)]
       {
