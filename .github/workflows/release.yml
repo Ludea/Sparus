@@ -21,7 +21,7 @@ jobs:
           - platform: ubuntu-latest
             args: "--target aarch64 --split-per-abi"
             target: aarch64
-            android: true
+            mobile: android
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -37,16 +37,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Java
-        if: matrix.android
+        if: matrix.mobile == 'android'
         uses: actions/setup-java@v5
         with:
           distribution: "zulu"
           java-version: "17"
       - name: Setup Android SDK
-        if: matrix.android
+        if: matrix.mobile == 'android'
         uses: android-actions/setup-android@v3
       - name: Setup Android NDK
-        if: matrix.android
+        if: matrix.mobile == 'android'
         uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
@@ -89,7 +89,6 @@ jobs:
         id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STRONGHOLD_SALT: ${{ secrets.STRONGHOLD_SALT }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         with:
           releaseBody: ${{ steps.build_changelog.outputs.changelog }}
@@ -99,7 +98,7 @@ jobs:
           mobile: ${{ matrix.mobile }}
           args: ${{ matrix.args }}
       - uses: ilharp/sign-android-release@v2
-        if: matrix.android
+        if: matrix.mobile == 'android'
         name: Sign app APK
         id: sign_app
         with:
@@ -112,7 +111,7 @@ jobs:
           BUILD_TOOLS_VERSION: "34.0.0"
       - name: Upload Mobile assets
         uses: softprops/action-gh-release@v2
-        if: ${{ matrix.android }}
+        if: matrix.mobile == 'android'
         with:
           body: ${{ steps.build_changelog.outputs.changelog }}
           files: ${{steps.sign_app.outputs.signedFile}}
