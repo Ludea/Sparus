@@ -98,6 +98,13 @@ jobs:
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
+      - name: setup Android signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
       - uses: tauri-apps/tauri-action@dev
         id: build
         env:
@@ -110,21 +117,3 @@ jobs:
           tagName: ${{ github.ref_name }}
           mobile: ${{ matrix.mobile }}
           args: ${{ matrix.args }}
-      - uses: ilharp/sign-android-release@v2
-        if: matrix.mobile == 'android'
-        name: Sign app APK
-        id: sign_app
-        with:
-          releaseDir: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
-          signingKey: ${{ secrets.SIGNING_KEY }}
-          keyAlias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
-      - name: Upload Mobile assets
-        uses: softprops/action-gh-release@v2
-        if: matrix.mobile == 'android'
-        with:
-          body: ${{ steps.build_changelog.outputs.changelog }}
-          files: ${{steps.sign_app.outputs.signedFile}}

@@ -96,6 +96,13 @@ jobs:
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets -- -D warnings
+      - name: setup Android signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,21 +114,3 @@ jobs:
           workflowArtifactNamePattern: "Sparus-${{ env.SHORT_SHA }}_[platform]_[arch]_[bundle]"
           mobile: ${{ matrix.mobile }}
           args: ${{ matrix.args }}
-      - uses: ilharp/sign-android-release@v2
-        if: matrix.mobile == 'android' && github.event_name == 'push'
-        name: Sign app APK
-        id: sign_app
-        with:
-          releaseDir: src-tauri/gen/android/app/build/outputs/apk/arm64/release/
-          signingKey: ${{ secrets.SIGNING_KEY }}
-          keyAlias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
-      - uses: actions/upload-artifact@v6
-        if: matrix.mobile == 'android'
-        with:
-          name: Sparus-${{ env.SHORT_SHA }}-android_${{ matrix.target }}
-          if-no-files-found: error
-          path: ${{steps.sign_app.outputs.signedFile}}
