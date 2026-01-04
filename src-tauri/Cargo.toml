@@ -37,7 +37,7 @@ tokio-stream = "0.1"
 tower-http = { version = "0.6", features = ["fs", "trace", "cors"] }
 getrandom = "0.3.1"
 async-lock = "3.4.0"
-wasmtime = "40.0.0"
+wasmtime = { version = "40.0.0", features = ["async"] }
 wasmtime-wasi = "40.0.0"
 tauri-plugin-store = "2"
 tauri-plugin-dialog = "2"
