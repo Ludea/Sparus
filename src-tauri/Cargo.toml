@@ -42,7 +42,7 @@ wasmtime-wasi = "40.0.0"
 tauri-plugin-store = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-os = "2"
-tauri-plugin-http = "2"
+tauri-plugin-http = { version = "2", features = ["stream"] }
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 tauri-plugin-notification = "2"
