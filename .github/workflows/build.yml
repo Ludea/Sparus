@@ -20,7 +20,7 @@ jobs:
           - platform: macos-latest
             args: ""
           - platform: macos-15-intel
-            args: ""
+            args: "--verbose"
           - platform: windows-latest
             args: ""
           - platform: ubuntu-latest
