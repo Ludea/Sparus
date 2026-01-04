@@ -13,9 +13,9 @@ jobs:
           - platform: ubuntu-24.04
             args: ""
           - platform: macos-13
-            args: "--target x86_64-apple-darwin"
+            args: ""
           - platform: macos-14
-            args: "--target aarch64-apple-darwin"
+            args: ""
           - platform: windows-2022
             args: ""
           - platform: ubuntu-latest
@@ -76,7 +76,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
       - name: install webkit2gtk (ubuntu only)
         if: matrix.platform == 'ubuntu-24.04'
         run: |
