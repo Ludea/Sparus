@@ -37,8 +37,8 @@ tokio-stream = "0.1"
 tower-http = { version = "0.6", features = ["fs", "trace", "cors"] }
 getrandom = "0.3.1"
 async-lock = "3.4.0"
-wasmtime = { git = "https://github.com/alexcrichton/wasmtime", branch = "try-to-fix-symbol" }
-wasmtime-wasi = { git = "https://github.com/alexcrichton/wasmtime", branch = "try-to-fix-symbol" } 
+wasmtime = { git = "https://github.com/bytecodealliance/wasmtime" }
+wasmtime-wasi = { git = "https://github.com/bytecodealliance/wasmtime" } 
 tauri-plugin-store = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-os = "2"
