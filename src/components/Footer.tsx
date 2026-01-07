@@ -15,6 +15,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Command, SpawnOptions } from "@tauri-apps/plugin-shell";
 import { arch, platform } from "@tauri-apps/plugin-os";
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification,
+} from "@tauri-apps/plugin-notification";
 
 const host = platform();
 const architecture = arch();
@@ -44,6 +49,13 @@ const convertReadableData = (data: number): string => {
   }
   return "";
 };
+
+async function checkPermission() {
+  if (!(await isPermissionGranted())) {
+    return (await requestPermission()) === "granted";
+  }
+  return true;
+}
 
 function Footer() {
   const [progress, setProgress] = useState(0);
@@ -144,6 +156,29 @@ function Footer() {
       })
       .catch(() => {
         setGameState("not_installed");
+      });
+
+    invoke("update_available", {
+      repositoryUrl: repositoryUrl,
+    })
+      .then((is_available) =>
+        is_available
+          ? checkPermission()
+              .then((is_allowed) => {
+                if (is_allowed) {
+                  sendNotification({
+                    title: "Update available !",
+                    body: "An update is available",
+                  });
+                }
+              })
+              .catch((err: unknown) => {
+                setGlobalError(err);
+              })
+          : null,
+      )
+      .catch((err: unknown) => {
+        setGlobalError(err);
       });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {

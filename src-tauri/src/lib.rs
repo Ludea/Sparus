@@ -175,6 +175,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       Ok(())
     })
     .plugin(tauri_plugin_os::init())
+    .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_store::Builder::default().build());
 
@@ -188,7 +189,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     builder = builder
       .invoke_system(INVOKE_SYSTEM_SCRIPTS)
       .plugin(tauri_plugin_dialog::init())
-      .plugin(tauri_plugin_notification::init())
       .plugin(tauri_plugin_shell::init())
       .plugin(tauri_plugin_process::init())
       .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
