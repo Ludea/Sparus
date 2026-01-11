@@ -1,10 +1,15 @@
 use protox::prost::Message;
-use std::{env, fs, path::PathBuf};
+use std::{
+  env, fs,
+  path::{Path, PathBuf},
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let _ = tauri_runtime_verso_build::get_verso_as_external_bin();
 
-  fs::copy("Sparus-sample.json", "Sparus.json")?;
+  if !Path::new("Sparus.json").exists() {
+    fs::copy("Sparus-sample.json", "Sparus.json")?;
+  }
 
   let file_descriptors = protox::compile(["proto/sparus.proto"], ["."]).unwrap();
 
