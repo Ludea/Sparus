@@ -104,10 +104,8 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
           .expect("Unable to access to resource directory")
           .join(config_file);
         store_file_content = app.fs().read_to_string(&resource_dir_file)?;
+        WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
       }
-
-      #[cfg(mobile)]
-      WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
 
       #[cfg(desktop)]
       {
