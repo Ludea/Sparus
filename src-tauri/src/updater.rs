@@ -7,7 +7,7 @@ use libspeedupdate::{
 };
 use semver::Version;
 use serde::Serialize;
-use std::{fs, future, io, path::Path, sync::Arc};
+use std::{future, io, path::Path, sync::Arc};
 use tauri::{command, AppHandle, Emitter, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
@@ -213,23 +213,6 @@ pub async fn update_available<R: Runtime>(
     }
     Err(value) => Err(value),
   }
-}
-
-#[command]
-pub fn check_if_installed(path: String) -> Result<(), &'static str> {
-  let path = Path::new(&path);
-  if path.is_dir() {
-    let entries = fs::read_dir(path);
-    if let Ok(entries) = entries {
-      for entry in entries {
-        if entry.is_ok() {
-          return Ok(());
-        }
-      }
-    }
-    return Err("Not installed");
-  }
-  Err("folder doesn't exist")
 }
 
 async fn latest_remote_version(

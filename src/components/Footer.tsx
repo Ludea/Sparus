@@ -6,12 +6,16 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Grow from "@mui/material/Grow";
 import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
+import Tooltip from "@mui/material/Tooltip";
+
+//Icons
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ErrorIcon from "@mui/icons-material/WarningRounded";
 
 // Context
 import { SparusErrorContext, SparusStoreContext } from "utils/Context";
@@ -105,7 +109,7 @@ function Footer() {
   const [appliedOutputBytesEnd, setAppliedOutputBytesEnd] = useState("");
   const [appliedOutputBytesPerSec, setAppliedOutputBytesPerSec] = useState("");
 
-  const { setGlobalError } = useContext(SparusErrorContext);
+  const { setGlobalError, globalError } = useContext(SparusErrorContext);
   const store = useContext(SparusStoreContext);
   const anchorRef = useRef<HTMLDivElement>(null);
   const gameLabel = gameLabelByState[gameState];
@@ -159,8 +163,8 @@ function Footer() {
         "/",
         type,
         "/",
-        // platform,
-        // "/",
+        platform,
+        "/",
       ),
     })
       .then(() => {
@@ -225,19 +229,12 @@ function Footer() {
         setGlobalError(err);
       });
 
-    invoke("check_if_installed", { path: workspacePath.concat("/game") })
-      .then(() => {
-        invoke<string>("get_game_exe_name", {
-          path: workspacePath.concat("/game"),
-        })
-          .then((name) => {
-            setGameName(name);
-            setGameState("play");
-          })
-          .catch((err: unknown) => {
-            setGameState("not_installed");
-            setGlobalError(err);
-          });
+    invoke<string>("get_game_exe_name", {
+      path: workspacePath.concat("/game"),
+    })
+      .then((name) => {
+        setGameName(name);
+        setGameState("play");
       })
       .catch((err: unknown) => {
         setGameState("not_installed");
@@ -249,8 +246,8 @@ function Footer() {
         "/",
         repositoryName,
         "/launcher/",
-        //platform,
-        //"/",
+        platform,
+        "/",
       ),
     })
       .then((is_available) =>
@@ -362,11 +359,11 @@ function Footer() {
 
   return (
     <Grid
-      size={11}
+      size={12}
       container
       justifyContent="center"
       alignItems="center"
-      spacing={4}
+      spacing={3}
       sx={{
         position: "fixed",
         bottom: "15%",
@@ -394,7 +391,14 @@ function Footer() {
           />
         ) : null}
       </Grid>
-      <Grid>
+      <Grid
+        container
+        size={4}
+        spacing={1}
+        sx={{
+          alignItems: "center",
+        }}
+      >
         <ButtonGroup
           variant="contained"
           ref={anchorRef}
@@ -487,6 +491,11 @@ function Footer() {
             </Grow>
           )}
         </Popper>
+        {globalError ? (
+          <Tooltip title={JSON.stringify(globalError)}>
+            <ErrorIcon />
+          </Tooltip>
+        ) : null}
       </Grid>
       {gameState === "updating" ? (
         <Grid

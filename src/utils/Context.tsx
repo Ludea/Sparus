@@ -2,7 +2,7 @@ import { ReactNode, createContext } from "react";
 import { LazyStore } from "@tauri-apps/plugin-store";
 
 interface SparusError {
-  globalError: unknown;
+  globalError: string;
   setGlobalError: (err: unknown) => void;
 }
 
