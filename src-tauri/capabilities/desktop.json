@@ -28,6 +28,7 @@
     "dialog:default",
     "store:default",
     "notification:default",
+    "process:allow-restart",
     {
       "identifier": "shell:allow-spawn",
       "allow": [

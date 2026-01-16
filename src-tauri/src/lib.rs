@@ -50,15 +50,14 @@ fn get_current_path() -> Result<String, IOErr> {
 
 #[command]
 fn get_game_exe_name(path: String) -> Result<String, String> {
-  let folder = path;
-  if let Ok(mut entries) = fs::read_dir(folder) {
+  if let Ok(mut entries) = fs::read_dir(path) {
     if let Some(entry) = entries.next() {
       if let Ok(entry) = entry {
         let path = entry.path();
         if path.is_file() && is_executable(&path) {
           return Ok(path.file_name().unwrap().to_string_lossy().to_string());
         } else {
-          return Err("Game exe not found".to_string());
+          return Err("Game binaries not found".to_string());
         }
       }
       return Err("No game installed".to_string());

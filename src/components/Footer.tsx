@@ -1,11 +1,17 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grow from "@mui/material/Grow";
+import Popper from "@mui/material/Popper";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
 
 // Context
 import { SparusErrorContext, SparusStoreContext } from "utils/Context";
@@ -13,6 +19,7 @@ import { SparusErrorContext, SparusStoreContext } from "utils/Context";
 // Tauri api
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { relaunch } from "@tauri-apps/plugin-process";
 import { Command, SpawnOptions } from "@tauri-apps/plugin-shell";
 import { arch, platform } from "@tauri-apps/plugin-os";
 import {
@@ -23,6 +30,28 @@ import {
 
 const host = platform();
 const architecture = arch();
+type GameState =
+  | "update_available"
+  | "play"
+  | "updating"
+  | "not_installed"
+  | "idle";
+type LauncherState = "update_available" | "restart" | "updating" | "idle";
+type LabelSource = "game" | "launcher";
+const gameLabelByState: Record<GameState, string> = {
+  update_available: "Update Game",
+  play: "Play",
+  updating: "",
+  not_installed: "Install Game",
+  idle: "",
+};
+
+const launcherLabelByState: Record<LauncherState, string> = {
+  update_available: "Update launcher",
+  restart: "Restart launcher",
+  updating: "",
+  idle: "",
+};
 
 interface UpdateEvent {
   download: number;
@@ -60,11 +89,15 @@ async function checkPermission() {
 function Footer() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(0);
-  const [gameState, setGameState] = useState("not_installed");
-  const [gameLoading, setGameLoading] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>("idle");
+  const [launcherState, setLauncherState] = useState<LauncherState>("idle");
+  const [activeSource, setActiveSource] = useState<LabelSource>("game");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [gameName, setGameName] = useState<string>("");
-  const [repositoryUrl, setRepositoryUrl] = useState<string>();
+  const [repositoryName, setRepositoryName] = useState<string>("");
+  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
   const [downloadedBytesStart, setDownloadedBytesStart] = useState("");
   const [downloadedBytesEnd, setDownloadedBytesEnd] = useState("");
   const [downloadedBytesPerSec, setDownloadedBytesPerSec] = useState("");
@@ -74,7 +107,11 @@ function Footer() {
 
   const { setGlobalError } = useContext(SparusErrorContext);
   const store = useContext(SparusStoreContext);
-  const theme = useTheme();
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const gameLabel = gameLabelByState[gameState];
+  const launcherLabel = launcherLabelByState[launcherState];
+  const activeLabel = activeSource === "game" ? gameLabel : launcherLabel;
+  const alternativeLabel = activeSource === "game" ? launcherLabel : gameLabel;
 
   let platform = "";
   let shell = "";
@@ -99,6 +136,47 @@ function Footer() {
     }
   }
 
+  const closeMenu = (event: Event) => {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const install_update = (type: string) => {
+    if (type === "launcher") setLauncherState("updating");
+    if (type === "game") setGameState("updating");
+    let workdirSubPath = "";
+    if (type === "game")
+      workdirSubPath = host === "windows" ? "\\game" : "/game";
+
+    invoke("update_workspace", {
+      workspacePath: workspacePath.concat(workdirSubPath),
+      repositoryUrl: repositoryUrl.concat(
+        //   "/",
+        repositoryName,
+        "/",
+        type,
+        "/",
+        // platform,
+        // "/",
+      ),
+    })
+      .then(() => {
+        if (type === "launcher") setLauncherState("restart");
+        if (type === "game") setGameState("play");
+        setLoading(false);
+        setAppliedOutputBytesPerSec("");
+      })
+      .catch((err: unknown) => {
+        if (type === "launcher") setLauncherState("update_available");
+        if (type === "game") setGameState("not_installed");
+        setLoading(false);
+        setGlobalError(err);
+      });
+  };
+
   useEffect(() => {
     store
       .get<string>("game_name")
@@ -110,7 +188,16 @@ function Footer() {
       });
 
     store
-      .get<string>("game_url")
+      .get<string>("repository_name")
+      .then((name) => {
+        if (name) setRepositoryName(name);
+      })
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
+
+    store
+      .get<string>("repository_url")
       .then((value) => {
         if (value) setRepositoryUrl(value);
       })
@@ -125,13 +212,10 @@ function Footer() {
         else
           invoke<string>("get_current_path")
             .then((path) => {
-              const gameSubPath = host === "windows" ? "\\game" : "/game";
-              store
-                .set("workspace_path", path.concat(gameSubPath))
-                .catch((err: unknown) => {
-                  setGlobalError(err);
-                });
-              setWorkspacePath(path.concat(gameSubPath));
+              store.set("workspace_path", path).catch((err: unknown) => {
+                setGlobalError(err);
+              });
+              setWorkspacePath(path);
             })
             .catch((err: unknown) => {
               setGlobalError(err);
@@ -141,31 +225,70 @@ function Footer() {
         setGlobalError(err);
       });
 
-    invoke("check_if_installed", { path: workspacePath })
+    invoke("check_if_installed", { path: workspacePath.concat("/game") })
       .then(() => {
         invoke<string>("get_game_exe_name", {
-          path: workspacePath,
+          path: workspacePath.concat("/game"),
         })
           .then((name) => {
             setGameName(name);
+            setGameState("play");
           })
           .catch((err: unknown) => {
+            setGameState("not_installed");
             setGlobalError(err);
           });
-        setGameState("installed");
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         setGameState("not_installed");
+        setGlobalError(err);
       });
 
     invoke("update_available", {
-      repositoryUrl: repositoryUrl,
+      repositoryUrl: repositoryUrl.concat(
+        "/",
+        repositoryName,
+        "/launcher/",
+        //platform,
+        //"/",
+      ),
     })
       .then((is_available) =>
         is_available
           ? checkPermission()
               .then((is_allowed) => {
                 if (is_allowed) {
+                  setLauncherState("update_available");
+                  sendNotification({
+                    title: "Update available !",
+                    body: "An update is available",
+                  });
+                }
+              })
+              .catch((err: unknown) => {
+                setGlobalError(err);
+              })
+          : null,
+      )
+      .catch((err: unknown) => {
+        setGlobalError(err);
+      });
+
+    invoke("update_available", {
+      repositoryUrl: repositoryUrl.concat(
+        "/",
+        repositoryName,
+        "/game/",
+        platform,
+        "/",
+      ),
+    })
+      .then((is_available) =>
+        is_available
+          ? checkPermission()
+              .then((is_allowed) => {
+                if (is_allowed) {
+                  setGameState("update_available");
                   sendNotification({
                     title: "Update available !",
                     body: "An update is available",
@@ -213,7 +336,14 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError(err);
     });
-  }, [gameName, store, setGlobalError, workspacePath]);
+  }, [
+    // gameState,
+    launcherState,
+    repositoryName,
+    store,
+    setGlobalError,
+    workspacePath,
+  ]);
 
   const spawn = () => {
     const opts: SpawnOptions = {
@@ -221,12 +351,12 @@ function Footer() {
     };
     const command = Command.create(
       shell,
-      [...arg, workspacePath.concat("/", gameName)],
+      [...arg, workspacePath.concat("/game/", gameName)],
       opts,
     );
 
     command.spawn().catch((err: unknown) => {
-      console.log(err);
+      setGlobalError(err);
     });
   };
 
@@ -247,7 +377,7 @@ function Footer() {
       }}
     >
       <Grid size={8}>
-        {gameState === "installing" ? (
+        {gameState === "updating" ? (
           <LinearProgress
             variant="buffer"
             value={buffer}
@@ -265,51 +395,100 @@ function Footer() {
         ) : null}
       </Grid>
       <Grid>
-        <Button
+        <ButtonGroup
           variant="contained"
-          color="primary"
-          //disabled={gameRunning}
-          loading={gameLoading}
-          sx={{
-            "&.Mui-disabled": {
-              backgroundColor: theme.palette.primary.main,
-            },
-          }}
-          loadingIndicator={<CircularProgress color="secondary" size={22} />}
-          onClick={() => {
-            if (gameState === "not_installed") {
-              setGameLoading(true);
-              setGameState("installing");
-              invoke("update_workspace", {
-                workspacePath,
-                repositoryUrl: repositoryUrl?.concat(
-                  "/",
-                  gameName,
-                  "/game/",
-                  platform,
-                  "/",
-                ),
-              })
-                .then(() => {
-                  setGameState("installed");
-                  setGameLoading(false);
-                  setAppliedOutputBytesPerSec("");
-                })
-                .catch((err: unknown) => {
-                  setGameState("not_installed ");
-                  setGameLoading(false);
-                  setGlobalError(err);
-                });
-            }
-            if (gameState === "installed") {
-              spawn();
-            }
-          }}
+          ref={anchorRef}
+          aria-label="play_update_install"
         >
-          {gameState !== "installed" ? "Install" : "Play"}
-        </Button>
+          <Button
+            loading={loading}
+            loadingIndicator={<CircularProgress color="secondary" size={22} />}
+            onClick={() => {
+              if (activeSource === "launcher")
+                switch (launcherState) {
+                  case "restart":
+                    relaunch().catch((err: unknown) => {
+                      setGlobalError(err);
+                    });
+                    break;
+                  case "update_available":
+                    install_update("launcher");
+                    break;
+                  default:
+                }
+              if (activeSource === "game")
+                switch (gameState) {
+                  case "play":
+                    spawn();
+                    break;
+                  case "not_installed":
+                    install_update("game");
+                    break;
+                  case "update_available":
+                    install_update("game");
+                    break;
+                  default:
+                }
+            }}
+          >
+            {activeLabel}
+          </Button>
+          {gameState === "update_available" ||
+          gameState === "not_installed" ||
+          launcherState === "update_available" ||
+          launcherState === "restart" ? (
+            <Button
+              size="small"
+              aria-controls={open ? "split-button-menu" : undefined}
+              aria-expanded={open ? "true" : undefined}
+              aria-label="play"
+              aria-haspopup="menu"
+              onClick={() => {
+                setOpen((prevOpen) => !prevOpen);
+              }}
+            >
+              <ArrowDropDownIcon />
+            </Button>
+          ) : null}
+        </ButtonGroup>
+        <Popper
+          sx={{ zIndex: 1 }}
+          open={open}
+          anchorEl={anchorRef.current}
+          role={undefined}
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom" ? "center top" : "center bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={closeMenu}>
+                  <MenuList id="split-button-menu" autoFocusItem>
+                    <MenuItem
+                      selected={true}
+                      onClick={() => {
+                        setActiveSource(
+                          activeSource === "game" ? "launcher" : "game",
+                        );
+                        setOpen(false);
+                      }}
+                    >
+                      {alternativeLabel}
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
       </Grid>
-      {gameState === "installing" ? (
+      {gameState === "updating" ? (
         <Grid
           size={11}
           sx={{ display: "flex", position: "fixed", bottom: "8%" }}
