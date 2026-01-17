@@ -3,7 +3,7 @@ import { LazyStore } from "@tauri-apps/plugin-store";
 
 interface SparusError {
   globalError: string;
-  setGlobalError: (err: unknown) => void;
+  setGlobalError: (err: string) => void;
 }
 
 const SparusErrorContext = createContext<SparusError>({
