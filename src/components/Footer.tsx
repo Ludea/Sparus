@@ -32,6 +32,12 @@ import {
   sendNotification,
 } from "@tauri-apps/plugin-notification";
 
+interface UpdateError {
+  UpdateErr: {
+    description: "";
+  };
+}
+
 const host = platform();
 const architecture = arch();
 type GameState =
@@ -268,7 +274,9 @@ function Footer() {
           : null,
       )
       .catch((err: unknown) => {
-        setGlobalError(err);
+        if (err && typeof err === "object" && "UpdateErr" in err) {
+          setGlobalError((err as UpdateError).UpdateErr.description);
+        }
       });
 
     invoke("update_available", {
@@ -293,12 +301,16 @@ function Footer() {
                 }
               })
               .catch((err: unknown) => {
-                setGlobalError(err);
+                if (err && typeof err === "object" && "UpdateErr" in err) {
+                  setGlobalError((err as UpdateError).UpdateErr.description);
+                }
               })
           : null,
       )
       .catch((err: unknown) => {
-        setGlobalError(err);
+        if (err && typeof err === "object" && "UpdateErr" in err) {
+          setGlobalError((err as UpdateError).UpdateErr.description);
+        }
       });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
