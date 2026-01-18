@@ -164,7 +164,7 @@ function Footer() {
     invoke("update_workspace", {
       workspacePath: workspacePath.concat(workdirSubPath),
       repositoryUrl: repositoryUrl.concat(
-        //   "/",
+        "/",
         repositoryName,
         "/",
         type,
@@ -235,8 +235,9 @@ function Footer() {
         setGlobalError(err);
       });
 
+    const workdirSubPath = host === "windows" ? "\\game" : "/game";
     invoke<string>("get_game_exe_name", {
-      path: workspacePath.concat("/game"),
+      path: workspacePath.concat(workdirSubPath),
     })
       .then((name) => {
         setGameName(name);
