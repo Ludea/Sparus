@@ -280,39 +280,40 @@ function Footer() {
         }
       });
 
-    invoke("update_available", {
-      repositoryUrl: repositoryUrl.concat(
-        "/",
-        repositoryName,
-        "/game/",
-        platform,
-        "/",
-      ),
-    })
-      .then((is_available) =>
-        is_available
-          ? checkPermission()
-              .then((is_allowed) => {
-                if (is_allowed) {
-                  setGameState("update_available");
-                  sendNotification({
-                    title: "Update available !",
-                    body: "An update is available",
-                  });
-                }
-              })
-              .catch((err: unknown) => {
-                if (err && typeof err === "object" && "UpdateErr" in err) {
-                  setGlobalError((err as UpdateError).UpdateErr.description);
-                }
-              })
-          : null,
-      )
-      .catch((err: unknown) => {
-        if (err && typeof err === "object" && "UpdateErr" in err) {
-          setGlobalError((err as UpdateError).UpdateErr.description);
-        }
-      });
+    if (gameState === "play")
+      invoke("update_available", {
+        repositoryUrl: repositoryUrl.concat(
+          "/",
+          repositoryName,
+          "/game/",
+          platform,
+          "/",
+        ),
+      })
+        .then((is_available) =>
+          is_available
+            ? checkPermission()
+                .then((is_allowed) => {
+                  if (is_allowed) {
+                    setGameState("update_available");
+                    sendNotification({
+                      title: "Update available !",
+                      body: "An update is available",
+                    });
+                  }
+                })
+                .catch((err: unknown) => {
+                  if (err && typeof err === "object" && "UpdateErr" in err) {
+                    setGlobalError((err as UpdateError).UpdateErr.description);
+                  }
+                })
+            : null,
+        )
+        .catch((err: unknown) => {
+          if (err && typeof err === "object" && "UpdateErr" in err) {
+            setGlobalError((err as UpdateError).UpdateErr.description);
+          }
+        });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
