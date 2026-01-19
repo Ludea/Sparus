@@ -196,13 +196,13 @@ function Footer() {
 
   useEffect(() => {
     Promise.all([
-      store.get<string>("game_name"),
+      store.get<string>("games"),
       store.get<string>("repository_name"),
       store.get<string>("repository_url"),
       store.get<string>("workspace_path"),
     ])
-      .then(([game_name, repository_name, repository_url, workspace_path]) => {
-        if (game_name) setGameName(game_name);
+      .then(([games, repository_name, repository_url, workspace_path]) => {
+        if (games) setGameName(games[0]);
         if (repository_name) setRepositoryName(repository_name);
         if (repository_url) setRepositoryUrl(repository_url);
         if (workspace_path) setWorkspacePath(workspace_path);
@@ -351,7 +351,7 @@ function Footer() {
 
   const spawn = () => {
     const opts: SpawnOptions = {
-      env: { CARGO_MANIFEST_DIR: workspacePath },
+      env: { CARGO_MANIFEST_DIR: workspacePath.concat("/game/") },
     };
     const command = Command.create(
       shell,
