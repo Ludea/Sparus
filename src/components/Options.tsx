@@ -32,39 +32,22 @@ function Options() {
   const store = useContext(SparusStoreContext);
 
   useEffect(() => {
-    store
-      .get<string>("game_url")
-      .then((value) => {
-        if (value) setGameURL(value);
+    Promise.all([
+      store.get<string>("game_url"),
+      store.get<string>("launcher_url"),
+      store.get<string>("workspace_path"),
+      store.get<boolean>("autostart"),
+    ])
+      .then(([game_url, launcher_url, workspace_path, autostart]) => {
+        if (game_url) setGameURL(game_url);
+        if (launcher_url) setLauncherURL(launcher_url);
+        if (workspace_path) setWorkspacePath(workspace_path);
+        if (autostart) setAutostart(autostart);
       })
       .catch((err: unknown) => {
         setGlobalError(err);
       });
-    store
-      .get<string>("launcher_url")
-      .then((value) => {
-        if (value) setLauncherURL(value);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-    store
-      .get<string>("workspace_path")
-      .then((value) => {
-        if (value) setWorkspacePath(value);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-    store
-      .get<boolean>("autostart")
-      .then((value) => {
-        if (value) setAutostart(value);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-  }, [setGlobalError, store]);
+  }, []);
 
   return (
     <Slide direction="right" in mountOnEnter unmountOnExit>

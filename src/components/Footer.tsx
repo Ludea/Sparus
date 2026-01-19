@@ -38,6 +38,11 @@ interface UpdateError {
   };
 }
 
+interface GameError {
+  kind: string;
+  message: string;
+}
+
 const host = platform();
 const architecture = arch();
 type GameState =
@@ -180,45 +185,27 @@ function Footer() {
         setAppliedOutputBytesPerSec("");
       })
       .catch((err: unknown) => {
+        if (err && typeof err === "object" && "UpdateErr" in err) {
+          setGlobalError((err as UpdateError).UpdateErr.description);
+        }
         if (type === "launcher") setLauncherState("update_available");
         if (type === "game") setGameState("not_installed");
         setLoading(false);
-        setGlobalError(err);
       });
   };
 
   useEffect(() => {
-    store
-      .get<string>("game_name")
-      .then((name) => {
-        if (name) setGameName(name);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-
-    store
-      .get<string>("repository_name")
-      .then((name) => {
-        if (name) setRepositoryName(name);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-
-    store
-      .get<string>("repository_url")
-      .then((value) => {
-        if (value) setRepositoryUrl(value);
-      })
-      .catch((err: unknown) => {
-        setGlobalError(err);
-      });
-
-    store
-      .get<string>("workspace_path")
-      .then((value) => {
-        if (value) setWorkspacePath(value);
+    Promise.all([
+      store.get<string>("game_name"),
+      store.get<string>("repository_name"),
+      store.get<string>("repository_url"),
+      store.get<string>("workspace_path"),
+    ])
+      .then(([game_name, repository_name, repository_url, workspace_path]) => {
+        if (game_name) setGameName(game_name);
+        if (repository_name) setRepositoryName(repository_name);
+        if (repository_url) setRepositoryUrl(repository_url);
+        if (workspace_path) setWorkspacePath(workspace_path);
         else
           invoke<string>("get_current_path")
             .then((path) => {
@@ -230,90 +217,103 @@ function Footer() {
             .catch((err: unknown) => {
               setGlobalError(err);
             });
+
+        const workdirSubPath = host === "windows" ? "\\game" : "/game";
+        invoke<string>("get_game_exe_name", {
+          path: workspace_path?.concat(workdirSubPath),
+        })
+          .then((name) => {
+            setGameName(name);
+            setGameState("play");
+          })
+          .catch((err: unknown) => {
+            if (
+              err &&
+              typeof err === "object" &&
+              "kind" in err &&
+              "message" in err
+            ) {
+              if ((err as GameError).kind !== "notInstalled")
+                setGlobalError((err as GameError).message);
+            }
+            setGameState("not_installed");
+          });
+
+        const repo_name = repository_name ?? "";
+        invoke("update_available", {
+          repositoryUrl: repository_url?.concat(
+            "/",
+            repo_name,
+            "/launcher/",
+            platform,
+            "/",
+          ),
+        })
+          .then((is_available) =>
+            is_available
+              ? checkPermission()
+                  .then((is_allowed) => {
+                    if (is_allowed) {
+                      setLauncherState("update_available");
+                      sendNotification({
+                        title: "Update available !",
+                        body: "An update is available",
+                      });
+                    }
+                  })
+                  .catch((err: unknown) => {
+                    setGlobalError(err);
+                  })
+              : null,
+          )
+          .catch((err: unknown) => {
+            if (err && typeof err === "object" && "UpdateErr" in err) {
+              setGlobalError((err as UpdateError).UpdateErr.description);
+            }
+          });
+
+        if (gameState === "play")
+          invoke("update_available", {
+            repositoryUrl: repository_url?.concat(
+              "/",
+              repo_name,
+              "/game/",
+              platform,
+              "/",
+            ),
+          })
+            .then((is_available) =>
+              is_available
+                ? checkPermission()
+                    .then((is_allowed) => {
+                      if (is_allowed) {
+                        setGameState("update_available");
+                        sendNotification({
+                          title: "Update available !",
+                          body: "An update is available",
+                        });
+                      }
+                    })
+                    .catch((err: unknown) => {
+                      if (
+                        err &&
+                        typeof err === "object" &&
+                        "UpdateErr" in err
+                      ) {
+                        setGlobalError(
+                          (err as UpdateError).UpdateErr.description,
+                        );
+                      }
+                    })
+                : null,
+            )
+            .catch((err: unknown) => {
+              setGlobalError(err);
+            });
       })
       .catch((err: unknown) => {
         setGlobalError(err);
       });
-
-    const workdirSubPath = host === "windows" ? "\\game" : "/game";
-    invoke<string>("get_game_exe_name", {
-      path: workspacePath.concat(workdirSubPath),
-    })
-      .then((name) => {
-        setGameName(name);
-        setGameState("play");
-      })
-      .catch((err: unknown) => {
-        setGameState("not_installed");
-        setGlobalError(err);
-      });
-
-    invoke("update_available", {
-      repositoryUrl: repositoryUrl.concat(
-        "/",
-        repositoryName,
-        "/launcher/",
-        platform,
-        "/",
-      ),
-    })
-      .then((is_available) =>
-        is_available
-          ? checkPermission()
-              .then((is_allowed) => {
-                if (is_allowed) {
-                  setLauncherState("update_available");
-                  sendNotification({
-                    title: "Update available !",
-                    body: "An update is available",
-                  });
-                }
-              })
-              .catch((err: unknown) => {
-                setGlobalError(err);
-              })
-          : null,
-      )
-      .catch((err: unknown) => {
-        if (err && typeof err === "object" && "UpdateErr" in err) {
-          setGlobalError((err as UpdateError).UpdateErr.description);
-        }
-      });
-
-    if (gameState === "play")
-      invoke("update_available", {
-        repositoryUrl: repositoryUrl.concat(
-          "/",
-          repositoryName,
-          "/game/",
-          platform,
-          "/",
-        ),
-      })
-        .then((is_available) =>
-          is_available
-            ? checkPermission()
-                .then((is_allowed) => {
-                  if (is_allowed) {
-                    setGameState("update_available");
-                    sendNotification({
-                      title: "Update available !",
-                      body: "An update is available",
-                    });
-                  }
-                })
-                .catch((err: unknown) => {
-                  if (err && typeof err === "object" && "UpdateErr" in err) {
-                    setGlobalError((err as UpdateError).UpdateErr.description);
-                  }
-                })
-            : null,
-        )
-        .catch((err: unknown) => {
-          if (err && typeof err === "object" && "UpdateErr" in err) {
-            setGlobalError((err as UpdateError).UpdateErr.description);
-          }
-        });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
@@ -347,14 +347,7 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError(err);
     });
-  }, [
-    // gameState,
-    launcherState,
-    repositoryName,
-    store,
-    setGlobalError,
-    workspacePath,
-  ]);
+  }, []);
 
   const spawn = () => {
     const opts: SpawnOptions = {
@@ -422,6 +415,7 @@ function Footer() {
             loading={loading}
             loadingIndicator={<CircularProgress color="secondary" size={22} />}
             onClick={() => {
+              setGlobalError(null);
               if (activeSource === "launcher")
                 switch (launcherState) {
                   case "restart":

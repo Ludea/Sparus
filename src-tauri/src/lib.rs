@@ -1,12 +1,8 @@
 use axum::Router;
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::PermissionsExt;
-use std::{
-  env, fs, io,
-  net::SocketAddr,
-  path::{Path, PathBuf},
-};
-use tauri::{command, Builder, Manager, Runtime, WebviewWindowBuilder};
+use std::{env, fs, net::SocketAddr, path::PathBuf};
+use tauri::{Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 use tower_http::{
   cors::{Any, CorsLayer},
@@ -30,43 +26,7 @@ mod rpc;
 #[cfg(desktop)]
 mod tray;
 mod updater;
-
-#[derive(serde::Serialize)]
-pub enum IOErr {
-  Io(String),
-}
-
-impl From<io::Error> for IOErr {
-  fn from(err: io::Error) -> Self {
-    IOErr::Io(err.to_string())
-  }
-}
-
-#[command]
-fn get_current_path() -> Result<String, IOErr> {
-  let path = env::current_dir()?;
-  Ok(path.to_string_lossy().to_string())
-}
-
-#[command]
-fn get_game_exe_name(path: String) -> Result<String, String> {
-  if let Ok(mut entries) = fs::read_dir(path) {
-    if let Some(entry) = entries.next() {
-      if let Ok(entry) = entry {
-        let path = entry.path();
-        if path.is_file() && is_executable(&path) {
-          return Ok(path.file_name().unwrap().to_string_lossy().to_string());
-        } else {
-          return Err("Game binaries not found".to_string());
-        }
-      }
-      return Err("No game installed".to_string());
-    }
-    Err("Unable to read dir".to_string())
-  } else {
-    Err("Unable to read dir".to_string())
-  }
-}
+mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -201,8 +161,8 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       updater::update_available,
       plugins::call_plugin_function,
       plugins::js_plugins_path,
-      get_current_path,
-      get_game_exe_name
+      utils::get_current_path,
+      utils::get_game_exe_name
     ])
     .build(tauri::tauri_build_context!())
     .expect("error while building Sparus application");
@@ -215,22 +175,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       }
     }
   });
-}
-
-fn is_executable(path: &Path) -> bool {
-  #[cfg(not(target_os = "windows"))]
-  if let Ok(metadata) = path.metadata() {
-    let permissions = metadata.permissions();
-    permissions.mode() & 0o111 != 0
-  } else {
-    false
-  }
-  #[cfg(target_os = "windows")]
-  if let Some(extension) = path.extension() {
-    extension == "exe"
-  } else {
-    false
-  }
 }
 
 async fn start_http_server(app_data_dir: PathBuf) {
