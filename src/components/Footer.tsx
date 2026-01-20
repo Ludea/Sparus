@@ -64,7 +64,7 @@ const gameLabelByState: Record<GameState, string> = {
 const launcherLabelByState: Record<LauncherState, string> = {
   update_available: "Update launcher",
   restart: "Restart launcher",
-  updating: "",
+  updating: "test",
   idle: "",
 };
 
@@ -400,10 +400,12 @@ function Footer() {
       </Grid>
       <Grid
         container
-        size={4}
+        size={5}
         spacing={1}
         sx={{
           alignItems: "center",
+          position: "fixed",
+          right: 10,
         }}
       >
         <ButtonGroup
@@ -414,6 +416,9 @@ function Footer() {
           <Button
             loading={loading}
             loadingIndicator={<CircularProgress color="secondary" size={22} />}
+            sx={{
+              width: 200,
+            }}
             onClick={() => {
               setGlobalError(null);
               if (activeSource === "launcher")
