@@ -1,3 +1,5 @@
+#[cfg(target_family = "unix")]
+use std::os::unix::fs::PermissionsExt;
 use std::{env, fs, io, path::Path};
 use tauri::command;
 

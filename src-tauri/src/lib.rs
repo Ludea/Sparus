@@ -1,6 +1,4 @@
 use axum::Router;
-#[cfg(target_family = "unix")]
-use std::os::unix::fs::PermissionsExt;
 use std::{env, fs, net::SocketAddr, path::PathBuf};
 use tauri::{Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
