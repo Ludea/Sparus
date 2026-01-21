@@ -451,9 +451,7 @@ function Footer() {
           >
             {activeLabel}
           </Button>
-          {gameState === "update_available" ||
-          gameState === "not_installed" ||
-          launcherState === "update_available" ||
+          {launcherState === "update_available" ||
           launcherState === "restart" ? (
             <Button
               size="small"
