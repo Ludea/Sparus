@@ -205,8 +205,8 @@ function Footer() {
         if (games) setGameName(games[0]);
         if (repository_name) setRepositoryName(repository_name);
         if (repository_url) setRepositoryUrl(repository_url);
-        if (workspace_path) setWorkspacePath(workspace_path);
-        else
+        if (workspace_path !== undefined) setWorkspacePath(workspace_path);
+        else {
           invoke<string>("get_current_path")
             .then((path) => {
               store.set("workspace_path", path).catch((err: unknown) => {
@@ -217,6 +217,7 @@ function Footer() {
             .catch((err: unknown) => {
               setGlobalError(err);
             });
+        }
 
         const workdirSubPath = host === "windows" ? "\\game" : "/game";
         invoke<string>("get_game_exe_name", {
@@ -347,7 +348,7 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError(err);
     });
-  }, []);
+  });
 
   const spawn = () => {
     const opts: SpawnOptions = {

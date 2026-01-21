@@ -47,7 +47,7 @@ function Options() {
       .catch((err: unknown) => {
         setGlobalError(err);
       });
-  }, []);
+  });
 
   return (
     <Slide direction="right" in mountOnEnter unmountOnExit>
