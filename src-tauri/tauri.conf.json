@@ -59,8 +59,9 @@
       "csp": {
         "default-src": "'self'",
         "connect-src": "ipc: http://ipc.localhost",
-        "style-src": "'unsafe-inline' 'self'",
-         "script-src": "'self'"
+        "style-src": "'unsafe-inline' 'self' tauri://localhost",
+        "img-src": "'self' tauri://localhost",
+        "script-src": "'self' tauri://localhost"
       }
     }
   }
