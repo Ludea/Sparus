@@ -9,8 +9,6 @@ use tauri::command;
 pub enum GameErr {
   Io(String),
   NotInstalled(String),
-  BadInstalled(String),
-  Other(String),
 }
 
 impl From<io::Error> for GameErr {
@@ -27,22 +25,18 @@ pub fn get_current_path() -> Result<String, GameErr> {
 
 #[command]
 pub fn get_game_exe_name(path: String) -> Result<String, GameErr> {
-  if let Ok(mut entries) = fs::read_dir(path) {
-    if let Some(entry) = entries.next() {
-      if let Ok(entry) = entry {
-        let path = entry.path();
-        if path.is_file() && is_executable(&path) {
-          return Ok(path.file_name().unwrap().to_string_lossy().to_string());
-        } else {
-          return Err(GameErr::BadInstalled("Game binaries not found".to_string()));
-        }
-      }
-      return Err(GameErr::Other("No game installed".to_string()));
+  let path = Path::new(&path);
+  let folder = fs::read_dir(path).unwrap();
+  for entry in folder {
+    let entry = entry?;
+    let meta = entry.metadata()?;
+    let path = entry.path();
+
+    if meta.is_file() && is_executable(&path) {
+      return Ok(path.file_name().unwrap().to_string_lossy().to_string());
     }
-    Err(GameErr::Other("Unable to read dir".to_string()))
-  } else {
-    Err(GameErr::NotInstalled("No game installed".to_string()))
   }
+  Err(GameErr::NotInstalled("No Game installed".to_string()))
 }
 
 fn is_executable(path: &Path) -> bool {
