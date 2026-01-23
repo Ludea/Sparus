@@ -64,7 +64,7 @@ const gameLabelByState: Record<GameState, string> = {
 const launcherLabelByState: Record<LauncherState, string> = {
   update_available: "Update launcher",
   restart: "Restart launcher",
-  updating: "test",
+  updating: "",
   idle: "",
 };
 
