@@ -26,7 +26,7 @@ pub fn get_current_path() -> Result<String, GameErr> {
 #[command]
 pub fn get_game_exe_name(path: String) -> Result<String, GameErr> {
   let path = Path::new(&path);
-  let folder = fs::read_dir(path).unwrap();
+  let folder = fs::read_dir(path)?;
   for entry in folder {
     let entry = entry?;
     let meta = entry.metadata()?;
