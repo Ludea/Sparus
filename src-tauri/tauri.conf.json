@@ -60,7 +60,7 @@
         "default-src": "'self'",
         "connect-src": "ipc: http://ipc.localhost",
         "style-src": "'unsafe-inline' 'self' tauri://localhost",
-        "img-src": "'self' tauri://localhost",
+        "img-src": "'self' data: tauri://localhost",
         "script-src": "'self' tauri://localhost"
       }
     }
