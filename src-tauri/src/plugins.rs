@@ -62,7 +62,7 @@ pub struct PluginSystem {
 impl PluginSystem {
   pub fn new() -> Self {
     let mut config = Config::new();
-    config.async_support(true);
+    config.wasm_component_model(true);
     let engine =
       Engine::new(&config).unwrap_or_else(|err| panic!("Unable to start wasm runtime: {}", err));
     Self { engine }
