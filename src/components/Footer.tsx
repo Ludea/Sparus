@@ -348,7 +348,7 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError(err);
     });
-  });
+  }, []);
 
   const spawn = () => {
     const opts: SpawnOptions = {
