@@ -19,6 +19,7 @@ use tauri_plugin_fs::FsExt;
 #[cfg(desktop)]
 use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
 
+mod errors;
 mod plugins;
 mod rpc;
 #[cfg(desktop)]

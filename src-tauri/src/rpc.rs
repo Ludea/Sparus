@@ -2,6 +2,7 @@ pub mod sparus {
   tonic::include_proto!("sparus");
 }
 
+use crate::errors::SparusError;
 use crate::plugins::PluginSystem;
 use crate::rpc::reqwest::StatusCode;
 use futures::StreamExt;
@@ -15,32 +16,13 @@ use tokio::{
 };
 use tonic::transport::Channel;
 
-#[derive(serde::Serialize, Debug)]
-pub enum DownloadError {
-  Httperror(String),
-  Io(String),
-  Rpc(String),
-}
-
-impl From<std::io::Error> for DownloadError {
-  fn from(err: std::io::Error) -> Self {
-    DownloadError::Io(err.to_string())
-  }
-}
-
-impl From<reqwest::Error> for DownloadError {
-  fn from(err: reqwest::Error) -> Self {
-    DownloadError::Httperror(err.to_string())
-  }
-}
-
 async fn start_streaming(
   app_data_dir: PathBuf,
   runtime: PluginSystem,
   client: &mut EventClient<Channel>,
   plugins_url: String,
   launcher_name: String,
-) -> Result<(), DownloadError> {
+) -> Result<(), SparusError> {
   let app_data_dir_string = app_data_dir.display().to_string();
   let plugins = get_list_plugins_with_versions(app_data_dir_string.clone(), runtime).await;
   let response = client
@@ -48,8 +30,8 @@ async fn start_streaming(
       repository_name: launcher_name,
       list_plugin: plugins,
     })
-    .await
-    .map_err(|err| DownloadError::Rpc(err.to_string()))?;
+    .await?;
+  // .map_err(|err| DownloadError::Rpc(err.to_string()))?;
 
   let mut stream = response.into_inner();
 
@@ -81,7 +63,7 @@ pub async fn start_rpc_client(
   cms_url: String,
   plugins_url: String,
   launcher_name: String,
-) -> Result<(), DownloadError> {
+) -> Result<(), SparusError> {
   if let Ok(mut client) = EventClient::connect(cms_url).await {
     start_streaming(
       app_data_dir,
@@ -99,23 +81,23 @@ async fn download_and_write_file(
   app_data_dir: PathBuf,
   url: String,
   plugin_name: String,
-) -> Result<(), DownloadError> {
+) -> Result<(), SparusError> {
   let response = reqwest::get(url).await?;
-  if response.status() == StatusCode::OK {
-    let mut stream = response.bytes_stream();
-    let plugins_dir = app_data_dir.join("plugins");
-    let plugin_name_dir = plugins_dir.join("{plugin_name}");
-    fs::create_dir_all(plugin_name_dir.clone()).await?;
-    let file_path = plugin_name_dir.join(format!("{}.wasm", &plugin_name));
-    let mut file = File::create(file_path).await?;
-    while let Some(chunk) = stream.next().await {
-      let data = chunk?;
-      file.write_all(&data).await?;
-    }
-    Ok(())
-  } else {
-    Err(DownloadError::Httperror("Plugin not found".to_string()))
+  if response.status() != StatusCode::OK {
+    return Err(SparusError::Plugin);
   }
+
+  let mut stream = response.bytes_stream();
+  let plugins_dir = app_data_dir.join("plugins");
+  let plugin_name_dir = plugins_dir.join("{plugin_name}");
+  fs::create_dir_all(plugin_name_dir.clone()).await?;
+  let file_path = plugin_name_dir.join(format!("{}.wasm", &plugin_name));
+  let mut file = File::create(file_path).await?;
+  while let Some(chunk) = stream.next().await {
+    let data = chunk?;
+    file.write_all(&data).await?;
+  }
+  Ok(())
 }
 
 async fn get_list_plugins_with_versions(

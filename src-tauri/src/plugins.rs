@@ -1,3 +1,4 @@
+use crate::errors::SparusError;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use tauri::{command, AppHandle, Manager, Runtime, State};
@@ -7,38 +8,6 @@ use wasmtime::{
   Config, Engine, Result, Store,
 };
 use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
-
-#[derive(serde::Serialize)]
-pub enum PluginsErr {
-  Wasmerr(String),
-  IOerror(String),
-  StripPrefixError(String),
-  TauriError(String),
-}
-
-impl From<wasmtime::Error> for PluginsErr {
-  fn from(err: wasmtime::Error) -> Self {
-    PluginsErr::Wasmerr(err.to_string())
-  }
-}
-
-impl From<std::io::Error> for PluginsErr {
-  fn from(err: std::io::Error) -> Self {
-    PluginsErr::IOerror(err.to_string())
-  }
-}
-
-impl From<std::path::StripPrefixError> for PluginsErr {
-  fn from(err: std::path::StripPrefixError) -> Self {
-    PluginsErr::StripPrefixError(err.to_string())
-  }
-}
-
-impl From<tauri::Error> for PluginsErr {
-  fn from(err: tauri::Error) -> Self {
-    PluginsErr::TauriError(err.to_string())
-  }
-}
 
 pub struct ComponentRunStates {
   pub wasi_ctx: WasiCtx,
@@ -106,12 +75,13 @@ pub async fn call_plugin_function<R: Runtime>(
   plugin: String,
   function: String,
   args: Option<Value>,
-) -> std::result::Result<String, PluginsErr> {
-  let mut plugins_args: Vec<Val> = Vec::new();
-  if let Some(existing_arg) = args {
-    plugins_args = std_array_to_vals(&existing_arg)
-      .ok_or(PluginsErr::Wasmerr("Epected an array".to_string()))?;
-  }
+) -> std::result::Result<String, SparusError> {
+  let plugins_args = match args {
+    Some(existing_arg) => std_array_to_vals(&existing_arg).ok_or(SparusError::Wasmtime(
+      wasmtime::Error::msg("Epected an array"),
+    )),
+    None => Err(SparusError::Wasmtime(wasmtime::Error::msg(""))),
+  }?;
   let app_data_dir = handle.path().app_data_dir()?;
   let plugins_dir = app_data_dir.join("plugins");
   let result = state
@@ -123,7 +93,7 @@ pub async fn call_plugin_function<R: Runtime>(
 #[command]
 pub async fn js_plugins_path<R: Runtime>(
   app: AppHandle<R>,
-) -> std::result::Result<Vec<String>, PluginsErr> {
+) -> std::result::Result<Vec<String>, SparusError> {
   let plugins_dir = app
     .path()
     .app_data_dir()

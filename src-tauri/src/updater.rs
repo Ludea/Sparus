@@ -1,46 +1,20 @@
+use crate::errors::SparusError;
+use crate::utils;
 use async_lock::Mutex;
 use futures::TryStreamExt;
 use libspeedupdate::{
-  link::{AutoRepository, RemoteRepository, RepositoryError},
+  link::{AutoRepository, RemoteRepository},
   metadata::{CleanName, Current},
-  workspace::{UpdateError, UpdateOptions, Workspace},
+  workspace::{UpdateOptions, Workspace},
 };
 use semver::Version;
 use serde::Serialize;
-use std::{future, io, path::Path, sync::Arc};
+use std::{future, path::Path, sync::Arc};
 use tauri::{command, AppHandle, Emitter, Runtime, Window};
 use tokio::{
   sync::{mpsc, oneshot},
   task::LocalSet,
 };
-
-#[derive(serde::Serialize)]
-pub enum UpdateErr {
-  Io(String),
-  UpdateErr { description: String },
-}
-
-impl From<io::Error> for UpdateErr {
-  fn from(err: io::Error) -> Self {
-    UpdateErr::Io(err.to_string())
-  }
-}
-
-impl From<UpdateError> for UpdateErr {
-  fn from(error: UpdateError) -> Self {
-    Self::UpdateErr {
-      description: error.to_string(),
-    }
-  }
-}
-
-impl From<RepositoryError> for UpdateErr {
-  fn from(error: RepositoryError) -> Self {
-    Self::UpdateErr {
-      description: error.to_string(),
-    }
-  }
-}
 
 #[derive(Clone, Serialize)]
 struct DownloadInfos {
@@ -71,7 +45,7 @@ pub enum Task<R: Runtime> {
     repo: AutoRepository,
     workspace: Arc<Mutex<Workspace>>,
     goal_version: Option<String>,
-    response: oneshot::Sender<Result<(), UpdateErr>>,
+    response: oneshot::Sender<Result<(), SparusError>>,
   },
 }
 
@@ -170,7 +144,7 @@ pub async fn update_workspace<R: Runtime>(
   repository_url: &str,
   auth: Option<(&str, &str)>,
   goal_version: Option<String>,
-) -> Result<(), UpdateErr> {
+) -> Result<(), SparusError> {
   let repo = AutoRepository::new(repository_url, auth)?;
 
   let workspace = Arc::new(Mutex::new(Workspace::open(Path::new(workspace_path))?));
@@ -192,7 +166,7 @@ pub async fn update_available<R: Runtime>(
   repository_url: String,
   username: Option<String>,
   password: Option<String>,
-) -> Result<bool, UpdateErr> {
+) -> Result<bool, SparusError> {
   let auth;
   match username {
     Some(ref user) => match password {
@@ -202,13 +176,13 @@ pub async fn update_available<R: Runtime>(
     None => auth = None,
   }
 
-  let local_version = &handle.package_info().version;
-
+  let local_version_string = utils::version(handle)?;
+  let local_version = Version::parse(&local_version_string)?;
   let remote_version = latest_remote_version(repository_url, auth).await;
   match remote_version {
     Ok(value) => {
       let remote_version_semver = Version::parse(value.version().as_str());
-      let rv = remote_version_semver.unwrap().gt(local_version);
+      let rv = remote_version_semver?.gt(&local_version);
       Ok(rv)
     }
     Err(value) => Err(value),
@@ -218,7 +192,7 @@ pub async fn update_available<R: Runtime>(
 async fn latest_remote_version(
   repository_url: String,
   auth: Option<(&str, &str)>,
-) -> Result<Current, UpdateErr> {
+) -> Result<Current, SparusError> {
   let res = AutoRepository::new(repository_url.as_str(), auth)?;
   let remote_version = res.current_version().await?;
   Ok(remote_version)
