@@ -17,7 +17,7 @@ pub struct Root {
 
 #[derive(Debug, Deserialize)]
 pub struct State {
-  pub Stable: Stable,
+  pub stable: Stable,
 }
 
 #[derive(Debug, Deserialize)]
@@ -75,7 +75,7 @@ pub fn version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
       if entry.file_name() == "state.json" {
         let content = File::open(&path)?;
         let root: Root = serde_json::from_reader(content)?;
-        return Ok(root.state.Stable.version);
+        return Ok(root.state.stable.version);
       } else {
         let initial_version = initial_version(app);
         return Ok(initial_version);
