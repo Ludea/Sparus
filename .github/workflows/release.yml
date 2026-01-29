@@ -12,9 +12,9 @@ jobs:
         include:
           - platform: ubuntu-24.04
             args: ""
-          - platform: macos-13
+          - platform: macos-15-intel
             args: ""
-          - platform: macos-14
+          - platform: macos-15
             args: ""
           - platform: windows-2022
             args: ""
@@ -105,7 +105,7 @@ jobs:
           echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
           base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
           echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
-      - uses: tauri-apps/tauri-action@dev
+      - uses: ludea/tauri-action@update-release
         id: build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
