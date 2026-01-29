@@ -232,7 +232,7 @@ function Footer() {
             setGameState("play");
           })
           .catch((err: unknown) => {
-            if ((err as SparusError).kind !== "repository")
+            if ((err as SparusError).kind !== "game")
               setGlobalError(
                 (err as SparusError).kind.concat(
                   ": ",
