@@ -31,7 +31,6 @@ async fn start_streaming(
       list_plugin: plugins,
     })
     .await?;
-  // .map_err(|err| DownloadError::Rpc(err.to_string()))?;
 
   let mut stream = response.into_inner();
 

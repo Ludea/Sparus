@@ -77,23 +77,20 @@ pub fn version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
         let root: Root = serde_json::from_reader(content)?;
         return Ok(root.state.stable.version);
       } else {
-        let initial_version = initial_version(app);
-        return Ok(initial_version);
+        return initial_version(app);
       }
     }
-    let initial_version = initial_version(app);
-    Ok(initial_version)
+    initial_version(app)
   } else {
-    let initial_version = initial_version(app);
-    Ok(initial_version)
+    initial_version(app)
   }
 }
 
-fn initial_version<R: Runtime>(app: AppHandle<R>) -> String {
-  let store = app.store("Sparus.json").unwrap();
+fn initial_version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
+  let store = app.store("Sparus.json")?;
   let initial_version = match store.get("initial_version") {
     Some(version_json) => version_json,
     None => panic!("No initial version specified from store"),
   };
-  initial_version.to_string()
+  Ok(initial_version.to_string())
 }
