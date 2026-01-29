@@ -20,12 +20,16 @@ import { platform } from "@tauri-apps/plugin-os";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderIcon from "@mui/icons-material/Folder";
 
+interface SparusError {
+  kind: string;
+  message: string;
+}
+
 const host = platform();
 
 function Options() {
-  const [gameURL, setGameURL] = useState<string>("");
   const [autostart, setAutostart] = useState<boolean>();
-  const [launcherURL, setLauncherURL] = useState<string>("");
+  const [repositoryUrl, setRepositoryUrl] = useState<string>("");
   const [workspacePath, setWorkspacePath] = useState<string>("");
 
   const { setGlobalError } = useContext(SparusErrorContext);
@@ -33,19 +37,19 @@ function Options() {
 
   useEffect(() => {
     Promise.all([
-      store.get<string>("game_url"),
-      store.get<string>("launcher_url"),
+      store.get<string>("repository_url"),
       store.get<string>("workspace_path"),
       store.get<boolean>("autostart"),
     ])
-      .then(([game_url, launcher_url, workspace_path, autostart]) => {
-        if (game_url) setGameURL(game_url);
-        if (launcher_url) setLauncherURL(launcher_url);
+      .then(([repository_url, workspace_path, autostart]) => {
+        if (repository_url) setRepositoryUrl(repository_url);
         if (workspace_path) setWorkspacePath(workspace_path);
         if (autostart) setAutostart(autostart);
       })
       .catch((err: unknown) => {
-        setGlobalError(err);
+        setGlobalError(
+          (err as SparusError).kind.concat(": ", (err as SparusError).message),
+        );
       });
   });
 
@@ -79,30 +83,18 @@ function Options() {
             label="Game download url"
             type="text"
             variant="standard"
-            value={gameURL}
+            value={repositoryUrl}
             onChange={(event) => {
-              setGameURL(event.target.value);
+              setRepositoryUrl(event.target.value);
               store
-                .set("game_url", event.target.value)
+                .set("repository_url", event.target.value)
                 .catch((err: unknown) => {
-                  setGlobalError(err);
-                });
-            }}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="launcher_url"
-            label="Launcher download url"
-            type="text"
-            variant="standard"
-            value={launcherURL}
-            onChange={(event) => {
-              setLauncherURL(event.target.value);
-              store
-                .set("launcher_url", event.target.value)
-                .catch((err: unknown) => {
-                  setGlobalError(err);
+                  setGlobalError(
+                    (err as SparusError).kind.concat(
+                      ": ",
+                      (err as SparusError).message,
+                    ),
+                  );
                 });
             }}
           />
@@ -121,7 +113,12 @@ function Options() {
                   store
                     .set("workspace_path", event.target.value)
                     .catch((err: unknown) => {
-                      setGlobalError(err);
+                      setGlobalError(
+                        (err as SparusError).kind.concat(
+                          ": ",
+                          (err as SparusError).message,
+                        ),
+                      );
                     });
                 }}
               />
@@ -142,12 +139,22 @@ function Options() {
                         store
                           .set("workspace_path", dir.concat(gameSubPath))
                           .catch((err: unknown) => {
-                            setGlobalError(err);
+                            setGlobalError(
+                              (err as SparusError).kind.concat(
+                                ": ",
+                                (err as SparusError).message,
+                              ),
+                            );
                           });
                       }
                     })
                     .catch((err: unknown) => {
-                      setGlobalError(err);
+                      setGlobalError(
+                        (err as SparusError).kind.concat(
+                          ": ",
+                          (err as SparusError).message,
+                        ),
+                      );
                     });
                 }}
               >
@@ -163,11 +170,21 @@ function Options() {
                   setAutostart(event.target.checked);
                   if (autostart) {
                     enable().catch((err: unknown) => {
-                      setGlobalError(err);
+                      setGlobalError(
+                        (err as SparusError).kind.concat(
+                          ": ",
+                          (err as SparusError).message,
+                        ),
+                      );
                     });
                   } else
                     disable().catch((err: unknown) => {
-                      setGlobalError(err);
+                      setGlobalError(
+                        (err as SparusError).kind.concat(
+                          ": ",
+                          (err as SparusError).message,
+                        ),
+                      );
                     });
                   store
                     .set("autostart", event.target.value)
@@ -189,7 +206,12 @@ function Options() {
           aria-label="delete"
           onClick={() => {
             remove("game", { recursive: true }).catch((err: unknown) => {
-              setGlobalError(err);
+              setGlobalError(
+                (err as SparusError).kind.concat(
+                  ": ",
+                  (err as SparusError).message,
+                ),
+              );
             });
           }}
         >
