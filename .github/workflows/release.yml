@@ -12,9 +12,9 @@ jobs:
         include:
           - platform: ubuntu-24.04
             args: ""
-          - platform: macos-13
+          - platform: macos-15-intel
             args: ""
-          - platform: macos-14
+          - platform: macos-15
             args: ""
           - platform: windows-2022
             args: ""
