@@ -32,13 +32,7 @@ import {
   sendNotification,
 } from "@tauri-apps/plugin-notification";
 
-interface UpdateError {
-  UpdateErr: {
-    description: "";
-  };
-}
-
-interface GameError {
+interface SparusError {
   kind: string;
   message: string;
 }
@@ -185,9 +179,9 @@ function Footer() {
         setAppliedOutputBytesPerSec("");
       })
       .catch((err: unknown) => {
-        if (err && typeof err === "object" && "UpdateErr" in err) {
-          setGlobalError((err as UpdateError).UpdateErr.description);
-        }
+        setGlobalError(
+          (err as SparusError).kind.concat(": ", (err as SparusError).message),
+        );
         if (type === "launcher") setLauncherState("update_available");
         if (type === "game") setGameState("not_installed");
         setLoading(false);
@@ -210,12 +204,22 @@ function Footer() {
           invoke<string>("get_current_path")
             .then((path) => {
               store.set("workspace_path", path).catch((err: unknown) => {
-                setGlobalError(err);
+                setGlobalError(
+                  (err as SparusError).kind.concat(
+                    ": ",
+                    (err as SparusError).message,
+                  ),
+                );
               });
               setWorkspacePath(path);
             })
             .catch((err: unknown) => {
-              setGlobalError(err);
+              setGlobalError(
+                (err as SparusError).kind.concat(
+                  ": ",
+                  (err as SparusError).message,
+                ),
+              );
             });
         }
 
@@ -228,15 +232,13 @@ function Footer() {
             setGameState("play");
           })
           .catch((err: unknown) => {
-            if (
-              err &&
-              typeof err === "object" &&
-              "kind" in err &&
-              "message" in err
-            ) {
-              if ((err as GameError).kind !== "notInstalled")
-                setGlobalError((err as GameError).message);
-            }
+            if ((err as SparusError).kind !== "repository")
+              setGlobalError(
+                (err as SparusError).kind.concat(
+                  ": ",
+                  (err as SparusError).message,
+                ),
+              );
             setGameState("not_installed");
           });
 
@@ -263,14 +265,22 @@ function Footer() {
                     }
                   })
                   .catch((err: unknown) => {
-                    setGlobalError(err);
+                    setGlobalError(
+                      (err as SparusError).kind.concat(
+                        ": ",
+                        (err as SparusError).message,
+                      ),
+                    );
                   })
               : null,
           )
           .catch((err: unknown) => {
-            if (err && typeof err === "object" && "UpdateErr" in err) {
-              setGlobalError((err as UpdateError).UpdateErr.description);
-            }
+            setGlobalError(
+              (err as SparusError).kind.concat(
+                ": ",
+                (err as SparusError).message,
+              ),
+            );
           });
 
         if (gameState === "play")
@@ -296,24 +306,28 @@ function Footer() {
                       }
                     })
                     .catch((err: unknown) => {
-                      if (
-                        err &&
-                        typeof err === "object" &&
-                        "UpdateErr" in err
-                      ) {
-                        setGlobalError(
-                          (err as UpdateError).UpdateErr.description,
-                        );
-                      }
+                      setGlobalError(
+                        (err as SparusError).kind.concat(
+                          ": ",
+                          (err as SparusError).message,
+                        ),
+                      );
                     })
                 : null,
             )
             .catch((err: unknown) => {
-              setGlobalError(err);
+              setGlobalError(
+                (err as SparusError).kind.concat(
+                  ": ",
+                  (err as SparusError).message,
+                ),
+              );
             });
       })
       .catch((err: unknown) => {
-        setGlobalError(err);
+        setGlobalError(
+          (err as SparusError).kind.concat(": ", (err as SparusError).message),
+        );
       });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
@@ -346,9 +360,11 @@ function Footer() {
         convertReadableData(event.payload.applied_output_bytes_per_sec),
       );
     }).catch((err: unknown) => {
-      setGlobalError(err);
+      setGlobalError(
+        (err as SparusError).kind.concat(": ", (err as SparusError).message),
+      );
     });
-  }, []);
+  }, [gameState, launcherState, globalError]);
 
   const spawn = () => {
     const opts: SpawnOptions = {
