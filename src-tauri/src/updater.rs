@@ -177,7 +177,7 @@ pub async fn update_available<R: Runtime>(
   }
 
   let local_version_string = utils::version(handle)?;
-  let local_version = Version::parse(&local_version_string)?;
+  let local_version = Version::parse(&local_version_string).unwrap();
   let remote_version = latest_remote_version(repository_url, auth).await;
   match remote_version {
     Ok(value) => {
