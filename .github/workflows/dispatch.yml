@@ -10,7 +10,7 @@ on:
       repository_name:
         description: "Repository name"
         required: true
-        default: "Sparus"
+        default: "sparus"
       repository_url:
         description: "Repository URL"
         required: true
@@ -35,9 +35,9 @@ jobs:
         include:
           - platform: ubuntu-24.04
             host: linux
-          - platform: macos-13
+          - platform: macos-15-intel
             host: macos_x86_64
-          - platform: macos-14
+          - platform: macos-15
             host: macos_arm64
           - platform: windows-2022
             host: win64
@@ -111,5 +111,6 @@ jobs:
            echo "Uploading: $f"
            curl --fail ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
           done
+
 
 
