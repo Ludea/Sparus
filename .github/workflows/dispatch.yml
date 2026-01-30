@@ -21,7 +21,7 @@ on:
       games:
         description: "Default game name"
         required: true
-        default: "kataster"
+        default: '["kataster"]'
       initial_version:
         description: "Initial version"
         required: true
@@ -112,3 +112,4 @@ jobs:
            echo "Uploading: $f"
            curl --fail ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
           done
+
