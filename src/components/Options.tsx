@@ -79,8 +79,8 @@ function Options() {
           <TextField
             autoFocus
             margin="dense"
-            id="game_url"
-            label="Game download url"
+            id="repository_url"
+            label="Repository url"
             type="text"
             variant="standard"
             value={repositoryUrl}
