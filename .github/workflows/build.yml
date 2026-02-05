@@ -96,7 +96,7 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets -- -D warnings
       - name: setup Android signing
-        if: matrix.mobile == 'android'
+        if: matrix.mobile == 'android' && github.event_name != 'pull_request'
         run: |
           cd src-tauri/gen/android
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
