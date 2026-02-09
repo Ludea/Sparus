@@ -35,7 +35,7 @@ tonic = "0.14.0"
 tonic-prost = "0.14"
 tokio-stream = "0.1"
 tower-http = { version = "0.6", features = ["fs", "trace", "cors"] }
-getrandom = "0.3.1"
+getrandom = "0.4.1"
 thiserror = "2.0.18"
 async-lock = "3.4.0"
 wasmtime = { git = "https://github.com/bytecodealliance/wasmtime" }
