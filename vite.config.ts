@@ -10,6 +10,16 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  fmt: {
+    ignorePatterns: ["dist/**", "src-tauri"],
+  },
+  lint: {
+    ignorePatterns: ["dist/**", "src-tauri"],
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+  },
   clearScreen: false,
   server: {
     port: 5173,

@@ -87,7 +87,7 @@ jobs:
           cache-on-failure: true
           workspaces: ./src-tauri -> target
       - name: Lint and prettier
-        run: vp run check 
+        run: vp run check
       - name: Build interface
         run: vp build
       - name: fmt
