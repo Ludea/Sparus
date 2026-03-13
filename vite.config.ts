@@ -1,13 +1,15 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vite-plus";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr(), tsconfigPaths()],
+  plugins: [react(), svgr()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   clearScreen: false,
   server: {
     port: 5173,

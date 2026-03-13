@@ -3,9 +3,17 @@
   "version": "0.5.0",
   "license": "Apache-2.0",
   "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "check": "vp check",
+    "format": "vp check --fix",
+    "build": "tsc && vp build",
+    "tauri": "tauri"
+  },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@module-federation/runtime": "^2.0.1",
     "@mui/icons-material": "^7.0.0",
     "@mui/lab": "^7.0.1-beta.20",
     "@mui/material": "^7.0.0",
@@ -26,30 +34,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
-    "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^10.0.0",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-import-resolver-typescript": "^4.1.1",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
-    "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^7.0.0",
-    "prettier": "^3.3.0",
+    "@vitejs/plugin-react": "^6.0.0",
     "typescript": "^5.4.4",
     "typescript-eslint": "^8.18.2",
-    "vite": "^7.0.0",
     "vite-plugin-svgr": "^4.2.0",
-    "vite-tsconfig-paths": "^6.0.2"
-  },
-  "scripts": {
-    "dev": "vite",
-    "lint": "eslint .",
-    "prettier": "prettier --check .",
-    "build": "tsc && vite build",
-    "serve": "vite preview",
-    "tauri": "tauri"
+    "vite-plus": "^0.1.11"
   }
 }

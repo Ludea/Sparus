@@ -40,9 +40,9 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "npx tsc && pnpm build",
+    "beforeBuildCommand": "npx tsc && vp build",
     "frontendDist": "../dist",
-    "beforeDevCommand": "pnpm dev",
+    "beforeDevCommand": "vp dev",
     "devUrl": "http://localhost:5173"
   },
   "productName": "sparus",

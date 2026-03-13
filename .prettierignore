@@ -1,4 +1,0 @@
-src-tauri
-dist
-.pnp.*
-pnpm-lock.yaml

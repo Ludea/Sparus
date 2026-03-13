@@ -69,9 +69,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v4
+      - uses: voidzero-dev/setup-vp@v1
         with:
-          version: 9
+          cache: true
+          run-install: true
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -85,14 +86,10 @@ jobs:
         with:
           cache-on-failure: true
           workspaces: ./src-tauri -> target
-      - name: install app dependencies
-        run: pnpm install
-      - name: Prettier
-        run: pnpm prettier
-      - name: Lint
-        run: pnpm lint
+      - name: Lint and prettier
+        run: vp run check 
       - name: Build interface
-        run: pnpm build
+        run: vp build
       - name: fmt
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
       - name: Clippy
