@@ -8,9 +8,7 @@ const PluginLoader: React.FC = () => {
   const { register } = usePluginsContext();
 
   useEffect(() => {
-    invoke<string[]>("js_plugins_path")
-      .then(setPluginPaths)
-      .catch(console.error);
+    invoke<string[]>("js_plugins_path").then(setPluginPaths).catch(console.error);
   }, []);
 
   return (

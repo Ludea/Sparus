@@ -54,10 +54,7 @@ function MobileIndex() {
           }}
         >
           <Tab icon={<HomeIcon fontSize="large" />} aria-label="home" />
-          <Tab
-            icon={<AccountCircleIcon fontSize="large" />}
-            aria-label="account"
-          />
+          <Tab icon={<AccountCircleIcon fontSize="large" />} aria-label="account" />
         </Tabs>
       </AppBar>
     </>

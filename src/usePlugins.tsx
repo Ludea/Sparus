@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactElement,
-} from "react";
+import React, { createContext, useContext, useState, ReactElement } from "react";
 
 export type PluginPosition = "header" | "body" | "footer";
 
@@ -16,9 +11,7 @@ interface PluginContextType {
 }
 const PluginsContext = createContext<PluginContextType | null>(null);
 
-export const PluginsProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const PluginsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [header, setHeader] = useState<ReactElement[]>([]);
   const [body, setBody] = useState<ReactElement[]>([]);
   const [footer, setFooter] = useState<ReactElement[]>([]);
@@ -30,18 +23,13 @@ export const PluginsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const unregister = (position: PluginPosition, element: ReactElement) => {
-    if (position === "header")
-      setHeader((prev) => prev.filter((e) => e !== element));
-    if (position === "body")
-      setBody((prev) => prev.filter((e) => e !== element));
-    if (position === "footer")
-      setFooter((prev) => prev.filter((e) => e !== element));
+    if (position === "header") setHeader((prev) => prev.filter((e) => e !== element));
+    if (position === "body") setBody((prev) => prev.filter((e) => e !== element));
+    if (position === "footer") setFooter((prev) => prev.filter((e) => e !== element));
   };
 
   return (
-    <PluginsContext.Provider
-      value={{ header, body, footer, register, unregister }}
-    >
+    <PluginsContext.Provider value={{ header, body, footer, register, unregister }}>
       {children}
     </PluginsContext.Provider>
   );

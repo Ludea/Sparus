@@ -47,9 +47,7 @@ function Options() {
         if (autostart) setAutostart(autostart);
       })
       .catch((err: unknown) => {
-        setGlobalError(
-          (err as SparusError).kind.concat(": ", (err as SparusError).message),
-        );
+        setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
       });
   });
 
@@ -86,16 +84,11 @@ function Options() {
             value={repositoryUrl}
             onChange={(event) => {
               setRepositoryUrl(event.target.value);
-              store
-                .set("repository_url", event.target.value)
-                .catch((err: unknown) => {
-                  setGlobalError(
-                    (err as SparusError).kind.concat(
-                      ": ",
-                      (err as SparusError).message,
-                    ),
-                  );
-                });
+              store.set("repository_url", event.target.value).catch((err: unknown) => {
+                setGlobalError(
+                  (err as SparusError).kind.concat(": ", (err as SparusError).message),
+                );
+              });
             }}
           />
           <Grid container>
@@ -110,16 +103,11 @@ function Options() {
                 value={workspacePath}
                 onChange={(event) => {
                   setWorkspacePath(event.target.value);
-                  store
-                    .set("workspace_path", event.target.value)
-                    .catch((err: unknown) => {
-                      setGlobalError(
-                        (err as SparusError).kind.concat(
-                          ": ",
-                          (err as SparusError).message,
-                        ),
-                      );
-                    });
+                  store.set("workspace_path", event.target.value).catch((err: unknown) => {
+                    setGlobalError(
+                      (err as SparusError).kind.concat(": ", (err as SparusError).message),
+                    );
+                  });
                 }}
               />
             </Grid>
@@ -133,27 +121,20 @@ function Options() {
                   })
                     .then((dir) => {
                       if (dir) {
-                        const gameSubPath =
-                          host === "windows" ? "\\game" : "/game";
+                        const gameSubPath = host === "windows" ? "\\game" : "/game";
                         setWorkspacePath(dir.concat(gameSubPath));
                         store
                           .set("workspace_path", dir.concat(gameSubPath))
                           .catch((err: unknown) => {
                             setGlobalError(
-                              (err as SparusError).kind.concat(
-                                ": ",
-                                (err as SparusError).message,
-                              ),
+                              (err as SparusError).kind.concat(": ", (err as SparusError).message),
                             );
                           });
                       }
                     })
                     .catch((err: unknown) => {
                       setGlobalError(
-                        (err as SparusError).kind.concat(
-                          ": ",
-                          (err as SparusError).message,
-                        ),
+                        (err as SparusError).kind.concat(": ", (err as SparusError).message),
                       );
                     });
                 }}
@@ -171,26 +152,18 @@ function Options() {
                   if (autostart) {
                     enable().catch((err: unknown) => {
                       setGlobalError(
-                        (err as SparusError).kind.concat(
-                          ": ",
-                          (err as SparusError).message,
-                        ),
+                        (err as SparusError).kind.concat(": ", (err as SparusError).message),
                       );
                     });
                   } else
                     disable().catch((err: unknown) => {
                       setGlobalError(
-                        (err as SparusError).kind.concat(
-                          ": ",
-                          (err as SparusError).message,
-                        ),
+                        (err as SparusError).kind.concat(": ", (err as SparusError).message),
                       );
                     });
-                  store
-                    .set("autostart", event.target.value)
-                    .catch((err: unknown) => {
-                      setGlobalError(err);
-                    });
+                  store.set("autostart", event.target.value).catch((err: unknown) => {
+                    setGlobalError(err);
+                  });
                 }}
                 slotProps={{
                   input: {
@@ -206,12 +179,7 @@ function Options() {
           aria-label="delete"
           onClick={() => {
             remove("game", { recursive: true }).catch((err: unknown) => {
-              setGlobalError(
-                (err as SparusError).kind.concat(
-                  ": ",
-                  (err as SparusError).message,
-                ),
-              );
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
             });
           }}
         >

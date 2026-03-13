@@ -39,12 +39,7 @@ interface SparusError {
 
 const host = platform();
 const architecture = arch();
-type GameState =
-  | "update_available"
-  | "play"
-  | "updating"
-  | "not_installed"
-  | "idle";
+type GameState = "update_available" | "play" | "updating" | "not_installed" | "idle";
 type LauncherState = "update_available" | "restart" | "updating" | "idle";
 type LabelSource = "game" | "launcher";
 const gameLabelByState: Record<GameState, string> = {
@@ -81,9 +76,7 @@ const convertReadableData = (data: number): string => {
     return `${String(Math.floor((data / (1024 * 1024)) * 100) / 100)} MiB`;
   }
   if (data > 1024 * 1024 * 1024) {
-    return `${String(
-      Math.floor((data / (1024 * 1024 * 1024)) * 100) / 100,
-    )} GiB`;
+    return `${String(Math.floor((data / (1024 * 1024 * 1024)) * 100) / 100)} GiB`;
   }
   return "";
 };
@@ -157,20 +150,11 @@ function Footer() {
     if (type === "launcher") setLauncherState("updating");
     if (type === "game") setGameState("updating");
     let workdirSubPath = "";
-    if (type === "game")
-      workdirSubPath = host === "windows" ? "\\game" : "/game";
+    if (type === "game") workdirSubPath = host === "windows" ? "\\game" : "/game";
 
     invoke("update_workspace", {
       workspacePath: workspacePath.concat(workdirSubPath),
-      repositoryUrl: repositoryUrl.concat(
-        "/",
-        repositoryName,
-        "/",
-        type,
-        "/",
-        platform,
-        "/",
-      ),
+      repositoryUrl: repositoryUrl.concat("/", repositoryName, "/", type, "/", platform, "/"),
     })
       .then(() => {
         if (type === "launcher") setLauncherState("restart");
@@ -179,9 +163,7 @@ function Footer() {
         setAppliedOutputBytesPerSec("");
       })
       .catch((err: unknown) => {
-        setGlobalError(
-          (err as SparusError).kind.concat(": ", (err as SparusError).message),
-        );
+        setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
         if (type === "launcher") setLauncherState("update_available");
         if (type === "game") setGameState("not_installed");
         setLoading(false);
@@ -205,21 +187,13 @@ function Footer() {
             .then((path) => {
               store.set("workspace_path", path).catch((err: unknown) => {
                 setGlobalError(
-                  (err as SparusError).kind.concat(
-                    ": ",
-                    (err as SparusError).message,
-                  ),
+                  (err as SparusError).kind.concat(": ", (err as SparusError).message),
                 );
               });
               setWorkspacePath(path);
             })
             .catch((err: unknown) => {
-              setGlobalError(
-                (err as SparusError).kind.concat(
-                  ": ",
-                  (err as SparusError).message,
-                ),
-              );
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
             });
         }
 
@@ -233,24 +207,13 @@ function Footer() {
           })
           .catch((err: unknown) => {
             if ((err as SparusError).kind !== "game")
-              setGlobalError(
-                (err as SparusError).kind.concat(
-                  ": ",
-                  (err as SparusError).message,
-                ),
-              );
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
             setGameState("not_installed");
           });
 
         const repo_name = repository_name ?? "";
         invoke("update_available", {
-          repositoryUrl: repository_url?.concat(
-            "/",
-            repo_name,
-            "/launcher/",
-            platform,
-            "/",
-          ),
+          repositoryUrl: repository_url?.concat("/", repo_name, "/launcher/", platform, "/"),
         })
           .then((is_available) =>
             is_available
@@ -266,32 +229,18 @@ function Footer() {
                   })
                   .catch((err: unknown) => {
                     setGlobalError(
-                      (err as SparusError).kind.concat(
-                        ": ",
-                        (err as SparusError).message,
-                      ),
+                      (err as SparusError).kind.concat(": ", (err as SparusError).message),
                     );
                   })
               : null,
           )
           .catch((err: unknown) => {
-            setGlobalError(
-              (err as SparusError).kind.concat(
-                ": ",
-                (err as SparusError).message,
-              ),
-            );
+            setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
           });
 
         if (gameState === "play")
           invoke("update_available", {
-            repositoryUrl: repository_url?.concat(
-              "/",
-              repo_name,
-              "/game/",
-              platform,
-              "/",
-            ),
+            repositoryUrl: repository_url?.concat("/", repo_name, "/game/", platform, "/"),
           })
             .then((is_available) =>
               is_available
@@ -307,62 +256,34 @@ function Footer() {
                     })
                     .catch((err: unknown) => {
                       setGlobalError(
-                        (err as SparusError).kind.concat(
-                          ": ",
-                          (err as SparusError).message,
-                        ),
+                        (err as SparusError).kind.concat(": ", (err as SparusError).message),
                       );
                     })
                 : null,
             )
             .catch((err: unknown) => {
-              setGlobalError(
-                (err as SparusError).kind.concat(
-                  ": ",
-                  (err as SparusError).message,
-                ),
-              );
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
             });
       })
       .catch((err: unknown) => {
-        setGlobalError(
-          (err as SparusError).kind.concat(": ", (err as SparusError).message),
-        );
+        setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
       });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
       setProgress(
-        (event.payload.downloaded_bytes_start /
-          event.payload.downloaded_bytes_end) *
-          100,
+        (event.payload.downloaded_bytes_start / event.payload.downloaded_bytes_end) * 100,
       );
       setBuffer(
-        (event.payload.applied_output_bytes_start /
-          event.payload.applied_output_bytes_end) *
-          100,
+        (event.payload.applied_output_bytes_start / event.payload.applied_output_bytes_end) * 100,
       );
-      setDownloadedBytesStart(
-        convertReadableData(event.payload.downloaded_bytes_start),
-      );
-      setDownloadedBytesEnd(
-        convertReadableData(event.payload.downloaded_bytes_end),
-      );
-      setDownloadedBytesPerSec(
-        convertReadableData(event.payload.downloaded_bytes_per_sec),
-      );
-      setAppliedOutputBytesStart(
-        convertReadableData(event.payload.applied_output_bytes_start),
-      );
-      setAppliedOutputBytesEnd(
-        convertReadableData(event.payload.applied_output_bytes_end),
-      );
-      setAppliedOutputBytesPerSec(
-        convertReadableData(event.payload.applied_output_bytes_per_sec),
-      );
+      setDownloadedBytesStart(convertReadableData(event.payload.downloaded_bytes_start));
+      setDownloadedBytesEnd(convertReadableData(event.payload.downloaded_bytes_end));
+      setDownloadedBytesPerSec(convertReadableData(event.payload.downloaded_bytes_per_sec));
+      setAppliedOutputBytesStart(convertReadableData(event.payload.applied_output_bytes_start));
+      setAppliedOutputBytesEnd(convertReadableData(event.payload.applied_output_bytes_end));
+      setAppliedOutputBytesPerSec(convertReadableData(event.payload.applied_output_bytes_per_sec));
     }).catch((err: unknown) => {
-      setGlobalError(
-        (err as SparusError).kind.concat(": ", (err as SparusError).message),
-      );
+      setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
     });
   }, [gameState, launcherState, globalError]);
 
@@ -370,11 +291,7 @@ function Footer() {
     const opts: SpawnOptions = {
       env: { CARGO_MANIFEST_DIR: workspacePath.concat("/game/") },
     };
-    const command = Command.create(
-      shell,
-      [...arg, workspacePath.concat("/game/", gameName)],
-      opts,
-    );
+    const command = Command.create(shell, [...arg, workspacePath.concat("/game/", gameName)], opts);
 
     command.spawn().catch((err: unknown) => {
       setGlobalError(err);
@@ -425,11 +342,7 @@ function Footer() {
           right: 10,
         }}
       >
-        <ButtonGroup
-          variant="contained"
-          ref={anchorRef}
-          aria-label="play_update_install"
-        >
+        <ButtonGroup variant="contained" ref={anchorRef} aria-label="play_update_install">
           <Button
             loading={loading}
             loadingIndicator={<CircularProgress color="secondary" size={22} />}
@@ -467,8 +380,7 @@ function Footer() {
           >
             {activeLabel}
           </Button>
-          {launcherState === "update_available" ||
-          launcherState === "restart" ? (
+          {launcherState === "update_available" || launcherState === "restart" ? (
             <Button
               size="small"
               aria-controls={open ? "split-button-menu" : undefined}
@@ -495,8 +407,7 @@ function Footer() {
             <Grow
               {...TransitionProps}
               style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
+                transformOrigin: placement === "bottom" ? "center top" : "center bottom",
               }}
             >
               <Paper>
@@ -505,9 +416,7 @@ function Footer() {
                     <MenuItem
                       selected={true}
                       onClick={() => {
-                        setActiveSource(
-                          activeSource === "game" ? "launcher" : "game",
-                        );
+                        setActiveSource(activeSource === "game" ? "launcher" : "game");
                         setOpen(false);
                       }}
                     >
@@ -532,13 +441,9 @@ function Footer() {
           alignItems="center"
           justifyContent="center"
         >
-          <Paper
-            sx={{ position: "fixed", bottom: "8%", backgroundColor: "#393e46" }}
-            elevation={3}
-          >
+          <Paper sx={{ position: "fixed", bottom: "8%", backgroundColor: "#393e46" }} elevation={3}>
             <Typography sx={{ color: "white" }}>
-              Download: {downloadedBytesStart} / {downloadedBytesEnd} @{" "}
-              {downloadedBytesPerSec}/s
+              Download: {downloadedBytesStart} / {downloadedBytesEnd} @ {downloadedBytesPerSec}/s
               <br />
               Write : {appliedOutputBytesStart} / {appliedOutputBytesEnd} @{" "}
               {appliedOutputBytesPerSec}/s

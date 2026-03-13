@@ -15,7 +15,7 @@ export const Plugins = ({
     const base_url = "http://localhost:8012/plugins/";
     import(/* @vite-ignore */ base_url + path)
       .then((mod) => {
-        /* eslint-disable-next-line 
+        /* eslint-disable-next-line
            @typescript-eslint/no-unsafe-return, 
            @typescript-eslint/no-unsafe-member-access */
         setComponent(() => mod.default);
