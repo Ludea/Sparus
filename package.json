@@ -43,5 +43,6 @@
     "typescript-eslint": "^8.18.2",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plus": "^0.1.11"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }
