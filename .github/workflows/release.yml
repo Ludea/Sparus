@@ -87,6 +87,7 @@ jobs:
           cache-on-failure: true
           workspaces: ./src-tauri -> target
       - name: Lint and prettier
+        if: matrix.platform != 'windows-2022'
         run: vp run check
       - name: Build interface
         run: vp build

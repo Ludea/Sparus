@@ -83,6 +83,7 @@ jobs:
       - name: Generate icons
         run: vp run tauri icon src-tauri/icons/icon.png
       - name: Lint and prettier
+        if: matrix.platform != 'windows-2022'
         run: vp run check
       - name: Build interface
         run: vp run build
