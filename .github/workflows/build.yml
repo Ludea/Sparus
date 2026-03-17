@@ -69,7 +69,6 @@ jobs:
           node-version: 20
       - uses: voidzero-dev/setup-vp@v1
         with:
-          cache: true
           run-install: true
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
