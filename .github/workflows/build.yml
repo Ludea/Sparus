@@ -24,7 +24,7 @@ jobs:
           - platform: windows-latest
             args: ""
           - platform: ubuntu-latest
-            args: "--target aarch64 --split-per-abi"
+            args: "--target aarch64 --split-per-abi --verbose"
             target: aarch64
             mobile: android
 
