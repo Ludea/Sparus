@@ -158,7 +158,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     .invoke_handler(tauri::generate_handler![
       updater::update_workspace,
       updater::update_available,
-      plugins::call_plugin_function,
+      plugins::call_wasm_plugin_function,
       plugins::js_plugins_path,
       utils::get_current_path,
       utils::get_game_exe_name

@@ -20,7 +20,7 @@
     "allow-check-if-installed", 
     "allow-update-workspace",
     "allow-update-available",
-    "allow-call-plugin-function",
+    "allow-call-wasm-plugin-function",
     "allow-get-current-path",
     "allow-get-game-exe-name", 
     "allow-js-plugins-path",
