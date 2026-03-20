@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, To, NavigateOptions } from "react-router-dom";
 
 // Icons
 import ClearIcon from "@mui/icons-material/Clear";
@@ -14,6 +14,13 @@ import { SparusErrorContext } from "utils/Context";
 
 // Tauri api
 import { getCurrentWindow } from "@tauri-apps/api/window";
+
+declare module "react-router-dom" {
+  interface NavigateFunction {
+    (to: To, options?: NavigateOptions): void;
+    (delta: number): void;
+  }
+}
 
 function Header() {
   const { setGlobalError } = useContext(SparusErrorContext);
