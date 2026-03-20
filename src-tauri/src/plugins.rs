@@ -1,10 +1,10 @@
 use crate::errors::SparusError;
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::path::PathBuf;
 use tauri::{command, AppHandle, Manager, Runtime, State};
 use tokio::fs;
 use wasmtime::{
-  component::{Component, Linker, ResourceTable, Val},
+  component::{types::ComponentItem, Component, Linker, ResourceTable, Type, Val},
   Config, Engine, Result, Store,
 };
 use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
@@ -31,7 +31,9 @@ pub struct PluginSystem {
 impl PluginSystem {
   pub fn new() -> Self {
     let mut config = Config::new();
-    config.wasm_component_model(true);
+    config
+      .wasm_component_model_async(true)
+      .wasm_component_model_async_builtins(true);
     let engine =
       Engine::new(&config).unwrap_or_else(|err| panic!("Unable to start wasm runtime: {}", err));
     Self { engine }
@@ -40,42 +42,78 @@ impl PluginSystem {
   pub async fn call(
     &self,
     plugin_dir: PathBuf,
-    plugin: String,
+    plugin_name: String,
     function: String,
     args: Vec<Val>,
-  ) -> Result<String> {
+  ) -> Result<Value, SparusError> {
     let mut linker = Linker::new(&self.engine);
     wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
-
-    let wasi = WasiCtx::builder().build();
+    let wasi = WasiCtx::builder().inherit_stdio().inherit_stderr().build();
     let state = ComponentRunStates {
       wasi_ctx: wasi,
       resource_table: ResourceTable::new(),
     };
+
     let mut store = Store::new(&self.engine, state);
-    let plugin_full_path = plugin_dir.display().to_string() + "/" + &plugin + ".wasm";
-    let component = Component::from_file(&self.engine, plugin_full_path)?;
-    let instance = linker.instantiate_async(&mut store, &component).await?;
-    let mut result = [Val::String(String::new())];
-    if let Some(func) = instance.get_func(&mut store, function) {
-      func.call_async(&mut store, &args, &mut result).await?;
-      let value_result = wasm_val_to_std_val(&result[0]);
-      Ok(value_result.to_string())
-    } else {
-      let err = std::io::Error::other("function does not exist");
-      Err(err.into())
+
+    let plugin_absolute_path = plugin_dir.join(&plugin_name).join(plugin_name).with_extension("wasm");
+    let component = Component::from_file(&self.engine, plugin_absolute_path)?;
+
+    let component_type = component.component_type();
+    let exports_iter = component_type.exports(&self.engine);
+    let mut instance_name = "";
+    for (name, export_type) in exports_iter {
+      if let ComponentItem::ComponentInstance(_) = export_type {
+        instance_name = name;
+      }
     }
+
+    let instance = linker.instantiate_async(&mut store, &component).await?;
+    let instance_index = instance
+      .get_export_index(&mut store, None, instance_name)
+      .ok_or(SparusError::PluginInternal(
+        "instance index not found".to_string(),
+      ))?;
+
+    let func_index = instance
+      .get_export_index(&mut store, Some(&instance_index), &function)
+      .ok_or(SparusError::PluginInternal(
+        "function index not found".to_string(),
+      ))?;
+
+    let func = instance
+      .get_func(&mut store, func_index)
+      .ok_or(SparusError::PluginInternal(
+        "function not found".to_string(),
+      ))?;
+
+    let func_ty = func.ty(&store);
+    let result_types = func_ty.results();
+
+    let mut results: Vec<Val> = result_types.map(default_val_from_type).collect();
+    if func_ty.async_() {
+      store
+        .run_concurrent(async |accessor| -> Result<(), SparusError> {
+          func.call_concurrent(accessor, &args, &mut results).await?;
+          Ok(())
+        })
+        .await??
+    } else {
+      func.call_async(&mut store, &args, &mut results).await?
+    }
+
+    Ok(results_to_json(results))
   }
 }
 
 #[command]
-pub async fn call_plugin_function<R: Runtime>(
+pub async fn call_wasm_plugin_function<R: Runtime>(
   handle: AppHandle<R>,
   state: State<'_, PluginSystem>,
   plugin: String,
   function: String,
   args: Option<Value>,
-) -> std::result::Result<String, SparusError> {
+) -> Result<Value, SparusError> {
   let plugins_args = match args {
     Some(existing_arg) => std_array_to_vals(&existing_arg).ok_or(SparusError::Wasmtime(
       wasmtime::Error::msg("Epected an array"),
@@ -84,16 +122,13 @@ pub async fn call_plugin_function<R: Runtime>(
   }?;
   let app_data_dir = handle.path().app_data_dir()?;
   let plugins_dir = app_data_dir.join("plugins");
-  let result = state
+  state
     .call(plugins_dir, plugin, function, plugins_args)
-    .await?;
-  Ok(result)
+    .await
 }
 
 #[command]
-pub async fn js_plugins_path<R: Runtime>(
-  app: AppHandle<R>,
-) -> std::result::Result<Vec<String>, SparusError> {
+pub async fn js_plugins_path<R: Runtime>(app: AppHandle<R>) -> Result<Vec<String>, SparusError> {
   let plugins_dir = app
     .path()
     .app_data_dir()
@@ -174,53 +209,54 @@ fn std_val_to_wasm_val(value: &Value) -> Option<Val> {
   }
 }
 
-fn wasm_val_to_std_val(val: &Val) -> Value {
+fn val_to_json(val: Val) -> Value {
   match val {
-    Val::Bool(b) => Value::Bool(*b),
-    Val::S8(i) => Value::Number((*i).into()),
-    Val::S16(i) => Value::Number((*i).into()),
-    Val::S32(i) => Value::Number((*i).into()),
-    Val::S64(i) => json!(i),
-    Val::U8(i) => Value::Number((*i).into()),
-    Val::U16(i) => Value::Number((*i).into()),
-    Val::U32(i) => Value::Number((*i).into()),
-    Val::U64(i) => json!(i),
-    Val::Float32(f) => json!(f),
-    Val::Float64(f) => json!(f),
-    Val::String(s) => Value::String(s.clone()),
+    Val::Bool(b) => Value::Bool(b),
+    Val::S32(n) => Value::Number(n.into()),
+    Val::S64(n) => Value::Number(n.into()),
+    Val::U32(n) => Value::Number(n.into()),
+    Val::U64(n) => Value::Number(n.into()),
+    Val::Float32(f) => serde_json::Number::from_f64(f as f64)
+      .map(Value::Number)
+      .unwrap_or(Value::Null),
+    Val::Float64(f) => serde_json::Number::from_f64(f)
+      .map(Value::Number)
+      .unwrap_or(Value::Null),
+    Val::String(s) => Value::String(s),
+    _ => Value::Null,
+  }
+}
 
-    Val::List(vals) => {
-      let arr: Vec<Value> = vals.iter().map(wasm_val_to_std_val).collect();
-      Value::Array(arr)
-    }
+fn results_to_json(results: Vec<Val>) -> Value {
+  match results.len() {
+    0 => Value::Null,
+    1 => val_to_json(results.into_iter().next().unwrap()),
+    _ => Value::Array(results.into_iter().map(val_to_json).collect()),
+  }
+}
 
-    Val::Record(fields) => {
-      let mut map = serde_json::Map::new();
-      for (k, v) in fields {
-        map.insert(k.clone(), wasm_val_to_std_val(v));
+fn default_val_from_type(ty: Type) -> Val {
+  match ty {
+    Type::Bool => Val::Bool(false),
+    Type::S8 => Val::S8(0),
+    Type::S16 => Val::S16(0),
+    Type::S32 => Val::S32(0),
+    Type::S64 => Val::S64(0),
+    Type::U8 => Val::U8(0),
+    Type::U16 => Val::U16(0),
+    Type::U32 => Val::U32(0),
+    Type::U64 => Val::U64(0),
+    Type::Float32 => Val::Float32(0.0),
+    Type::Float64 => Val::Float64(0.0),
+    Type::String => Val::String(String::new()),
+    Type::Result(result_ty) => {
+      if let Some(ok_ty) = result_ty.ok() {
+        Val::Result(Ok(Some(Box::new(default_val_from_type(ok_ty)))))
+      } else {
+        Val::Result(Ok(None))
       }
-      Value::Object(map)
     }
-
-    Val::Option(opt) => match opt {
-      Some(inner) => wasm_val_to_std_val(inner),
-      None => Value::Null,
-    },
-
-    Val::Result(res) => match res {
-      Ok(opt) => match opt {
-        Some(inner) => json!({ "Ok": wasm_val_to_std_val(inner) }),
-        None => json!({ "Ok": Value::Null }),
-      },
-      Err(opt) => match opt {
-        Some(inner) => json!({ "Err": wasm_val_to_std_val(inner) }),
-        None => json!({ "Err": Value::Null }),
-      },
-    },
-
-    Val::Tuple(vals) => Value::Array(vals.iter().map(wasm_val_to_std_val).collect()),
-
-    _ => Value::String(format!("{val:?}")),
+    _ => unimplemented!("Type non supporté dynamiquement"),
   }
 }
 

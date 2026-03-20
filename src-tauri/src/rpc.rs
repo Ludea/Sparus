@@ -24,7 +24,7 @@ async fn start_streaming(
   launcher_name: String,
 ) -> Result<(), SparusError> {
   let app_data_dir_string = app_data_dir.display().to_string();
-  let plugins = get_list_plugins_with_versions(app_data_dir_string.clone(), runtime).await;
+  let plugins = get_list_plugins_with_versions(app_data_dir_string.clone(), runtime).await?;
   let response = client
     .sparus(Plugins {
       repository_name: launcher_name,
@@ -102,19 +102,21 @@ async fn download_and_write_file(
 async fn get_list_plugins_with_versions(
   app_data_dir: String,
   runtime: PluginSystem,
-) -> HashMap<String, String> {
+) -> Result<HashMap<String, String>, SparusError> {
   let plugins_path = Path::new(&app_data_dir).join("plugins");
   let mut list_plugins = HashMap::new();
   if plugins_path.is_dir() {
-    for entry in std::fs::read_dir(&plugins_path).unwrap() {
-      let entry = entry.unwrap();
+    for entry in std::fs::read_dir(&plugins_path)? {
+      let entry = entry?;
       let file_path = entry.path();
       if file_path.is_file() {
         if let Some(extension) = file_path.clone().extension() {
           if extension == "wasm" {
             let plugin_name = file_path
               .file_stem()
-              .unwrap()
+              .ok_or(SparusError::PluginInternal(
+                "Unable to get wasm plugin name".to_string(),
+              ))?
               .to_string_lossy()
               .into_owned();
             let version = runtime
@@ -124,12 +126,12 @@ async fn get_list_plugins_with_versions(
                 "get-version".to_string(),
                 Vec::new(),
               )
-              .await;
-            list_plugins.insert(plugin_name, version.unwrap());
+              .await?;
+            list_plugins.insert(plugin_name, version.to_string());
           }
         }
       }
     }
   }
-  list_plugins
+  Ok(list_plugins)
 }

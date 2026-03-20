@@ -31,6 +31,8 @@ pub enum SparusError {
   Wasmtime(#[from] wasmtime::Error),
   #[error("Plugin not found")]
   Plugin,
+  #[error("{0}")]
+  PluginInternal(String),
 }
 
 impl From<UpdateError> for SparusError {
@@ -97,6 +99,10 @@ impl Serialize for SparusError {
       SparusError::Plugin => {
         s.serialize_field("kind", "plugin")?;
         s.serialize_field("message", "Plugin not found")?;
+      }
+      SparusError::PluginInternal(err) => {
+        s.serialize_field("kind", "plugin")?;
+        s.serialize_field("message", &err.to_string())?;
       }
     }
     s.end()
