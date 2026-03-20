@@ -38,8 +38,8 @@ tower-http = { version = "0.6", features = ["fs", "trace", "cors"] }
 getrandom = "0.4.1"
 thiserror = "2.0.18"
 async-lock = "3.4.0"
-wasmtime = { git = "https://github.com/bytecodealliance/wasmtime" }
-wasmtime-wasi = { git = "https://github.com/bytecodealliance/wasmtime" } 
+wasmtime = "43.0.0"
+wasmtime-wasi = "43.0.0"
 tauri-plugin-store = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-os = "2"
