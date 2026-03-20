@@ -56,7 +56,10 @@ impl PluginSystem {
 
     let mut store = Store::new(&self.engine, state);
 
-    let plugin_absolute_path = plugin_dir.join(&plugin_name).join(plugin_name).with_extension("wasm");
+    let plugin_absolute_path = plugin_dir
+      .join(&plugin_name)
+      .join(plugin_name)
+      .with_extension("wasm");
     let component = Component::from_file(&self.engine, plugin_absolute_path)?;
 
     let component_type = component.component_type();
