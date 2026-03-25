@@ -37,7 +37,7 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "@vitejs/plugin-react": "^6.0.0",
-    "typescript": "^5.4.4",
+    "typescript": "^6.0.2",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plus": "^0.1.11"
   },
