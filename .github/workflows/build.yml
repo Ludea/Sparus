@@ -55,7 +55,7 @@ jobs:
           java-version: "21"
       - name: Setup Android SDK
         if: matrix.mobile == 'android'
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
       - name: Setup Android NDK
         if: matrix.mobile == 'android'
         uses: nttld/setup-ndk@v1
