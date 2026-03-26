@@ -132,33 +132,22 @@ pub async fn call_wasm_plugin_function<R: Runtime>(
 
 #[command]
 pub async fn js_plugins_path<R: Runtime>(app: AppHandle<R>) -> Result<Vec<String>, SparusError> {
-  let plugins_dir = app
-    .path()
-    .app_data_dir()
-    .map_err(|err| std::io::Error::other(err.to_string()))?
-    .join("plugins");
+  let plugins_dir = app.path().app_data_dir()?.join("plugins");
 
   if !plugins_dir.exists() {
     return Ok(Vec::new());
   }
 
-  let mut entries = fs::read_dir(&plugins_dir)
-    .await
-    .map_err(|err| std::io::Error::other(err.to_string()))?;
+  let mut entries = fs::read_dir(&plugins_dir).await?;
 
   let mut plugins = Vec::new();
 
-  while let Ok(Some(entry)) = entries.next_entry().await.map_err(|err| err.to_string()) {
+  while let Some(entry) = entries.next_entry().await? {
     let path = entry.path();
     if path.is_dir() {
-      let mut sub_entries = fs::read_dir(&path)
-        .await
-        .map_err(|err| std::io::Error::other(err.to_string()))?;
-      while let Ok(Some(entry)) = sub_entries
-        .next_entry()
-        .await
-        .map_err(|err| err.to_string())
-      {
+      let mut sub_entries = fs::read_dir(&path).await?;
+
+      while let Some(entry) = sub_entries.next_entry().await? {
         let path = entry.path();
         if let Some(extension) = path.extension() {
           if extension == "js" {
