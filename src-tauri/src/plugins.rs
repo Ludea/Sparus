@@ -121,7 +121,7 @@ pub async fn call_wasm_plugin_function<R: Runtime>(
     Some(existing_arg) => std_array_to_vals(&existing_arg).ok_or(SparusError::Wasmtime(
       wasmtime::Error::msg("Epected an array"),
     )),
-    None => Err(SparusError::Wasmtime(wasmtime::Error::msg(""))),
+    None => Ok(Vec::new()),
   }?;
   let app_data_dir = handle.path().app_data_dir()?;
   let plugins_dir = app_data_dir.join("plugins");
