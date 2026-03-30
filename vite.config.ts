@@ -1,12 +1,13 @@
 import { defineConfig } from "vite-plus";
 import react from "@vitejs/plugin-react";
-import svgr from "vite-plugin-svgr";
 
 const host = process.env.TAURI_DEV_HOST;
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr()],
+  define: {
+    process: { env: {} },
+  },
+  plugins: [react()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -16,6 +17,7 @@ export default defineConfig({
   lint: {
     ignorePatterns: ["dist/**", "src-tauri"],
     options: {
+      denyWarnings: true,
       typeAware: true,
       typeCheck: true,
     },
