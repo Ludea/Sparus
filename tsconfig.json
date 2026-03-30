@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["vite-plugin-svgr/client"],
     "allowJs": true,
     "paths": {
       "assets/*": ["./src/assets/*"],
