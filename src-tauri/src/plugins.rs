@@ -144,24 +144,12 @@ pub async fn js_plugins_path<R: Runtime>(app: AppHandle<R>) -> Result<Vec<String
 
   while let Some(entry) = entries.next_entry().await? {
     let path = entry.path();
-    if path.is_dir() {
-      let mut sub_entries = fs::read_dir(&path).await?;
-
-      while let Some(entry) = sub_entries.next_entry().await? {
-        let path = entry.path();
-        if let Some(extension) = path.extension() {
-          if extension == "js" {
-            let full_path = entry.path();
-            let relative_path = full_path.strip_prefix(plugins_dir.clone())?;
-            let path = relative_path.display().to_string();
-
-            plugins.push(path);
-          }
-        }
-      }
+    if path.join("frontend.js").is_file() {
+      let plugin_dir = path.strip_prefix(&plugins_dir)?;
+      let plugin_dir_string = plugin_dir.display().to_string();
+      plugins.push(plugin_dir_string);
     }
   }
-
   Ok(plugins)
 }
 
