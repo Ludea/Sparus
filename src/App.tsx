@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -8,8 +8,8 @@ import Header from "components/Header";
 import { DesktopRoutes, MobileRoutes } from "routes";
 import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
-import { PluginManager } from "components/PluginManager";
-import { PluginsProvider } from "usePlugins";
+import { PluginManager } from "components/PluginsManager";
+import { PluginsProvider } from "utils/usePlugins";
 
 function App() {
   const [globalError, setGlobalError] = useState<unknown>();

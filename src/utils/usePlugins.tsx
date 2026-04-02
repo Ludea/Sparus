@@ -35,7 +35,6 @@ export const PluginsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 };
 
-// ✅ Hook d’accès
 export const usePluginsContext = (): PluginContextType => {
   const ctx = useContext(PluginsContext);
   if (!ctx) {
