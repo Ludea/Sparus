@@ -37,6 +37,7 @@ const PluginLoader: React.FC = () => {
     setMF(instance);
   }, []);
 
+  if (!mf) return null;
   return (
     <div style={{ display: "none" }}>
       {pluginPath.map((path) => (
