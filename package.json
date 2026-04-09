@@ -15,7 +15,7 @@
     "@emotion/styled": "^11.14.1",
     "@module-federation/runtime": "^2.2.3",
     "@mui/icons-material": "^7.3.9",
-    "@mui/lab": "7.0.1-beta.23",
+    "@mui/lab": "7.0.1-beta.24",
     "@mui/material": "^7.3.9",
     "@tauri-apps/api": "2.7.0",
     "@tauri-apps/cli": "^2.10.1",
