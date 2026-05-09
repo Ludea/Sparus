@@ -16,7 +16,7 @@
     "@module-federation/runtime": "^2.0.1",
     "@mui/icons-material": "^9.0.0",
     "@mui/lab": "^9.0.0-beta.0",
-    "@mui/material": "9.0.0",
+    "@mui/material": "9.0.1",
     "@tauri-apps/api": "2.7.0",
     "@tauri-apps/cli": "^2.0.0",
     "@tauri-apps/plugin-autostart": "^2.0.0",
