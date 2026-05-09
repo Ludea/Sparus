@@ -55,8 +55,6 @@ function Options() {
     <Slide direction="right" in mountOnEnter unmountOnExit>
       <Grid
         container
-        alignItems="flex-start"
-        direction="column"
         sx={{
           backgroundColor: "#D3D3D3",
           height: 550,
@@ -111,7 +109,7 @@ function Options() {
                 }}
               />
             </Grid>
-            <Grid size={1} alignContent="end">
+            <Grid size={1}>
               <IconButton
                 aria-label="folder"
                 onClick={() => {

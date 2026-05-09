@@ -302,8 +302,6 @@ function Footer() {
     <Grid
       size={12}
       container
-      justifyContent="center"
-      alignItems="center"
       spacing={3}
       sx={{
         position: "fixed",
@@ -435,12 +433,7 @@ function Footer() {
         ) : null}
       </Grid>
       {gameState === "updating" ? (
-        <Grid
-          size={11}
-          sx={{ display: "flex", position: "fixed", bottom: "8%" }}
-          alignItems="center"
-          justifyContent="center"
-        >
+        <Grid size={11} sx={{ display: "flex", position: "fixed", bottom: "8%" }}>
           <Paper sx={{ position: "fixed", bottom: "8%", backgroundColor: "#393e46" }} elevation={3}>
             <Typography sx={{ color: "white" }}>
               Download: {downloadedBytesStart} / {downloadedBytesEnd} @ {downloadedBytesPerSec}/s

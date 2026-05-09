@@ -49,7 +49,6 @@ function App() {
               <Grid
                 container
                 spacing={0}
-                m={-1}
                 sx={{
                   height: 600,
                   width: 800,
@@ -69,7 +68,6 @@ function App() {
               <Grid
                 container
                 spacing={0}
-                m={-1}
                 sx={{
                   height: "100vh",
                   width: "100vw",
