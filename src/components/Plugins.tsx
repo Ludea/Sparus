@@ -45,5 +45,5 @@ export const Plugins = ({ path, register, mf }: PluginsProps & { mf: ModuleFeder
   }, [path]);
 
   if (!Comp) return null;
-  return <Comp register={register} setError={setError} />;
+  return <Comp register={register} setError={(err: unknown) => setGlobalError(err)} />;
 };
