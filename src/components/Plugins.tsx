@@ -37,14 +37,13 @@ export const Plugins = ({ path, register, mf }: PluginsProps & { mf: ModuleFeder
           setGlobalError("invalid plugin");
           return;
         }
-        setComponent(mod.default);
+        setComponent(() => mod.default);
       })
       .catch((err: unknown) => {
-        console.log("err", err);
         setGlobalError(err);
       });
   }, [path]);
 
   if (!Comp) return null;
-  return <Comp path={path} register={register} />;
+  return <Comp register={register} setError={setError} />;
 };
