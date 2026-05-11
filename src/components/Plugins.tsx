@@ -4,9 +4,14 @@ import { SparusErrorContext } from "utils/Context";
 
 type PluginPosition = "header" | "body" | "footer";
 
-type PluginsProps = {
+type PluginsManagerProps = {
   path: string;
   register: (pos: PluginPosition, el: ReactElement) => void;
+};
+
+type PluginsProps = {
+  register: (pos: PluginPosition, el: ReactElement) => void;
+  setError: (err: unknown) => void;
 };
 
 type RemoteModule = {
@@ -17,7 +22,7 @@ function isRemoteModule(mod: unknown): mod is RemoteModule {
   return typeof mod === "object" && mod != null && "default" in mod;
 }
 
-export const Plugins = ({ path, register, mf }: PluginsProps & { mf: ModuleFederation }) => {
+export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: ModuleFederation }) => {
   const { setGlobalError } = useContext(SparusErrorContext);
   const [Comp, setComponent] = useState<ComponentType<PluginsProps> | null>(null);
 
