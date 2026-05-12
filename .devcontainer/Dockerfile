@@ -1,3 +1,2 @@
-FROM ghcr.io/lapce/lapdev-devcontainer-vnc
+FROM ghcr.io/lapce/lapdev-devcontainer-gnome:latest
 
-RUN curl -fsSL https://vite.plus | bash
