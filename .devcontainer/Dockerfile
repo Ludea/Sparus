@@ -15,6 +15,3 @@ RUN apt-get update && apt install -y --no-install-recommends \
     git
 
 RUN curl -fsSL https://vite.plus | bash
-
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
