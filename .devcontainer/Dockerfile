@@ -1,3 +1,3 @@
-FROM docker pull ghcr.io/lapce/lapdev-devcontainer-vnc
+FROM ghcr.io/lapce/lapdev-devcontainer-vnc
 
 RUN curl -fsSL https://vite.plus | bash
