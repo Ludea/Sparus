@@ -1,6 +1,6 @@
-FROM ghcr.io/lapce/lapdev-devcontainer-gnome
+FROM ghcr.io/lapce/lapdev-devcontainer-gnome:latest
 
-RUN apt-get update && apt install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
     libwebkit2gtk-4.1-dev \
     build-essential \
     curl \
@@ -14,7 +14,4 @@ RUN apt-get update && apt install -y --no-install-recommends \
     npm \
     git
 
-RUN npm install -g pnpm
-
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+RUN curl -fsSL https://vite.plus | bash
