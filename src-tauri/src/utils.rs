@@ -88,15 +88,14 @@ pub fn version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
 
 fn initial_version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
   let store = app.store("Sparus.json")?;
-  let initial_ver = match store.get("initial_version") {
+  match store.get("initial_version") {
     Some(version_json) => {
       if let tauri_plugin_store::JsonValue::String(version_string) = version_json {
-        version_string
+        Ok(version_string)
       } else {
-        panic!("No initial version specified from store")
+        Err(SparusError::NoVersion)
       }
     }
-    None => panic!("No initial version specified from store"),
-  };
-  Ok(initial_ver)
+    None => Err(SparusError::NoVersion),
+  }
 }

@@ -33,6 +33,8 @@ pub enum SparusError {
   Plugin,
   #[error("{0}")]
   PluginInternal(String),
+  #[error("No version was provided")]
+  NoVersion,
 }
 
 impl From<UpdateError> for SparusError {
@@ -103,6 +105,10 @@ impl Serialize for SparusError {
       SparusError::PluginInternal(err) => {
         s.serialize_field("kind", "plugin")?;
         s.serialize_field("message", &err.to_string())?;
+      }
+      SparusError::NoVersion => {
+        s.serialize_field("kind", "version")?;
+        s.serialize_field("message", "No version was provided")?;
       }
     }
     s.end()
