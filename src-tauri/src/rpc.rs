@@ -2,13 +2,13 @@ pub mod sparus {
   tonic::include_proto!("sparus");
 }
 
-use crate::errors::SparusError;
-use crate::plugins::PluginSystem;
-use crate::rpc::reqwest::StatusCode;
+use crate::{errors::SparusError, plugins::PluginSystem, rpc::reqwest::StatusCode};
 use futures::StreamExt;
 use sparus::{event_client::EventClient, EventType, Plugins};
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::{
+  collections::HashMap,
+  path::{Path, PathBuf},
+};
 use tauri_plugin_http::reqwest;
 use tokio::{
   fs::{self, File},

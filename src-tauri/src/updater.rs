@@ -1,5 +1,4 @@
-use crate::errors::SparusError;
-use crate::utils;
+use crate::{errors::SparusError, utils};
 use async_lock::Mutex;
 use futures::TryStreamExt;
 use libspeedupdate::{
