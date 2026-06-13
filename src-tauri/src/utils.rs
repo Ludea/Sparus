@@ -66,21 +66,11 @@ fn is_executable(path: &Path) -> bool {
 pub fn version<R: Runtime>(app: AppHandle<R>) -> Result<String, SparusError> {
   let current_dir = get_current_path()?;
   let current_path = Path::new(&current_dir);
-  let update_dir = current_path.join(".update");
-  if update_dir.exists() && update_dir.is_dir() {
-    let mut update_content = fs::read_dir(update_dir)?;
-    if let Some(entry) = update_content.next() {
-      let entry = entry?;
-      let path = entry.path();
-      if entry.file_name() == "state.json" {
-        let content = File::open(&path)?;
-        let root: Root = serde_json::from_reader(content)?;
-        return Ok(root.state.stable.version);
-      } else {
-        return initial_version(app);
-      }
-    }
-    initial_version(app)
+  let state_file = current_path.join(".update").join("state.json");
+  if state_file.is_file() {
+    let content = File::open(&state_file)?;
+    let root: Root = serde_json::from_reader(content)?;
+    Ok(root.state.stable.version)
   } else {
     initial_version(app)
   }
