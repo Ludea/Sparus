@@ -88,43 +88,47 @@ async fn run_task<R: Runtime>(task: Task<R>) {
       goal_version,
       response,
     } => {
+      let goal_version = match goal_version.map(CleanName::new).transpose() {
+        Ok(goal) => goal,
+        Err(invalid) => {
+          let _ = response.send(Err(SparusError::Update(format!(
+            "invalid goal version: {invalid}"
+          ))));
+          return;
+        }
+      };
+
       let result = workspace
         .lock()
         .await
-        .update(
-          &repo,
-          goal_version.map(|v| CleanName::new(v).unwrap()),
-          UpdateOptions::default(),
-        )
+        .update(&repo, goal_version, UpdateOptions::default())
         .try_take_while(|progress| {
           let state = progress.borrow();
           let progression = state.histogram.progress();
           let speed = state.histogram.speed().progress_per_sec();
-          window
-            .emit(
-              "sparus://downloadinfos",
-              DownloadInfos {
-                packages_start: state.downloading_package_idx,
-                packages_end: state.steps.len(),
-                downloaded_files_start: Some(progression.downloaded_files),
-                downloaded_files_end: Some(state.download_files),
-                downloaded_bytes_start: Some(progression.downloaded_bytes),
-                downloaded_bytes_end: Some(state.download_bytes),
-                applied_files_start: Some(progression.applied_files),
-                applied_files_end: Some(state.apply_files),
-                applied_input_bytes_start: Some(progression.applied_input_bytes),
-                applied_input_bytes_end: Some(state.apply_input_bytes),
-                applied_output_bytes_start: Some(progression.applied_output_bytes),
-                applied_output_bytes_end: Some(state.apply_output_bytes),
-                failed_files: Some(progression.failed_files),
-                downloaded_files_per_sec: Some(speed.downloaded_files_per_sec),
-                downloaded_bytes_per_sec: Some(speed.downloaded_bytes_per_sec),
-                applied_files_per_sec: Some(speed.applied_files_per_sec),
-                applied_input_bytes_per_sec: Some(speed.applied_input_bytes_per_sec),
-                applied_output_bytes_per_sec: Some(speed.applied_output_bytes_per_sec),
-              },
-            )
-            .unwrap();
+          let _ = window.emit(
+            "sparus://downloadinfos",
+            DownloadInfos {
+              packages_start: state.downloading_package_idx,
+              packages_end: state.steps.len(),
+              downloaded_files_start: Some(progression.downloaded_files),
+              downloaded_files_end: Some(state.download_files),
+              downloaded_bytes_start: Some(progression.downloaded_bytes),
+              downloaded_bytes_end: Some(state.download_bytes),
+              applied_files_start: Some(progression.applied_files),
+              applied_files_end: Some(state.apply_files),
+              applied_input_bytes_start: Some(progression.applied_input_bytes),
+              applied_input_bytes_end: Some(state.apply_input_bytes),
+              applied_output_bytes_start: Some(progression.applied_output_bytes),
+              applied_output_bytes_end: Some(state.apply_output_bytes),
+              failed_files: Some(progression.failed_files),
+              downloaded_files_per_sec: Some(speed.downloaded_files_per_sec),
+              downloaded_bytes_per_sec: Some(speed.downloaded_bytes_per_sec),
+              applied_files_per_sec: Some(speed.applied_files_per_sec),
+              applied_input_bytes_per_sec: Some(speed.applied_input_bytes_per_sec),
+              applied_output_bytes_per_sec: Some(speed.applied_output_bytes_per_sec),
+            },
+          );
           future::ready(Ok(true))
         })
         .try_for_each(|_| future::ready(Ok(())))
@@ -156,7 +160,12 @@ pub async fn update_workspace<R: Runtime>(
     goal_version,
     response: send,
   });
-  response.await.unwrap()
+  match response.await {
+    Ok(result) => result,
+    Err(_) => Err(SparusError::Update(
+      "update task did not return a result".to_string(),
+    )),
+  }
 }
 
 #[command]
@@ -176,7 +185,7 @@ pub async fn update_available<R: Runtime>(
   }
 
   let local_version_string = utils::version(handle)?;
-  let local_version = Version::parse(&local_version_string).unwrap();
+  let local_version = Version::parse(&local_version_string)?;
   let remote_version = latest_remote_version(repository_url, auth).await;
   match remote_version {
     Ok(value) => {
