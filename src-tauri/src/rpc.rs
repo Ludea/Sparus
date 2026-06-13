@@ -48,8 +48,11 @@ async fn start_streaming(
       Ok(EventType::Update) => {
         download_and_write_file(app_data_dir.clone(), url, plugin_name).await?
       }
-      Err(err) => {
-        err.to_string();
+      Err(_) => {
+        return Err(SparusError::PluginInternal(format!(
+          "received plugin event with unknown type {}",
+          item.event_type
+        )))
       }
     }
   }
