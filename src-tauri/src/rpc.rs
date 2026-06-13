@@ -43,7 +43,7 @@ async fn start_streaming(
         download_and_write_file(app_data_dir.clone(), url, plugin_name).await?
       }
       Ok(EventType::Delete) => {
-        fs::remove_file(format!("{app_data_dir_string}/plugins/{plugin_name}.wasm")).await?
+        fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await?
       }
       Ok(EventType::Update) => {
         download_and_write_file(app_data_dir.clone(), url, plugin_name).await?
@@ -108,28 +108,24 @@ async fn get_list_plugins_with_versions(
   if plugins_path.is_dir() {
     for entry in std::fs::read_dir(&plugins_path)? {
       let entry = entry?;
-      let file_path = entry.path();
-      if file_path.is_file() {
-        if let Some(extension) = file_path.clone().extension() {
-          if extension == "wasm" {
-            let plugin_name = file_path
-              .file_stem()
-              .ok_or(SparusError::PluginInternal(
-                "Unable to get wasm plugin name".to_string(),
-              ))?
-              .to_string_lossy()
-              .into_owned();
-            let version = runtime
-              .call(
-                plugins_path.clone(),
-                plugin_name.clone(),
-                "get-version".to_string(),
-                Vec::new(),
-              )
-              .await?;
-            list_plugins.insert(plugin_name, version.to_string());
-          }
-        }
+      if !entry.path().is_dir() {
+        continue;
+      }
+      let plugin_name = entry.file_name().to_string_lossy().into_owned();
+      let wasm_path = plugins_path
+        .join(&plugin_name)
+        .join(&plugin_name)
+        .with_extension("wasm");
+      if wasm_path.is_file() {
+        let version = runtime
+          .call(
+            plugins_path.clone(),
+            plugin_name.clone(),
+            "get-version".to_string(),
+            Vec::new(),
+          )
+          .await?;
+        list_plugins.insert(plugin_name, version.to_string());
       }
     }
   }
