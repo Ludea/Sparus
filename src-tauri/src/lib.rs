@@ -67,7 +67,19 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       #[cfg(desktop)]
       {
-        store_file_content = fs::read_to_string(config_file)?;
+        // In a bundled build `Sparus.json` ships as a resource; in `tauri dev`
+        // it lives next to the binary's working directory (see README). Prefer
+        // the bundled resource and fall back to the working directory.
+        let bundled_config = app
+          .path()
+          .resource_dir()
+          .map(|dir| dir.join(config_file))
+          .ok()
+          .filter(|path| path.is_file());
+        store_file_content = match bundled_config {
+          Some(path) => fs::read_to_string(path)?,
+          None => fs::read_to_string(config_file)?,
+        };
 
         WebviewWindowBuilder::new(app, "main", Default::default())
           .inner_size(800., 600.)
