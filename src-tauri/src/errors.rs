@@ -29,6 +29,8 @@ pub enum SparusError {
   Store(#[from] tauri_plugin_store::Error),
   #[error(transparent)]
   Wasmtime(#[from] wasmtime::Error),
+  #[error("Plugin event {0} not found")]
+  PluginEvent(String),
   #[error("Plugin not found")]
   Plugin,
   #[error("{0}")]
@@ -97,6 +99,10 @@ impl Serialize for SparusError {
       SparusError::Wasmtime(err) => {
         s.serialize_field("kind", "wasmtime")?;
         s.serialize_field("message", &err.to_string())?;
+      }
+      SparusError::PluginEvent(event_type) => {
+        s.serialize_field("kind", "plugin")?;
+        s.serialize_field("message", &format!("Plugin event {} not found", event_type))?;
       }
       SparusError::Plugin => {
         s.serialize_field("kind", "plugin")?;
