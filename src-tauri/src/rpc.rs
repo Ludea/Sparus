@@ -37,20 +37,26 @@ async fn start_streaming(
   while let Ok(Some(item)) = stream.message().await {
     let plugin_name = item.plugin;
     let url = format!("{}/plugins/{}", plugins_url, plugin_name);
+
     let event = EventType::try_from(item.event_type);
+
     match event {
-      Ok(EventType::Install) => {
-        download_and_write_file(app_data_dir.clone(), url, plugin_name).await?
+      Ok(EventType::Install) | Ok(EventType::Update) => {
+        download_and_write_file(app_data_dir.clone(), url, plugin_name).await?;
       }
       Ok(EventType::Delete) => {
-        fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await?
+        fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await?;
       }
-      Ok(EventType::Update) => {
-        download_and_write_file(app_data_dir.clone(), url, plugin_name).await?
+      Err(_) => {
+        let event_name = EventType::try_from(item.event_type)
+          .map(|e| e.as_str_name())
+          .unwrap_or("UNKNOWN_EVENT");
+
+        return Err(SparusError::PluginEvent(event_name.to_string()));
       }
-      Err(_) => return Err(SparusError::PluginInternal(item.event_type)),
     }
   }
+
   Ok(())
 }
 
