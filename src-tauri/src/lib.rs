@@ -53,34 +53,24 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         .app_data_dir()
         .expect("Unable to access to config directory");
       let store_file_destination = app_data_dir.join(config_file);
+      let config_path = match app.path().resource_dir() {
+        Ok(dir) => {
+          let bundled = dir.join(config_file);
+          if bundled.is_file() {
+            bundled
+          } else {
+            PathBuf::from(config_file)
+          }
+        }
+        Err(_) => PathBuf::from(config_file),
+      };
+      store_file_content = fs::read_to_string(&config_path).unwrap();
 
       #[cfg(mobile)]
-      {
-        let resource_dir_file = app
-          .path()
-          .resource_dir()
-          .expect("Unable to access to resource directory")
-          .join(config_file);
-        store_file_content = app.fs().read_to_string(&resource_dir_file)?;
-        WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
-      }
+      WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
 
       #[cfg(desktop)]
       {
-        // In a bundled build `Sparus.json` ships as a resource; in `tauri dev`
-        // it lives next to the binary's working directory (see README). Prefer
-        // the bundled resource and fall back to the working directory.
-        let bundled_config = app
-          .path()
-          .resource_dir()
-          .map(|dir| dir.join(config_file))
-          .ok()
-          .filter(|path| path.is_file());
-        store_file_content = match bundled_config {
-          Some(path) => fs::read_to_string(path)?,
-          None => fs::read_to_string(config_file)?,
-        };
-
         WebviewWindowBuilder::new(app, "main", Default::default())
           .inner_size(800., 600.)
           .title("Sparus")
