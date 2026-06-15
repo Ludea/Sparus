@@ -24,19 +24,18 @@ function isRemoteModule(mod: unknown): mod is RemoteModule {
 
 export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: ModuleFederation }) => {
   const { setGlobalError } = useContext(SparusErrorContext);
-  const [Comp, setComponent] = useState<ComponentType<PluginsProps> | null>(null);
+  const [Comp, setComponent] = useState<ComponentType<any> | null>(null);
 
   useEffect(() => {
-    const base_url = "http://localhost:8012/plugins/";
+    const base_url = "http://localhost:3002/frontend.js";
     mf.registerRemotes([
       {
-        name: path,
+        name: "button",
         type: "module",
-        entry: base_url + path + "/frontend.js",
+        entry: base_url,
       },
     ]);
-
-    mf.loadRemote(path + "/Button")
+    mf.loadRemote("button/Button")
       .then((mod) => {
         if (!isRemoteModule(mod)) {
           setGlobalError("invalid plugin");
@@ -50,5 +49,5 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   }, [path]);
 
   if (!Comp) return null;
-  return <Comp register={register} setError={(err: unknown) => setGlobalError(err)} />;
+  return <Comp />;
 };

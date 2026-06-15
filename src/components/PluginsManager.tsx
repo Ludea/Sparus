@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState, useContext } from "react";
+import ReactDOM from "react-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { createInstance, ModuleFederation } from "@module-federation/runtime";
 import { PluginsProvider, usePluginsContext } from "utils/usePlugins";
@@ -14,7 +15,8 @@ const PluginLoader: React.FC = () => {
 
   useEffect(() => {
     invoke<string[]>("js_plugins_path")
-      .then((path) => setPluginsPath(path))
+      .then((path) => setPluginsPath(path)
+    )
       .catch((err) => setGlobalError(err));
 
     let instance = createInstance({
@@ -32,6 +34,15 @@ const PluginLoader: React.FC = () => {
           requiredVersion: `^${React.version}`,
         },
       },
+      "react-dom": {
+        version: ReactDOM.version || React.version,
+        scope: "default",
+        lib: () => ReactDOM,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${ReactDOM.version || React.version}`,
+        },
+      },
     });
 
     setMF(instance);
@@ -40,9 +51,10 @@ const PluginLoader: React.FC = () => {
   if (!mf) return null;
   return (
     <div style={{ display: "none" }}>
-      {pluginPath.map((path) => (
-        <Plugins key={path} path={path} register={register} mf={mf} />
-      ))}
+      {//pluginPath.map((path) => (
+        <Plugins path={"path"} register={register} mf={mf} />
+    //  ))
+    }
     </div>
   );
 };
