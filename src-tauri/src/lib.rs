@@ -47,7 +47,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     .manage(plugins_manager.clone())
     .setup(|app| {
       let config_file = "Sparus.json";
-      let store_file_content;
       let app_data_dir = app
         .path()
         .app_data_dir()
@@ -64,7 +63,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         }
         Err(_) => PathBuf::from(config_file),
       };
-      store_file_content = fs::read_to_string(&config_path).unwrap();
+      let store_file_content = fs::read_to_string(&config_path)?;
 
       #[cfg(mobile)]
       WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
