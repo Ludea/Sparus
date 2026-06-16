@@ -34,7 +34,8 @@ pub fn get_current_path() -> Result<String, SparusError> {
 #[command]
 pub fn get_game_exe_name(path: String) -> Result<String, SparusError> {
   let path = Path::new(&path);
-  let folder = fs::read_dir(path)?;
+  let folder =
+    fs::read_dir(path).map_err(|_| SparusError::Game("No Game installed".to_string()))?;
   for entry in folder {
     let entry = entry?;
     let meta = entry.metadata()?;
