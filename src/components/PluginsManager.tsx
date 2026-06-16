@@ -15,8 +15,7 @@ const PluginLoader: React.FC = () => {
 
   useEffect(() => {
     invoke<string[]>("js_plugins_path")
-      .then((path) => setPluginsPath(path)
-    )
+      .then((path) => setPluginsPath(path))
       .catch((err) => setGlobalError(err));
 
     let instance = createInstance({
@@ -51,10 +50,11 @@ const PluginLoader: React.FC = () => {
   if (!mf) return null;
   return (
     <div style={{ display: "none" }}>
-      {//pluginPath.map((path) => (
+      {
+        //pluginPath.map((path) => (
         <Plugins path={"path"} register={register} mf={mf} />
-    //  ))
-    }
+        //  ))
+      }
     </div>
   );
 };
