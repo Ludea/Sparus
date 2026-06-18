@@ -9,7 +9,6 @@ import { DesktopRoutes, MobileRoutes } from "routes";
 import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
 import { PluginManager } from "components/PluginsManager";
-import { PluginsProvider } from "utils/usePlugins";
 
 function App() {
   const [globalError, setGlobalError] = useState<unknown>();
@@ -44,43 +43,41 @@ function App() {
     <SparusErrorContext.Provider value={errorCache}>
       <StoreProvider>
         <ThemeProvider theme={theme}>
-          <PluginsProvider>
-            <PluginManager>
-              <Grid
-                container
-                spacing={0}
-                sx={{
-                  height: 600,
-                  width: 800,
-                  backgroundSize: "cover",
-                  backgroundImage: `url(${DesktopBackground})`,
-                  display: {
-                    sm: "block",
-                    xs: "none",
-                  },
-                }}
-              >
-                <Grid>
-                  <Header />
-                </Grid>
-                {DesktopRouting}
+          <PluginManager>
+            <Grid
+              container
+              spacing={0}
+              sx={{
+                height: 600,
+                width: 800,
+                backgroundSize: "cover",
+                backgroundImage: `url(${DesktopBackground})`,
+                display: {
+                  sm: "block",
+                  xs: "none",
+                },
+              }}
+            >
+              <Grid>
+                <Header />
               </Grid>
-              <Grid
-                container
-                spacing={0}
-                sx={{
-                  height: "100vh",
-                  width: "100vw",
-                  display: {
-                    sm: "none",
-                    xs: "block",
-                  },
-                }}
-              >
-                {MobileRouting}{" "}
-              </Grid>
-            </PluginManager>
-          </PluginsProvider>
+              {DesktopRouting}
+            </Grid>
+            <Grid
+              container
+              spacing={0}
+              sx={{
+                height: "100vh",
+                width: "100vw",
+                display: {
+                  sm: "none",
+                  xs: "block",
+                },
+              }}
+            >
+              {MobileRouting}{" "}
+            </Grid>
+          </PluginManager>
         </ThemeProvider>
       </StoreProvider>
     </SparusErrorContext.Provider>
