@@ -427,7 +427,13 @@ function Footer() {
           )}
         </Popper>
         {globalError ? (
-          <Tooltip title={JSON.stringify(globalError)}>
+          <Tooltip
+            title={
+              <Typography sx={{ whiteSpace: "pre-line" }}>
+                {`kind: ${globalError.kind}\nmessage: ${globalError.message}`}
+              </Typography>
+            }
+          >
             <ErrorIcon />
           </Tooltip>
         ) : null}

@@ -10,8 +10,10 @@ import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
 import { PluginManager } from "components/PluginsManager";
 
+import type { SparusError } from "utils/Context";
+
 function App() {
-  const [globalError, setGlobalError] = useState<unknown>();
+  const [globalError, setGlobalError] = useState<SparusError>();
 
   const theme = createTheme();
   const DesktopRouting = useRoutes(DesktopRoutes);
