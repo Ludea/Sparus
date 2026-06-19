@@ -50,11 +50,9 @@ const PluginLoader: React.FC = () => {
   if (!mf) return null;
   return (
     <div style={{ display: "none" }}>
-      {
-        //pluginPath.map((path) => (
-        <Plugins path={"path"} register={register} mf={mf} />
-        //  ))
-      }
+      {pluginPath.map((path) => (
+        <Plugins key={path} path={path} register={register} mf={mf} />
+      ))}
     </div>
   );
 };
