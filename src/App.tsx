@@ -10,7 +10,7 @@ import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
 import { PluginManager } from "components/PluginsManager";
 
-import type { SparusError } from "utils/Context";
+import type { SparusError, SparusErrorContextType } from "utils/Context";
 
 function App() {
   const [globalError, setGlobalError] = useState<SparusError>();
@@ -19,12 +19,12 @@ function App() {
   const DesktopRouting = useRoutes(DesktopRoutes);
   const MobileRouting = useRoutes(MobileRoutes);
 
-  const errorCache = useMemo(
+  const errorCache = useMemo<SparusErrorContextType>(
     () => ({
       globalError,
-      setGlobalError,
+      setGlobalError: (err: unknown) => setGlobalError(err as SparusError),
     }),
-    [globalError, setGlobalError],
+    [globalError],
   );
 
   useEffect(() => {

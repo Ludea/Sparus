@@ -2,16 +2,16 @@ import { ReactNode, createContext } from "react";
 import { LazyStore } from "@tauri-apps/plugin-store";
 
 export interface SparusError {
-  globalError:
-    | {
-        kind: string;
-        message: string;
-      }
-    | undefined;
+  kind: string;
+  message: string;
+}
+
+export interface SparusErrorContextType {
+  globalError: SparusError | undefined;
   setGlobalError: (err: unknown) => void;
 }
 
-const SparusErrorContext = createContext<SparusError>({
+const SparusErrorContext = createContext<SparusErrorContextType>({
   globalError: undefined,
   setGlobalError: () => undefined,
 });
