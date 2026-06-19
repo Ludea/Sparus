@@ -1,4 +1,4 @@
-import { defineConfig } from "vite-plus";
+import { defineConfig, type PluginOption } from "vite-plus";
 import react from "@vitejs/plugin-react";
 
 const host = process.env.TAURI_DEV_HOST;
@@ -7,7 +7,11 @@ export default defineConfig({
   define: {
     process: { env: {} },
   },
-  plugins: [react()],
+  // `react()` returns Plugin[]; the spread flattens it (a nested [react()] is
+  // Plugin[][] and trips TS2769). The `as PluginOption[]` is load-bearing: it
+  // gives `plugins` the exact expected type so vp lint's type check does not
+  // overflow comparing the config to UserConfig (TS2321 "Excessive stack depth").
+  plugins: [...react()] as PluginOption[],
   resolve: {
     tsconfigPaths: true,
   },
