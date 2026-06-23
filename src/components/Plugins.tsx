@@ -31,29 +31,28 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   useEffect(() => {
     let cancelled = false;
 
-    void (async () => {
-      try {
-        // Load the plugin's bundle straight from the filesystem
-        // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
-        // instead of a remote HTTP server.
-        const entry = convertFileSrc(
-          await join(await appDataDir(), "plugins", path, "frontend.js"),
-        );
+    // Load the plugin's bundle straight from the filesystem
+    // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
+    // instead of a remote HTTP server.
+    appDataDir()
+      .then((dir) => join(dir, "plugins", path, "frontend.js"))
+      .then((file) => {
         // registerRemotes is idempotent for an already-registered name
         // (silent no-op without `force`), so re-running this effect is safe.
-        mf.registerRemotes([{ name: path, type: "module", entry }]);
-
-        const mod = await mf.loadRemote(`${path}/Button`);
+        mf.registerRemotes([{ name: path, type: "module", entry: convertFileSrc(file) }]);
+        return mf.loadRemote(`${path}/Button`);
+      })
+      .then((mod) => {
         if (cancelled) return;
         if (!isRemoteModule(mod)) {
           setGlobalError(`plugin "${path}" is invalid (no default export)`);
           return;
         }
         setComponent(() => mod.default);
-      } catch (err: unknown) {
+      })
+      .catch((err: unknown) => {
         if (!cancelled) setGlobalError(err);
-      }
-    })();
+      });
 
     return () => {
       cancelled = true;
