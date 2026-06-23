@@ -85,17 +85,31 @@ async fn download_and_write_file(
   url: String,
   plugin_name: String,
 ) -> Result<(), SparusError> {
+  let plugin_name_dir = app_data_dir.join("plugins").join(&plugin_name);
+  fs::create_dir_all(&plugin_name_dir).await?;
+
+  download_to(
+    url.clone(),
+    plugin_name_dir.join(format!("{plugin_name}.wasm")),
+  )
+  .await?;
+  download_to(
+    format!("{url}/frontend.js"),
+    plugin_name_dir.join("frontend.js"),
+  )
+  .await?;
+
+  Ok(())
+}
+
+async fn download_to(url: String, destination: PathBuf) -> Result<(), SparusError> {
   let response = reqwest::get(url).await?;
   if response.status() != StatusCode::OK {
     return Err(SparusError::Plugin);
   }
 
   let mut stream = response.bytes_stream();
-  let plugins_dir = app_data_dir.join("plugins");
-  let plugin_name_dir = plugins_dir.join(&plugin_name);
-  fs::create_dir_all(plugin_name_dir.clone()).await?;
-  let file_path = plugin_name_dir.join(format!("{}.wasm", &plugin_name));
-  let mut file = File::create(file_path).await?;
+  let mut file = File::create(destination).await?;
   while let Some(chunk) = stream.next().await {
     let data = chunk?;
     file.write_all(&data).await?;
