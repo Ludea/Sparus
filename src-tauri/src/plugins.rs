@@ -64,7 +64,7 @@ impl PluginSystem {
     let exports_iter = component_type.exports(&self.engine);
     let mut instance_name = "";
     for (name, export_type) in exports_iter {
-      if let ComponentItem::ComponentInstance(_) = export_type {
+      if let ComponentItem::ComponentInstance(_) = export_type.ty {
         instance_name = name;
       }
     }
