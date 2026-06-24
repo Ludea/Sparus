@@ -16,8 +16,6 @@ use tauri::WebviewUrl;
 use tauri_plugin_autostart::MacosLauncher;
 #[cfg(mobile)]
 use tauri_plugin_fs::FsExt;
-#[cfg(desktop)]
-use tauri_runtime_verso::INVOKE_SYSTEM_SCRIPTS;
 
 mod errors;
 mod plugins;
@@ -29,18 +27,12 @@ mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  #[cfg(desktop)]
-  run_app(tauri_runtime_verso::builder());
-  #[cfg(mobile)]
   run_app(tauri::Builder::default());
 }
 
 pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager: plugins::PluginSystem = plugins::PluginSystem::new();
-
-  #[cfg(all(debug_assertions, desktop))]
-  tauri_runtime_verso::set_verso_devtools_port(8000);
 
   builder = builder
     .manage(spawner)
@@ -144,7 +136,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   #[cfg(desktop)]
   {
     builder = builder
-      .invoke_system(INVOKE_SYSTEM_SCRIPTS)
       .plugin(tauri_plugin_dialog::init())
       .plugin(tauri_plugin_shell::init())
       .plugin(tauri_plugin_process::init())

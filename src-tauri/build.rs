@@ -5,8 +5,6 @@ use std::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let _ = tauri_runtime_verso_build::get_verso_as_external_bin();
-
   if !Path::new("Sparus.json").exists() {
     fs::copy("Sparus-sample.json", "Sparus.json")?;
   }
