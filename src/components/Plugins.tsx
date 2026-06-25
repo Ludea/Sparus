@@ -29,21 +29,27 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   const [Comp, setComponent] = useState<ComponentType<PluginsProps> | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    // Load the plugin's bundle straight from the filesystem
-    // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
-    // instead of a remote HTTP server.
-    appDataDir()
-      .then((dir) => join(dir, "plugins", path, "frontend.js"))
-      .then((file) => {
-        // registerRemotes is idempotent for an already-registered name
-        // (silent no-op without `force`), so re-running this effect is safe.
-        mf.registerRemotes([{ name: path, type: "module", entry: convertFileSrc(file) }]);
-        return mf.loadRemote(`${path}/Button`);
-      })
-      .then((mod) => {
-        if (cancelled) return;
+    let url: string = "";
+    if (import.meta.env.DEV) {
+      url = `http://localhost:3002/frontend.js`;
+    } else {
+      // Load the plugin's bundle straight from the filesystem
+      // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
+      // instead of a remote HTTP server.
+      appDataDir()
+        .then((dir) => join(dir, "plugins", path, "frontend.js"))
+        .then((file) => {
+          // registerRemotes is idempotent for an already-registered name
+          // (silent no-op without `force`), so re-running this effect is safe.
+          url = convertFileSrc(file);
+        })
+        .catch((err) => {
+          setGlobalError(err);
+        });
+    }
+    mf.registerRemotes([{ name: "button", type: "module", entry: url }]);
+    mf.loadRemote(`button/Button`)
+      .then((mod: unknown) => {
         if (!isRemoteModule(mod)) {
           setGlobalError(`plugin "${path}" is invalid (no default export)`);
           return;
@@ -51,12 +57,10 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
         setComponent(() => mod.default);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setGlobalError(err);
+        if (!(err instanceof TypeError) && !err.includes("Failed to fetch")) {
+          setGlobalError(err);
+        }
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [path, mf]);
 
   if (!Comp) return null;
