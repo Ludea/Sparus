@@ -56,8 +56,8 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
         }
         setComponent(() => mod.default);
       })
-      .catch((err: unknown) => {
-        if (!(err instanceof TypeError) && !err.includes("Failed to fetch")) {
+      .catch((err: Error) => {
+        if (!(err instanceof TypeError) && !err.message.includes("Failed to fetch")) {
           setGlobalError(err);
         }
       });
