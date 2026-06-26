@@ -1,5 +1,7 @@
 import { ModuleFederation } from "@module-federation/runtime";
 import { useState, useEffect, useContext, ReactElement, ComponentType } from "react";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { appDataDir, join } from "@tauri-apps/api/path";
 import { SparusErrorContext } from "utils/Context";
 
 type PluginPosition = "header" | "body" | "footer";
@@ -24,30 +26,43 @@ function isRemoteModule(mod: unknown): mod is RemoteModule {
 
 export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: ModuleFederation }) => {
   const { setGlobalError } = useContext(SparusErrorContext);
-  const [Comp, setComponent] = useState<ComponentType<any> | null>(null);
+  const [Comp, setComponent] = useState<ComponentType<PluginsProps> | null>(null);
 
   useEffect(() => {
-    const base_url = "http://localhost:3002/frontend.js";
-    mf.registerRemotes([
-      {
-        name: "button",
-        type: "module",
-        entry: base_url,
-      },
-    ]);
-    mf.loadRemote("button/Button")
-      .then((mod) => {
+    let url: string = "";
+    if (import.meta.env.DEV) {
+      url = `http://localhost:3002/frontend.js`;
+    } else {
+      // Load the plugin's bundle straight from the filesystem
+      // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
+      // instead of a remote HTTP server.
+      appDataDir()
+        .then((dir) => join(dir, "plugins", path, "frontend.js"))
+        .then((file) => {
+          // registerRemotes is idempotent for an already-registered name
+          // (silent no-op without `force`), so re-running this effect is safe.
+          url = convertFileSrc(file);
+        })
+        .catch((err) => {
+          setGlobalError(err);
+        });
+    }
+    mf.registerRemotes([{ name: "button", type: "module", entry: url }]);
+    mf.loadRemote(`button/Button`)
+      .then((mod: unknown) => {
         if (!isRemoteModule(mod)) {
-          setGlobalError("invalid plugin");
+          setGlobalError(`plugin "${path}" is invalid (no default export)`);
           return;
         }
         setComponent(() => mod.default);
       })
-      .catch((err: unknown) => {
-        setGlobalError(err);
+      .catch((err: Error) => {
+        if (!(err instanceof TypeError) && !err.message.includes("Failed to fetch")) {
+          setGlobalError(err);
+        }
       });
-  }, [path]);
+  }, [path, mf]);
 
   if (!Comp) return null;
-  return <Comp />;
+  return <Comp register={register} setError={setGlobalError} />;
 };
