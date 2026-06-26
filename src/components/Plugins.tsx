@@ -2,8 +2,6 @@ import { ModuleFederation } from "@module-federation/runtime";
 import { useState, useEffect, useContext, ReactElement, ComponentType } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, join } from "@tauri-apps/api/path";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { appDataDir, join } from "@tauri-apps/api/path";
 import { SparusErrorContext } from "utils/Context";
 
 type PluginPosition = "header" | "body" | "footer";
