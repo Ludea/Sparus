@@ -29,38 +29,53 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   const [Comp, setComponent] = useState<ComponentType<PluginsProps> | null>(null);
 
   useEffect(() => {
-    let url: string = "";
+    let cancelled = false;
+
+    const loadPlugin = (entry: string) => {
+      // Cache-bust the bundle URL so an updated frontend.js is fetched fresh
+      // instead of served stale from the webview cache (#1037). `force` lets the
+      // new entry replace a previously-registered remote of the same name.
+      const versionedEntry = `${entry}?v=${Date.now()}`;
+      mf.registerRemotes([{ name: "button", type: "module", entry: versionedEntry }], {
+        force: true,
+      });
+      mf.loadRemote(`button/Button`)
+        .then((mod: unknown) => {
+          if (cancelled) return;
+          if (!isRemoteModule(mod)) {
+            setGlobalError(`plugin "${path}" is invalid (no default export)`);
+            return;
+          }
+          setComponent(() => mod.default);
+        })
+        .catch((err: Error) => {
+          if (cancelled) return;
+          if (!(err instanceof TypeError) && !err.message.includes("Failed to fetch")) {
+            setGlobalError(err);
+          }
+        });
+    };
+
     if (import.meta.env.DEV) {
-      url = `http://localhost:3002/frontend.js`;
+      loadPlugin("http://localhost:3002/frontend.js");
     } else {
-      // Load the plugin's bundle straight from the filesystem
-      // ($APPDATA/plugins/<path>/frontend.js) through Tauri's asset protocol
-      // instead of a remote HTTP server.
+      // Resolve the on-disk bundle path FIRST, then load. The previous code set
+      // `url` inside an async `.then()` but called registerRemotes synchronously,
+      // so in production the remote was registered with an empty entry and never
+      // loaded.
       appDataDir()
         .then((dir) => join(dir, "plugins", path, "frontend.js"))
         .then((file) => {
-          // registerRemotes is idempotent for an already-registered name
-          // (silent no-op without `force`), so re-running this effect is safe.
-          url = convertFileSrc(file);
+          if (!cancelled) loadPlugin(convertFileSrc(file));
         })
         .catch((err) => {
-          setGlobalError(err);
+          if (!cancelled) setGlobalError(err);
         });
     }
-    mf.registerRemotes([{ name: "button", type: "module", entry: url }]);
-    mf.loadRemote(`button/Button`)
-      .then((mod: unknown) => {
-        if (!isRemoteModule(mod)) {
-          setGlobalError(`plugin "${path}" is invalid (no default export)`);
-          return;
-        }
-        setComponent(() => mod.default);
-      })
-      .catch((err: Error) => {
-        if (!(err instanceof TypeError) && !err.message.includes("Failed to fetch")) {
-          setGlobalError(err);
-        }
-      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [path, mf]);
 
   if (!Comp) return null;
