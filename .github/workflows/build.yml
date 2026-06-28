@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    env:
+      ANDROID_KEY_BASE64: ${{ secrets.ANDROID_KEY_BASE64 }}
     strategy:
       fail-fast: false
       matrix:
@@ -93,7 +95,7 @@ jobs:
       - name: Clippy
         run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-targets -- -D warnings
       - name: setup Android signing
-        if: matrix.mobile == 'android'
+        if: matrix.mobile == 'android' && env.ANDROID_KEY_BASE64 != ''
         run: |
           cd src-tauri/gen/android
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
