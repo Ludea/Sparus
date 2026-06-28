@@ -11,6 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 
 // Components
 import { SparusErrorContext } from "utils/Context";
+import { PluginSlot } from "utils/usePlugins";
 
 // Tauri api
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -99,6 +100,7 @@ function Header() {
           <ClearIcon />
         </IconButton>
       </Grid>
+      <PluginSlot position="header" />
     </Grid>
   );
 }
