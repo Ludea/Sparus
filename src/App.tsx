@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
+import CssBaseline from "@mui/material/CssBaseline";
+import GlobalStyles from "@mui/material/GlobalStyles";
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -45,6 +47,17 @@ function App() {
     <SparusErrorContext.Provider value={errorCache}>
       <StoreProvider>
         <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles
+            styles={{
+              "html, body, #root": {
+                margin: 0,
+                padding: 0,
+                height: "100%",
+                overflow: "hidden",
+              },
+            }}
+          />
           <PluginManager>
             <Grid
               container
