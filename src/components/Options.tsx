@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 
 // Components
 import { SparusErrorContext, SparusStoreContext } from "utils/Context";
+import { PluginSlot } from "utils/usePlugins";
 
 // Tauri api
 import { remove } from "@tauri-apps/plugin-fs";
@@ -183,6 +184,7 @@ function Options() {
         >
           <DeleteIcon />
         </IconButton>
+        <PluginSlot position="options" />
       </Grid>
     </Slide>
   );
