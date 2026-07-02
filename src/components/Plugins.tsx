@@ -3,8 +3,7 @@ import { useState, useEffect, useContext, ReactElement, ComponentType } from "re
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { SparusErrorContext } from "utils/Context";
-
-type PluginPosition = "header" | "body" | "footer";
+import type { PluginPosition } from "utils/usePlugins";
 
 type PluginsManagerProps = {
   path: string;
@@ -31,15 +30,21 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   useEffect(() => {
     let cancelled = false;
 
+    // Give each plugin its own host-local remote name so multiple installed
+    // plugins don't clobber a single shared "button" remote and render the same
+    // component several times (#1042). The exposed key ("Button") is unchanged,
+    // so plugin bundles don't need rebuilding.
+    const remoteName = `plugin_${path.replace(/[^a-zA-Z0-9_]/g, "_")}`;
+
     const loadPlugin = (entry: string) => {
       // Cache-bust the bundle URL so an updated frontend.js is fetched fresh
       // instead of served stale from the webview cache (#1037). `force` lets the
       // new entry replace a previously-registered remote of the same name.
       const versionedEntry = `${entry}?v=${Date.now()}`;
-      mf.registerRemotes([{ name: "button", type: "module", entry: versionedEntry }], {
+      mf.registerRemotes([{ name: remoteName, type: "module", entry: versionedEntry }], {
         force: true,
       });
-      mf.loadRemote(`button/Button`)
+      mf.loadRemote(`${remoteName}/Button`)
         .then((mod: unknown) => {
           if (cancelled) return;
           if (!isRemoteModule(mod)) {
