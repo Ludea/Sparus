@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, Fragment, ReactElement } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  Fragment,
+  ReactElement,
+} from "react";
 
 export type PluginPosition = "header" | "body" | "footer" | "options";
 
@@ -18,25 +26,26 @@ export const PluginsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [footer, setFooter] = useState<ReactElement[]>([]);
   const [options, setOptions] = useState<ReactElement[]>([]);
 
-  const register = (position: PluginPosition, element: ReactElement) => {
-    if (position === "header") setHeader((prev) => [...prev, element]);
-    if (position === "body") setBody((prev) => [...prev, element]);
-    if (position === "footer") setFooter((prev) => [...prev, element]);
-    if (position === "options") setOptions((prev) => [...prev, element]);
-  };
+  // Stable identities so a plugin's `useEffect(() => register(...), [register])`
+  // does not re-run and append the same element on every provider re-render
+  // (which is what made a single plugin render multiple times). The dedup guard
+  // makes repeated registrations of the same element idempotent.
+  const register = useCallback((position: PluginPosition, element: ReactElement) => {
+    const setters = { header: setHeader, body: setBody, footer: setFooter, options: setOptions };
+    setters[position]((prev) => (prev.includes(element) ? prev : [...prev, element]));
+  }, []);
 
-  const unregister = (position: PluginPosition, element: ReactElement) => {
-    if (position === "header") setHeader((prev) => prev.filter((e) => e !== element));
-    if (position === "body") setBody((prev) => prev.filter((e) => e !== element));
-    if (position === "footer") setFooter((prev) => prev.filter((e) => e !== element));
-    if (position === "options") setOptions((prev) => prev.filter((e) => e !== element));
-  };
+  const unregister = useCallback((position: PluginPosition, element: ReactElement) => {
+    const setters = { header: setHeader, body: setBody, footer: setFooter, options: setOptions };
+    setters[position]((prev) => prev.filter((e) => e !== element));
+  }, []);
 
-  return (
-    <PluginsContext.Provider value={{ header, body, footer, options, register, unregister }}>
-      {children}
-    </PluginsContext.Provider>
+  const value = useMemo(
+    () => ({ header, body, footer, options, register, unregister }),
+    [header, body, footer, options, register, unregister],
   );
+
+  return <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>;
 };
 
 export const usePluginsContext = (): PluginContextType => {
