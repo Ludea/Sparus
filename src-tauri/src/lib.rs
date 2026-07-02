@@ -1,12 +1,6 @@
-use axum::Router;
-use std::{env, fs, net::SocketAddr, path::PathBuf};
+use std::{env, fs, path::PathBuf};
 use tauri::{Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
-use tower_http::{
-  cors::{Any, CorsLayer},
-  services::ServeDir,
-  trace::TraceLayer,
-};
 
 #[cfg(desktop)]
 use tauri::RunEvent;
@@ -119,7 +113,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         plugins_url,
         launcher_name,
       ));
-      tauri::async_runtime::spawn(start_http_server(app_data_dir));
+      
 
       Ok(())
     })
@@ -166,25 +160,4 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       }
     }
   });
-}
-
-async fn start_http_server(app_data_dir: PathBuf) {
-  let js_plugins_path = app_data_dir.join("plugins");
-  let test = js_plugins_path.display().to_string();
-  let router = Router::new().nest_service("/plugins", ServeDir::new(test));
-  let addr = SocketAddr::from(([127, 0, 0, 1], 8012));
-  let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-  axum::serve(
-    listener,
-    router
-      .layer(
-        CorsLayer::new()
-          .allow_origin(Any)
-          .allow_headers(Any)
-          .expose_headers(Any),
-      )
-      .layer(TraceLayer::new_for_http()),
-  )
-  .await
-  .unwrap();
 }
