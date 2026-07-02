@@ -6,17 +6,17 @@ import { PluginsProvider, usePluginsContext } from "utils/usePlugins";
 import { SparusErrorContext } from "utils/Context";
 import { Plugins } from "components/Plugins";
 
+const isDev = import.meta.env.DEV;
+
 const PluginLoader: React.FC = () => {
   const [pluginPath, setPluginsPath] = useState<string[]>([]);
   const [mf, setMF] = useState<ModuleFederation>();
-  const [dev, setDev] = useState<boolean>(false);
   const { register } = usePluginsContext();
 
   const { setGlobalError } = useContext(SparusErrorContext);
 
   useEffect(() => {
-    setDev(import.meta.env.DEV);
-    if (!dev) {
+    if (!isDev) {
       invoke<string[]>("js_plugins_path")
         .then((path) => setPluginsPath(path))
         .catch((err) => setGlobalError(err));
@@ -54,7 +54,7 @@ const PluginLoader: React.FC = () => {
   if (!mf) return null;
   return (
     <div style={{ display: "none" }}>
-      {!dev ? (
+      {!isDev ? (
         pluginPath.map((path) => <Plugins key={path} path={path} register={register} mf={mf} />)
       ) : (
         <Plugins path="sparus" register={register} mf={mf} />
