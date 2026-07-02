@@ -113,7 +113,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         plugins_url,
         launcher_name,
       ));
-      
 
       Ok(())
     })
