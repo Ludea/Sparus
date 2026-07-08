@@ -296,7 +296,6 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
     });
-    console.log("12 : ", activeLabel);
   }, [gameState, launcherState, globalError]);
 
   const spawn = () => {
