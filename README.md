@@ -37,15 +37,15 @@ The frontend is built with **React 19** + **MUI v9**, while the backend is writt
 
 ## Tech Stack
 
-| Layer     | Technology                                                     |
-|-----------|----------------------------------------------------------------|
-| Desktop   | [Tauri v2](https://tauri.app/)                                 |
-| Frontend  | React 19, React Router 7, MUI v9, Emotion                     |
-| Backend   | Rust, Wasmtime (WASM plugin runtime)                           |
-| Plugins   | `@module-federation/runtime` (dynamic remote loading)          |
-| Build     | [vite-plus](https://viteplus.dev/) (`vp`), TypeScript 6       |
-| Mobile    | Android (Kotlin), APK signing via keystore                     |
-| CI        | GitHub Actions (Linux, Windows, macOS x86_64/arm64, Android)  |
+| Layer    | Technology                                                   |
+| -------- | ------------------------------------------------------------ |
+| Desktop  | [Tauri v2](https://tauri.app/)                               |
+| Frontend | React 19, React Router 7, MUI v9, Emotion                    |
+| Backend  | Rust, Wasmtime (WASM plugin runtime)                         |
+| Plugins  | `@module-federation/runtime` (dynamic remote loading)        |
+| Build    | [vite-plus](https://viteplus.dev/) (`vp`), TypeScript 6      |
+| Mobile   | Android (Kotlin), APK signing via keystore                   |
+| CI       | GitHub Actions (Linux, Windows, macOS x86_64/arm64, Android) |
 
 ---
 
@@ -57,25 +57,30 @@ The frontend is built with **React 19** + **MUI v9**, while the backend is writt
 - [vite-plus](https://viteplus.dev/) — unified toolchain (`vp`) that manages Node.js and the package manager automatically
 
   **macOS/Linux:**
+
   ```bash
   curl -fsSL https://viteplus.dev/install.sh | sh
   ```
+
   **Windows:**
   Download and run [`vp-setup.exe`](https://viteplus.dev/)
 
 ### Platform-specific
 
 **Windows**
+
 ```
 WebView2 Runtime (usually pre-installed on Windows 11)
 ```
 
 **macOS**
+
 ```
 Xcode Command Line Tools: xcode-select --install
 ```
 
 **Linux (Debian/Ubuntu)**
+
 ```bash
 sudo apt update && sudo apt install \
   libwebkit2gtk-4.1-dev \
@@ -88,6 +93,7 @@ sudo apt update && sudo apt install \
 ```
 
 **Android**
+
 - Android SDK + NDK
 - Set `ANDROID_HOME`, `NDK_HOME`, and a keystore file for signing (see CI config for reference)
 
@@ -161,12 +167,12 @@ Key fields include the remote server URL for the game manifest (`state.json`), t
 
 Pre-built binaries for Windows, macOS, Linux, and Android are published on the [Releases page](https://github.com/Ludea/Sparus/releases).
 
-| Platform | Artifact        |
-|----------|-----------------|
-| Windows  | `.msi` / `.exe` |
-| macOS    | `.dmg`          |
+| Platform | Artifact             |
+| -------- | -------------------- |
+| Windows  | `.msi` / `.exe`      |
+| macOS    | `.dmg`               |
 | Linux    | `.AppImage` / `.deb` |
-| Android  | `.apk`          |
+| Android  | `.apk`               |
 
 ---
 
@@ -184,4 +190,3 @@ Contributions are welcome! Please open an issue first for any significant change
 ## License
 
 Distributed under the **Apache-2.0** license. See [LICENSE](LICENSE) for details.
-
