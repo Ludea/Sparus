@@ -46,7 +46,7 @@ const gameLabelByState: Record<GameState, string> = {
   update_available: "Update Game",
   play: "Play",
   updating: "",
-  not_installed: "Install Game",
+  not_installed: "Install",
   idle: "",
 };
 
@@ -91,7 +91,7 @@ async function checkPermission() {
 function Footer() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(0);
-  const [gameState, setGameState] = useState<GameState>("idle");
+  const [gameState, setGameState] = useState<GameState>("not_installed");
   const [launcherState, setLauncherState] = useState<LauncherState>("idle");
   const [activeSource, setActiveSource] = useState<LabelSource>("game");
   const [loading, setLoading] = useState<boolean>(false);
@@ -199,21 +199,22 @@ function Footer() {
           });
 
         const workdirSubPath = host === "windows" ? "\\game" : "/game";
+        const gameWorkspacePath = (workspace_path ?? workspacePath).concat(workdirSubPath);
         invoke<string>("get_game_exe_name", {
-          path: workspacePath?.concat(workdirSubPath),
+          path: gameWorkspacePath,
         })
           .then((name) => {
             setGameName(name);
             setGameState("play");
           })
           .catch((err: unknown) => {
+            setGameState("not_installed");
             if ((err as SparusError).kind !== "game") {
               let error: SparusError = {
                 kind: "update",
                 message: "Failed to check for updates: ".concat(err as string),
               };
               setGlobalError(error);
-              setGameState("not_installed");
             }
           });
 
@@ -295,6 +296,7 @@ function Footer() {
     }).catch((err: unknown) => {
       setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
     });
+    console.log("12 : ", activeLabel);
   }, [gameState, launcherState, globalError]);
 
   const spawn = () => {
