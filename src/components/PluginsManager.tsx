@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState, useContext } from "react";
+import React, { FC, ReactNode, useEffect, useState, useContext } from "react";
 import ReactDOM from "react-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { createInstance, ModuleFederation } from "@module-federation/runtime";
@@ -8,7 +8,7 @@ import { Plugins } from "components/Plugins";
 
 const isDev = import.meta.env.DEV;
 
-const PluginLoader: React.FC = () => {
+const PluginLoader: FC = () => {
   const [pluginPath, setPluginsPath] = useState<string[]>([]);
   const [mf, setMF] = useState<ModuleFederation>();
   const { register } = usePluginsContext();
