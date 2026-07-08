@@ -182,53 +182,82 @@ function Footer() {
         if (repository_name) setRepositoryName(repository_name);
         if (repository_url) setRepositoryUrl(repository_url);
         if (workspace_path !== undefined) setWorkspacePath(workspace_path);
-        else {
-          invoke<string>("get_current_path")
-            .then((path) => {
-              store.set("workspace_path", path).catch((err: unknown) => {
-                setGlobalError(
-                  (err as SparusError).kind.concat(": ", (err as SparusError).message),
-                );
-              });
-              setWorkspacePath(path);
-            })
-            .catch((err: unknown) => {
+
+        invoke<string>("get_current_path")
+          .then((path) => {
+            store.set("workspace_path", path).catch((err: unknown) => {
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+            });
+            setWorkspacePath(path);
+          })
+          .catch((err: unknown) => {
+            let error: SparusError = {
+              kind: "path",
+              message: "Failed to get current path: ".concat(err as string),
+            };
+            setGlobalError(error);
+          });
+
+        const workdirSubPath = host === "windows" ? "\\game" : "/game";
+        invoke<string>("get_game_exe_name", {
+          path: workspacePath?.concat(workdirSubPath),
+        })
+          .then((name) => {
+            setGameName(name);
+            setGameState("play");
+          })
+          .catch((err: unknown) => {
+            if ((err as SparusError).kind !== "game") {
               let error: SparusError = {
-                kind: "path",
-                message: "Failed to get current path: ".concat(err as string),
+                kind: "update",
+                message: "Failed to check for updates: ".concat(err as string),
               };
               setGlobalError(error);
-            });
+              setGameState("not_installed");
+            }
+          });
 
-          const workdirSubPath = host === "windows" ? "\\game" : "/game";
-          invoke<string>("get_game_exe_name", {
-            path: workspacePath?.concat(workdirSubPath),
-          })
-            .then((name) => {
-              setGameName(name);
-              setGameState("play");
-            })
-            .catch((err: unknown) => {
-              if ((err as SparusError).kind !== "game") {
-                let error: SparusError = {
-                  kind: "update",
-                  message: "Failed to check for updates: ".concat(err as string),
-                };
-                setGlobalError(error);
-                setGameState("not_installed");
-              }
-            });
+        const repo_name = repository_name ?? "";
+        invoke("update_available", {
+          repositoryUrl: repository_url?.concat("/", repo_name, "/launcher/", platform, "/"),
+        })
+          .then((is_available) =>
+            is_available
+              ? checkPermission()
+                  .then((is_allowed) => {
+                    if (is_allowed) {
+                      setLauncherState("update_available");
+                      sendNotification({
+                        title: "Update available !",
+                        body: "An update is available",
+                      });
+                    }
+                  })
+                  .catch((err: unknown) => {
+                    setGlobalError(
+                      (err as SparusError).kind.concat(": ", (err as SparusError).message),
+                    );
+                  })
+              : null,
+          )
+          .catch((err: unknown) => {
+            let error: SparusError = {
+              kind: "update",
+              message: "Failed to check for updates: ".concat(err as string),
+            };
+            setGlobalError(error);
+          });
 
-          const repo_name = repository_name ?? "";
+        if (gameState === "play")
           invoke("update_available", {
-            repositoryUrl: repository_url?.concat("/", repo_name, "/launcher/", platform, "/"),
+            repositoryUrl: repository_url?.concat("/", repo_name, "/game/", platform, "/"),
           })
             .then((is_available) =>
               is_available
                 ? checkPermission()
                     .then((is_allowed) => {
                       if (is_allowed) {
-                        setLauncherState("update_available");
+                        setGameState("update_available");
                         sendNotification({
                           title: "Update available !",
                           body: "An update is available",
@@ -243,42 +272,8 @@ function Footer() {
                 : null,
             )
             .catch((err: unknown) => {
-              let error: SparusError = {
-                kind: "update",
-                message: "Failed to check for updates: ".concat(err as string),
-              };
-              setGlobalError(error);
+              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
             });
-
-          if (gameState === "play")
-            invoke("update_available", {
-              repositoryUrl: repository_url?.concat("/", repo_name, "/game/", platform, "/"),
-            })
-              .then((is_available) =>
-                is_available
-                  ? checkPermission()
-                      .then((is_allowed) => {
-                        if (is_allowed) {
-                          setGameState("update_available");
-                          sendNotification({
-                            title: "Update available !",
-                            body: "An update is available",
-                          });
-                        }
-                      })
-                      .catch((err: unknown) => {
-                        setGlobalError(
-                          (err as SparusError).kind.concat(": ", (err as SparusError).message),
-                        );
-                      })
-                  : null,
-              )
-              .catch((err: unknown) => {
-                setGlobalError(
-                  (err as SparusError).kind.concat(": ", (err as SparusError).message),
-                );
-              });
-        }
       })
       .catch((err: unknown) => {
         setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
