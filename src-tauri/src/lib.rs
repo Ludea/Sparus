@@ -1,11 +1,9 @@
-use std::{env, fs, path::PathBuf};
+use std::{env, fs};
 use tauri::{Builder, Manager, Runtime, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(desktop)]
 use tauri::RunEvent;
-#[cfg(mobile)]
-use tauri::WebviewUrl;
 #[cfg(desktop)]
 use tauri_plugin_autostart::MacosLauncher;
 #[cfg(mobile)]
@@ -33,38 +31,43 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
     .manage(plugins_manager.clone())
     .setup(|app| {
       let config_file = "Sparus.json";
+      let store_file_content;
       let app_data_dir = app
         .path()
         .app_data_dir()
         .expect("Unable to access to config directory");
       let store_file_destination = app_data_dir.join(config_file);
-      let config_path = match app.path().resource_dir() {
-        Ok(dir) => {
-          let bundled = dir.join(config_file);
-          if bundled.is_file() {
-            bundled
-          } else {
-            PathBuf::from(config_file)
-          }
-        }
-        Err(_) => PathBuf::from(config_file),
-      };
-      let store_file_content = fs::read_to_string(&config_path)?;
 
       #[cfg(mobile)]
-      WebviewWindowBuilder::new(app, "main", WebviewUrl::default()).build()?;
+      {
+        let resource_file = app
+          .path()
+          .resolve(config_file, tauri::path::BaseDirectory::Resource)?;
+        store_file_content = app.fs().read_to_string(&resource_file)?;
+      }
+
+      #[cfg(desktop)]
+      let mut window;
+      #[cfg(mobile)]
+      let window;
+
+      window = WebviewWindowBuilder::new(app, "main", Default::default());
 
       #[cfg(desktop)]
       {
-        WebviewWindowBuilder::new(app, "main", Default::default())
-          .inner_size(800., 600.)
-          .title("Sparus")
-          .decorations(false)
-          .build()?;
+        let resource_file = app
+          .path()
+          .resource_dir()
+          .expect("Unable to get resource directory")
+          .join(config_file);
+        store_file_content = fs::read_to_string(&resource_file)?;
+        window = window.inner_size(800., 600.).decorations(false);
 
         let handle = app.handle();
         tray::create_tray(handle)?;
       }
+
+      window.build()?;
 
       if !store_file_destination.exists() {
         fs::create_dir_all(&app_data_dir).expect("Cannot create app data directory");
