@@ -1,6 +1,7 @@
-# Sparus
-
 <div align="center">
+<img src="./assets/logo.jpeg" alt="Sparus logo" width="250px" height="250px" />
+ 
+**Sparus**
 
 **A cross-platform game launcher built with Tauri — start and keep your game up-to-date.**
 
