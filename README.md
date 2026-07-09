@@ -36,6 +36,13 @@ The frontend is built with **React 19** + **MUI v9**, while the backend is writt
 
 ---
 
+## Screenshot
+
+<p align="center">
+<img src="./assets/desktop.png" alt="Desktop" height="350" />
+<img src="./assets/mobile.png" alt="mobile" height="350" />
+<p align="center">
+
 ## Tech Stack
 
 | Layer    | Technology                                                   |
