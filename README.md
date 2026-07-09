@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./assets/logo.jpeg" alt="Sparus logo" width="250px" height="250px" />
+<img src="./assets/logo.png" alt="Sparus logo" width="250px" height="250px" />
  
 **Sparus**
 
