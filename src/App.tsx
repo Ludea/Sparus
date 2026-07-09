@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRoutes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -18,8 +19,8 @@ function App() {
   const [globalError, setGlobalError] = useState<SparusError>();
 
   const theme = createTheme();
-  const DesktopRouting = useRoutes(DesktopRoutes);
-  const MobileRouting = useRoutes(MobileRoutes);
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const Routing = useRoutes(isDesktop ? DesktopRoutes : MobileRoutes);
 
   const errorCache = useMemo<SparusErrorContextType>(
     () => ({
@@ -76,7 +77,7 @@ function App() {
               <Grid>
                 <Header />
               </Grid>
-              {DesktopRouting}
+              {isDesktop ? Routing : null}
             </Grid>
             <Grid
               container
@@ -90,7 +91,7 @@ function App() {
                 },
               }}
             >
-              {MobileRouting}{" "}
+              {isDesktop ? null : Routing}
             </Grid>
           </PluginManager>
         </ThemeProvider>
