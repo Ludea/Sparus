@@ -22,6 +22,10 @@ The frontend is built with **React 19** + **MUI v9**, while the backend is writt
 
 ---
 
+## Ecosystem
+
+[Lucle](https://github.com/ludea/lucle), a cms with an admin dashboard to manage binaries versions 
+
 ## Features
 
 - 🎮 **Launch & update** — installs and keeps your game up-to-date via a remote `state.json` manifest
