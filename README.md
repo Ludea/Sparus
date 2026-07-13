@@ -24,7 +24,7 @@ The frontend is built with **React 19** + **MUI v9**, while the backend is writt
 
 ## Ecosystem
 
-[Lucle](https://github.com/ludea/lucle), a cms with an admin dashboard to manage binaries versions 
+[Lucle](https://github.com/ludea/lucle), a cms with an admin dashboard to manage binaries versions
 
 ## Features
 
