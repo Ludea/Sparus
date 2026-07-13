@@ -19,6 +19,7 @@ import ErrorIcon from "@mui/icons-material/WarningRounded";
 
 // Context
 import { SparusErrorContext, SparusStoreContext } from "utils/Context";
+import { PluginSlot } from "utils/usePlugins";
 
 // Tauri api
 import { invoke } from "@tauri-apps/api/core";
@@ -461,6 +462,8 @@ function Footer() {
           </Paper>
         </Grid>
       ) : null}
+      {/* The root Grid is position: fixed, so plugin coords anchor to the footer area */}
+      <PluginSlot position="footer" />
     </Grid>
   );
 }
