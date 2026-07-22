@@ -66,7 +66,7 @@ jobs:
           ndk-version: r29
           link-to-sdk: true
       - name: setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
       - uses: voidzero-dev/setup-vp@v1
