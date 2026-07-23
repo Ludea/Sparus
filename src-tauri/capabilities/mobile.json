@@ -15,7 +15,8 @@
       "core:menu:default",
       "store:default",
       "notification:default",
-      "allow-js-plugins-path"
+      "allow-js-plugins-path",
+      "hotswap:default"
     ]
   }
   

@@ -13,6 +13,9 @@ import DesktopBackground from "assets/DesktopBackground.jpg";
 import { SparusErrorContext, StoreProvider } from "utils/Context";
 import { PluginManager } from "components/PluginsManager";
 
+//OTA Api
+import { checkUpdate, applyUpdate, notifyReady } from "tauri-plugin-hotswap-api";
+
 import type { SparusError, SparusErrorContextType } from "utils/Context";
 
 function App() {
@@ -41,6 +44,28 @@ function App() {
           event.preventDefault();
         }
       });
+
+      notifyReady()
+        .then(() => {
+          checkUpdate()
+            .then((result) => {
+              if (result.available) {
+                applyUpdate()
+                  .then(() => {
+                    window.location.reload();
+                  })
+                  .catch((error) => {
+                    setGlobalError({ kind: "update", message: "Failed to apply update: " + error });
+                  });
+              }
+            })
+            .catch((error) => {
+              setGlobalError({ kind: "update", message: "Failed to check for updates: " + error });
+            });
+        })
+        .catch((error) => {
+          setGlobalError({ kind: "update", message: "Failed to notify ready: " + error });
+        });
     }
   }, [globalError]);
 

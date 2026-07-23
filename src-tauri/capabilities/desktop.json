@@ -29,6 +29,7 @@
     "store:default",
     "notification:default",
     "process:allow-restart",
+    "hotswap:default",
     {
       "identifier": "shell:allow-spawn",
       "allow": [

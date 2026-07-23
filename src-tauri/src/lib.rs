@@ -26,6 +26,9 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
   let spawner: updater::LocalSpawner<R> = updater::LocalSpawner::new();
   let plugins_manager: plugins::PluginSystem = plugins::PluginSystem::new();
 
+  let context = tauri::generate_context!();
+  let (hotswap, _) = tauri_plugin_hotswap::init(context).expect("failed to initialize hotswap");
+
   builder = builder
     .manage(spawner)
     .manage(plugins_manager.clone())
@@ -119,6 +122,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       Ok(())
     })
+    .plugin(hotswap)
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_http::init())

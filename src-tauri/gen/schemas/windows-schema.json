@@ -2733,6 +2733,120 @@
           "markdownDescription": "Denies the save command without any pre-configured scope."
         },
         {
+          "description": "Default permissions for the Hotswap plugin\n#### This default permission set includes:\n\n- `allow-hotswap-check`\n- `allow-hotswap-apply`\n- `allow-hotswap-download`\n- `allow-hotswap-activate`\n- `allow-hotswap-rollback`\n- `allow-hotswap-current-version`\n- `allow-hotswap-notify-ready`\n- `allow-hotswap-configure`\n- `allow-hotswap-get-config`",
+          "type": "string",
+          "const": "hotswap:default",
+          "markdownDescription": "Default permissions for the Hotswap plugin\n#### This default permission set includes:\n\n- `allow-hotswap-check`\n- `allow-hotswap-apply`\n- `allow-hotswap-download`\n- `allow-hotswap-activate`\n- `allow-hotswap-rollback`\n- `allow-hotswap-current-version`\n- `allow-hotswap-notify-ready`\n- `allow-hotswap-configure`\n- `allow-hotswap-get-config`"
+        },
+        {
+          "description": "Enables the hotswap_activate command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-activate",
+          "markdownDescription": "Enables the hotswap_activate command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_apply command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-apply",
+          "markdownDescription": "Enables the hotswap_apply command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_check command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-check",
+          "markdownDescription": "Enables the hotswap_check command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_configure command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-configure",
+          "markdownDescription": "Enables the hotswap_configure command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_current_version command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-current-version",
+          "markdownDescription": "Enables the hotswap_current_version command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_download command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-download",
+          "markdownDescription": "Enables the hotswap_download command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_get_config command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-get-config",
+          "markdownDescription": "Enables the hotswap_get_config command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_notify_ready command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-notify-ready",
+          "markdownDescription": "Enables the hotswap_notify_ready command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the hotswap_rollback command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:allow-hotswap-rollback",
+          "markdownDescription": "Enables the hotswap_rollback command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_activate command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-activate",
+          "markdownDescription": "Denies the hotswap_activate command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_apply command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-apply",
+          "markdownDescription": "Denies the hotswap_apply command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_check command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-check",
+          "markdownDescription": "Denies the hotswap_check command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_configure command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-configure",
+          "markdownDescription": "Denies the hotswap_configure command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_current_version command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-current-version",
+          "markdownDescription": "Denies the hotswap_current_version command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_download command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-download",
+          "markdownDescription": "Denies the hotswap_download command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_get_config command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-get-config",
+          "markdownDescription": "Denies the hotswap_get_config command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_notify_ready command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-notify-ready",
+          "markdownDescription": "Denies the hotswap_notify_ready command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the hotswap_rollback command without any pre-configured scope.",
+          "type": "string",
+          "const": "hotswap:deny-hotswap-rollback",
+          "markdownDescription": "Denies the hotswap_rollback command without any pre-configured scope."
+        },
+        {
           "description": "This permission set configures what kind of\nfetch operations are available from the http plugin.\n\nThis enables all fetch operations but does not\nallow explicitly any origins to be fetched. This needs to\nbe manually configured before usage.\n\n#### Granted Permissions\n\nAll fetch operations are enabled.\n\n\n#### This default permission set includes:\n\n- `allow-fetch`\n- `allow-fetch-cancel`\n- `allow-fetch-send`\n- `allow-fetch-read-body`\n- `allow-fetch-cancel-body`",
           "type": "string",
           "const": "http:default",

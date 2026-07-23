@@ -40,6 +40,7 @@ tauri-plugin-dialog = "2"
 tauri-plugin-os = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-http = { version = "2", features = ["stream"] }
+tauri-plugin-hotswap = { version = "0.0.4", features = ["zip"] } 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 tauri-plugin-process = "2"
