@@ -40,7 +40,7 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "npx tsc && vp build",
+    "beforeBuildCommand": "vp exec tsc && vp build",
     "frontendDist": "../dist",
     "beforeDevCommand": "vp dev",
     "devUrl": "http://localhost:5173"
