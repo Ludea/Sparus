@@ -20,6 +20,8 @@ pub enum SparusError {
   #[error(transparent)]
   Http(#[from] reqwest::Error),
   #[error(transparent)]
+  RPC(#[from] tonic::transport::Error),
+  #[error(transparent)]
   Status(#[from] tonic::Status),
   #[error(transparent)]
   StripPrefix(#[from] path::StripPrefixError),
@@ -80,6 +82,10 @@ impl Serialize for SparusError {
         s.serialize_field("kind", "http")?;
         s.serialize_field("message", &err.to_string())?;
       }
+      SparusError::RPC(err) =>{
+        s.serialize_field("kind","rpc")?;
+        s.serialize_field("message", &err.to_string())?;
+      } 
       SparusError::Status(err) => {
         s.serialize_field("kind", "status")?;
         s.serialize_field("message", &err.to_string())?;

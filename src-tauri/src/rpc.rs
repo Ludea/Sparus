@@ -39,7 +39,6 @@ async fn start_streaming(
     let url = format!("{}/plugins/{}", plugins_url, plugin_name);
 
     let event = EventType::try_from(item.event_type);
-
     match event {
       Ok(EventType::Install) | Ok(EventType::Update) => {
         download_and_write_file(app_data_dir.clone(), url, plugin_name).await?;
@@ -67,7 +66,7 @@ pub async fn start_rpc_client(
   plugins_url: String,
   launcher_name: String,
 ) -> Result<(), SparusError> {
-  if let Ok(mut client) = EventClient::connect(cms_url).await {
+  let mut client= EventClient::connect("http://127.0.0.1:8112").await? ;
     start_streaming(
       app_data_dir,
       runtime,
@@ -76,7 +75,6 @@ pub async fn start_rpc_client(
       launcher_name,
     )
     .await?;
-  }
   Ok(())
 }
 
