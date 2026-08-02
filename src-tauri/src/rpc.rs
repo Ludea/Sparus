@@ -66,15 +66,15 @@ pub async fn start_rpc_client(
   plugins_url: String,
   launcher_name: String,
 ) -> Result<(), SparusError> {
-  let mut client= EventClient::connect("http://127.0.0.1:8112").await? ;
-    start_streaming(
-      app_data_dir,
-      runtime,
-      &mut client,
-      plugins_url,
-      launcher_name,
-    )
-    .await?;
+  let mut client = EventClient::connect("http://127.0.0.1:8112").await?;
+  start_streaming(
+    app_data_dir,
+    runtime,
+    &mut client,
+    plugins_url,
+    launcher_name,
+  )
+  .await?;
   Ok(())
 }
 

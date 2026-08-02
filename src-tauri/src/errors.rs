@@ -82,10 +82,10 @@ impl Serialize for SparusError {
         s.serialize_field("kind", "http")?;
         s.serialize_field("message", &err.to_string())?;
       }
-      SparusError::RPC(err) =>{
-        s.serialize_field("kind","rpc")?;
+      SparusError::RPC(err) => {
+        s.serialize_field("kind", "rpc")?;
         s.serialize_field("message", &err.to_string())?;
-      } 
+      }
       SparusError::Status(err) => {
         s.serialize_field("kind", "status")?;
         s.serialize_field("message", &err.to_string())?;
