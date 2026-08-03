@@ -35,11 +35,11 @@ jobs:
           source-root: src-tauri
       - name: Initialize Codeql for typescript
         if: ${{ matrix.language == 'typescript' }}
-        uses: github/codeql-action/init@v4.37.3
+        uses: github/codeql-action/init@v4
         with:
           languages: typescript
           source-root: src
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4.37.3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{matrix.language}}"
