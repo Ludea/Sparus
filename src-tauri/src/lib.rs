@@ -114,7 +114,6 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(
         app_data_dir.clone(),
-        plugins_manager,
         cms_url,
         plugins_url,
         launcher_name,
