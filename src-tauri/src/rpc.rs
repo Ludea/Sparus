@@ -14,6 +14,7 @@ use tauri_plugin_http::reqwest;
 use tokio::{
   fs::{self, File},
   io::AsyncWriteExt,
+  time::{sleep, Duration},
 };
 use tonic::transport::Channel;
 
@@ -33,47 +34,94 @@ async fn start_streaming(
     .await?;
 
   let mut stream = response.into_inner();
-  while let Ok(Some(item)) = stream.message().await {
+  loop {
+    // Handling the three outcomes explicitly. The previous
+    // `while let Ok(Some(item))` also matched `Err(_)` as "loop is over" and
+    // dropped the status without binding it, so a server-side error looked
+    // exactly like a clean shutdown and the launcher went permanently silent.
+    let item = match stream.message().await {
+      Ok(Some(item)) => item,
+      Ok(None) => return Ok(()),
+      Err(status) => return Err(SparusError::Status(status)),
+    };
+
     let plugin_name = item.plugin;
     let url = format!("{}/plugins/{}", plugins_url, plugin_name);
-    let event = EventType::try_from(item.event_type);
-    match event {
+    // One failed plugin must not end the subscription: log it and keep
+    // listening, otherwise a single 404 stops every later event from being
+    // acted on.
+    match EventType::try_from(item.event_type) {
       Ok(EventType::Install) | Ok(EventType::Update) => {
-        download_and_write_file(app_data_dir.clone(), url, plugin_name).await?;
+        if let Err(err) = download_and_write_file(app_data_dir.clone(), url, &plugin_name).await {
+          eprintln!("sparus: plugin {plugin_name}: install/update failed: {err}");
+        }
       }
       Ok(EventType::Delete) => {
-        fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await?;
+        if let Err(err) =
+          fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await
+        {
+          eprintln!("sparus: plugin {plugin_name}: delete failed: {err}");
+        }
       }
       Err(_) => {
-        let event_name = EventType::try_from(item.event_type)
-          .map(|e| e.as_str_name())
-          .unwrap_or("UNKNOWN_EVENT");
-
-        return Err(SparusError::PluginEvent(event_name.to_string()));
+        // Still a SparusError (as agreed in #1017), but reported rather than
+        // returned: an event type this build doesn't know about is not a
+        // reason to unsubscribe from every future event.
+        eprintln!(
+          "sparus: {} (plugin {plugin_name})",
+          SparusError::PluginEvent(item.event_type.to_string())
+        );
       }
     }
   }
-
-  Ok(())
 }
 
+/// Subscribes to the CMS event stream, reconnecting if the stream drops.
+///
+/// The subscription has to outlive transient failures: the CMS may not be up
+/// yet when the launcher starts, and any dropped stream previously left the
+/// launcher silently unsubscribed for the rest of the session.
 pub async fn start_rpc_client(
   app_data_dir: PathBuf,
   cms_url: String,
   plugins_url: String,
   launcher_name: String,
-) -> Result<(), SparusError> {
-  let mut client = EventClient::connect(cms_url).await?;
-  start_streaming(app_data_dir, &mut client, plugins_url, launcher_name).await?;
-  Ok(())
+) {
+  const MIN_BACKOFF: Duration = Duration::from_secs(1);
+  const MAX_BACKOFF: Duration = Duration::from_secs(60);
+
+  let mut backoff = MIN_BACKOFF;
+  loop {
+    match EventClient::connect(cms_url.clone()).await {
+      Ok(mut client) => {
+        backoff = MIN_BACKOFF;
+        if let Err(err) = start_streaming(
+          app_data_dir.clone(),
+          &mut client,
+          plugins_url.clone(),
+          launcher_name.clone(),
+        )
+        .await
+        {
+          eprintln!("sparus: event stream ended: {err}");
+        }
+      }
+      Err(err) => {
+        eprintln!("sparus: cannot reach the CMS at {cms_url}: {err}");
+      }
+    }
+
+    sleep(backoff).await;
+    backoff = (backoff * 2).min(MAX_BACKOFF);
+  }
 }
 
 async fn download_and_write_file(
   app_data_dir: PathBuf,
   url: String,
-  plugin_name: String,
+  plugin_name: &str,
 ) -> Result<(), SparusError> {
-  let plugin_name_dir = app_data_dir.join("plugins").join(&plugin_name);
+  let plugin_name_dir = app_data_dir.join("plugins").join(plugin_name);
   fs::create_dir_all(&plugin_name_dir).await?;
 
   let mut entries = fs::read_dir(&plugin_name_dir).await?;
