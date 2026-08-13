@@ -16,7 +16,7 @@ use tokio::{
   io::AsyncWriteExt,
   time::{sleep, Duration},
 };
-use tonic::transport::{Channel, Error};
+use tonic::transport::Channel;
 
 async fn start_streaming(
   app_data_dir: PathBuf,
@@ -99,16 +99,13 @@ pub async fn start_rpc_client(
     match EventClient::connect(cms_url.clone()).await {
       Ok(mut client) => {
         backoff = MIN_BACKOFF;
-        if let Err(err) = start_streaming(
+        start_streaming(
           app_data_dir.clone(),
           &mut client,
           plugins_url.clone(),
           launcher_name.clone(),
         )
-        .await
-        {
-          return Err(err);
-        }
+        .await?
       }
       Err(err) => {
         return Err(SparusError::Rpc(err));
