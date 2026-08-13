@@ -59,9 +59,7 @@ function App() {
                   });
               }
             })
-            .catch((error) => {
-              setGlobalError({ kind: "update", message: "Failed to check for updates: " + error });
-            });
+            .catch(() => {});
         })
         .catch((error) => {
           setGlobalError({ kind: "update", message: "Failed to notify ready: " + error });
