@@ -16,7 +16,7 @@ use tokio::{
   io::AsyncWriteExt,
   time::{sleep, Duration},
 };
-use tonic::transport::Channel;
+use tonic::transport::{Channel, Error};
 
 async fn start_streaming(
   app_data_dir: PathBuf,
@@ -53,24 +53,28 @@ async fn start_streaming(
     match EventType::try_from(item.event_type) {
       Ok(EventType::Install) | Ok(EventType::Update) => {
         if let Err(err) = download_and_write_file(app_data_dir.clone(), url, &plugin_name).await {
-          eprintln!("sparus: plugin {plugin_name}: install/update failed: {err}");
+          return Err(SparusError::PluginEvent(format!(
+            "Plugin {plugin_name}: install/update failed: {err}"
+          )));
         }
       }
       Ok(EventType::Delete) => {
         if let Err(err) =
           fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await
         {
-          eprintln!("sparus: plugin {plugin_name}: delete failed: {err}");
+          return Err(SparusError::PluginEvent(format!(
+            "Plugin {plugin_name}: delete failed: {err}"
+          )));
         }
       }
       Err(_) => {
         // Still a SparusError (as agreed in #1017), but reported rather than
         // returned: an event type this build doesn't know about is not a
         // reason to unsubscribe from every future event.
-        eprintln!(
-          "sparus: {} (plugin {plugin_name})",
-          SparusError::PluginEvent(item.event_type.to_string())
-        );
+        return Err(SparusError::PluginEvent(format!(
+          "Plugin {plugin_name}: unknown event type {}",
+          item.event_type
+        )));
       }
     }
   }
@@ -86,7 +90,7 @@ pub async fn start_rpc_client(
   cms_url: String,
   plugins_url: String,
   launcher_name: String,
-) {
+) -> Result<(), SparusError> {
   const MIN_BACKOFF: Duration = Duration::from_secs(1);
   const MAX_BACKOFF: Duration = Duration::from_secs(60);
 
@@ -103,11 +107,11 @@ pub async fn start_rpc_client(
         )
         .await
         {
-          eprintln!("sparus: event stream ended: {err}");
+          return Err(err);
         }
       }
       Err(err) => {
-        eprintln!("sparus: cannot reach the CMS at {cms_url}: {err}");
+        return Err(SparusError::Rpc(err));
       }
     }
 
