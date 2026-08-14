@@ -15,6 +15,10 @@ on:
         description: "Repository URL"
         required: true
         default: "https://example.com"
+      launcher_url:
+        description: "Launcher URL"
+        required: true
+        default: "https://example.com"
       config_filename:
         description: "Store file"
         default: "Sparus.json"
@@ -52,6 +56,7 @@ jobs:
           jq -n --arg repository_name "${{ inputs.repository_name }}" '{ repository_name: $repository_name}' > src-tauri/"${{ inputs.config_filename }}"
           jq -n --arg launcher_name "${{ inputs.launcher_name }}" '{ launcher_name: $launcher_name }' > src-tauri/"${{ inputs.config_filename }}"
           jq -n --arg repository_url "${{ inputs.repository_url }}" '{ repository_url: $repository_url}' > src-tauri/"${{ inputs.config_filename }}"
+          jq -n --arg launcher_url "${{ inputs.launcher_url }}" '{ launcher_url: $launcher_url}' > src-tauri/"${{ inputs.config_filename }}"
       - name: Download Background image and logo
         run: |
           curl --output-dir --fail src/assets -LJO ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/DesktopBackground.jpg
