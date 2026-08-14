@@ -90,7 +90,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         None => "http://127.0.0.1:8112".to_string(),
       };
 
-      let plugins_url = match store.get("plugins_url") {
+      let repository_url = match store.get("repository_url") {
         Some(url_json) => {
           if let tauri_plugin_store::JsonValue::String(url_string) = url_json {
             url_string
@@ -115,7 +115,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       tauri::async_runtime::spawn(rpc::start_rpc_client(
         app_data_dir.clone(),
         cms_url,
-        plugins_url,
+        repository_url,
         launcher_name,
       ));
 
