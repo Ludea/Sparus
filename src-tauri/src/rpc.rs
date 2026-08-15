@@ -98,18 +98,15 @@ pub async fn start_rpc_client(
   loop {
     match EventClient::connect(cms_url.clone()).await {
       Ok(mut client) => {
-        backoff = MIN_BACKOFF;
         start_streaming(
           app_data_dir.clone(),
           &mut client,
           plugins_url.clone(),
           launcher_name.clone(),
         )
-        .await?
+        .await?;
       }
-      Err(err) => {
-        return Err(SparusError::Rpc(err));
-      }
+      Err(err) => return Err(SparusError::Rpc(err)),
     }
 
     sleep(backoff).await;
