@@ -163,7 +163,11 @@ function Footer() {
         setAppliedOutputBytesPerSec("");
       })
       .catch((err: unknown) => {
-        setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+        let error: SparusError = {
+          kind: "update",
+          message: "Failed to install update: ".concat(err as string),
+        };
+        setGlobalError(error);
         if (type === "launcher") setLauncherState("update_available");
         if (type === "game") setGameState("not_installed");
         setLoading(false);
@@ -186,7 +190,11 @@ function Footer() {
         invoke<string>("get_current_path")
           .then((path) => {
             store.set("workspace_path", path).catch((err: unknown) => {
-              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+              let error: SparusError = {
+                kind: "path",
+                message: "Failed to set workspace path: ".concat(err as string),
+              };
+              setGlobalError(error);
             });
             setWorkspacePath(path);
           })
@@ -235,9 +243,11 @@ function Footer() {
                     }
                   })
                   .catch((err: unknown) => {
-                    setGlobalError(
-                      (err as SparusError).kind.concat(": ", (err as SparusError).message),
-                    );
+                    let error: SparusError = {
+                      kind: "update",
+                      message: "Failed to check for updates: ".concat(err as string),
+                    };
+                    setGlobalError(error);
                   })
               : null,
           )
@@ -266,18 +276,28 @@ function Footer() {
                       }
                     })
                     .catch((err: unknown) => {
-                      setGlobalError(
-                        (err as SparusError).kind.concat(": ", (err as SparusError).message),
-                      );
+                      let error: SparusError = {
+                        kind: "update",
+                        message: "Failed to check for updates: ".concat(err as string),
+                      };
+                      setGlobalError(error);
                     })
                 : null,
             )
             .catch((err: unknown) => {
-              setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+              let error: SparusError = {
+                kind: "update",
+                message: "Failed to check for updates: ".concat(err as string),
+              };
+              setGlobalError(error);
             });
       })
       .catch((err: unknown) => {
-        setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+        let error: SparusError = {
+          kind: "update",
+          message: "Failed to check for updates: ".concat(err as string),
+        };
+        setGlobalError(error);
       });
 
     listen<UpdateEvent>("sparus://downloadinfos", (event) => {
@@ -294,7 +314,11 @@ function Footer() {
       setAppliedOutputBytesEnd(convertReadableData(event.payload.applied_output_bytes_end));
       setAppliedOutputBytesPerSec(convertReadableData(event.payload.applied_output_bytes_per_sec));
     }).catch((err: unknown) => {
-      setGlobalError((err as SparusError).kind.concat(": ", (err as SparusError).message));
+      let error: SparusError = {
+        kind: "update",
+        message: "Failed to check for updates: ".concat(err as string),
+      };
+      setGlobalError(error);
     });
   }, [gameState, launcherState, globalError]);
 
@@ -305,7 +329,11 @@ function Footer() {
     const command = Command.create(shell, [...arg, workspacePath.concat("/game/", gameName)], opts);
 
     command.spawn().catch((err: unknown) => {
-      setGlobalError(err);
+      let error: SparusError = {
+        kind: "update",
+        message: "Failed to spawn command: ".concat(err as string),
+      };
+      setGlobalError(error);
     });
   };
 
