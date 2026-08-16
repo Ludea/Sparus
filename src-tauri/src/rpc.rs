@@ -96,7 +96,7 @@ pub async fn start_rpc_client(
 
   let mut backoff = MIN_BACKOFF;
   loop {
-    match EventClient::connect(cms_url.clone()).await {
+    let result = match EventClient::connect(cms_url.clone()).await {
       Ok(mut client) => {
         start_streaming(
           app_data_dir.clone(),
@@ -104,9 +104,15 @@ pub async fn start_rpc_client(
           plugins_url.clone(),
           launcher_name.clone(),
         )
-        .await?;
+        .await
       }
       Err(err) => return Err(SparusError::Rpc(err)),
+    };
+
+    if let Err(SparusError::PluginEvent(err)) = result {
+      return Err(SparusError::PluginEvent(format!(
+        "Plugin event failed, stopping subscription: {err}"
+      )));
     }
 
     sleep(backoff).await;
