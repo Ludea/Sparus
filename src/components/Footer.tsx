@@ -320,6 +320,18 @@ function Footer() {
       };
       setGlobalError(error);
     });
+
+    // Plugin install/update/delete runs in a background task with no command to
+    // return an error through, so it reports failures on this event instead.
+    listen<SparusError>("sparus://pluginerror", (event) => {
+      setGlobalError(event.payload);
+    }).catch((err: unknown) => {
+      let error: SparusError = {
+        kind: "plugin_event",
+        message: "Failed to listen for plugin errors: ".concat(err as string),
+      };
+      setGlobalError(error);
+    });
   }, [gameState, launcherState, globalError]);
 
   const spawn = () => {

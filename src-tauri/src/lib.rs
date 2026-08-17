@@ -113,6 +113,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       };
 
       tauri::async_runtime::spawn(rpc::start_rpc_client(
+        app.handle().clone(),
         app_data_dir.clone(),
         cms_url,
         repository_url,
