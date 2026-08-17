@@ -10,6 +10,7 @@ use std::{
   collections::HashMap,
   path::{Path, PathBuf},
 };
+use tauri::{AppHandle, Emitter, Runtime};
 use tauri_plugin_http::reqwest;
 use tokio::{
   fs::{self, File},
@@ -18,7 +19,37 @@ use tokio::{
 };
 use tonic::transport::Channel;
 
-async fn start_streaming(
+/// Event carrying a `SparusError` to the frontend.
+///
+/// `SparusError` already serializes to `{kind, message}`, which is the shape
+/// the UI's error handling expects, so this can be surfaced the same way as
+/// any other error. Same mechanism `updater.rs` uses for
+/// `sparus://downloadinfos`.
+pub const PLUGIN_ERROR_EVENT: &str = "sparus://pluginerror";
+
+fn report<R: Runtime>(app: &AppHandle<R>, err: SparusError) {
+  // `Emitter::emit` needs `Serialize + Clone`, and `SparusError` can't be
+  // `Clone` (it wraps `io::Error` and friends). Going through `to_value` reuses
+  // the existing `Serialize` impl, so the `kind` stays consistent with every
+  // other error the frontend receives.
+  match serde_json::to_value(&err) {
+    Ok(payload) => {
+      let _ = app.emit(PLUGIN_ERROR_EVENT, payload);
+    }
+    Err(serialization_err) => {
+      let _ = app.emit(
+        PLUGIN_ERROR_EVENT,
+        serde_json::json!({
+          "kind": "plugin_event",
+          "message": format!("{err} (payload not serializable: {serialization_err})"),
+        }),
+      );
+    }
+  }
+}
+
+async fn start_streaming<R: Runtime>(
+  app: &AppHandle<R>,
   app_data_dir: PathBuf,
   client: &mut EventClient<Channel>,
   plugins_url: String,
@@ -47,72 +78,81 @@ async fn start_streaming(
 
     let plugin_name = item.plugin;
     let url = format!("{}/plugins/{}", plugins_url, plugin_name);
-    // One failed plugin must not end the subscription: log it and keep
-    // listening, otherwise a single 404 stops every later event from being
-    // acted on.
+    // A failure on one plugin is reported to the frontend and skipped. It must
+    // not leave the loop: returning here ends the subscription, so the next
+    // event never arrives (#1060).
     match EventType::try_from(item.event_type) {
       Ok(EventType::Install) | Ok(EventType::Update) => {
         if let Err(err) = download_and_write_file(app_data_dir.clone(), url, &plugin_name).await {
-          return Err(SparusError::PluginEvent(format!(
-            "Plugin {plugin_name}: install/update failed: {err}"
-          )));
+          report(
+            app,
+            SparusError::PluginEvent(format!(
+              "Plugin {plugin_name}: install/update failed: {err}"
+            )),
+          );
         }
       }
       Ok(EventType::Delete) => {
         if let Err(err) =
           fs::remove_dir_all(format!("{app_data_dir_string}/plugins/{plugin_name}")).await
         {
-          return Err(SparusError::PluginEvent(format!(
-            "Plugin {plugin_name}: delete failed: {err}"
-          )));
+          report(
+            app,
+            SparusError::PluginEvent(format!("Plugin {plugin_name}: delete failed: {err}")),
+          );
         }
       }
       Err(_) => {
-        // Still a SparusError (as agreed in #1017), but reported rather than
-        // returned: an event type this build doesn't know about is not a
-        // reason to unsubscribe from every future event.
-        return Err(SparusError::PluginEvent(format!(
-          "Plugin {plugin_name}: unknown event type {}",
-          item.event_type
-        )));
+        report(
+          app,
+          SparusError::PluginEvent(format!(
+            "Plugin {plugin_name}: unknown event type {}",
+            item.event_type
+          )),
+        );
       }
     }
   }
 }
 
-/// Subscribes to the CMS event stream, reconnecting if the stream drops.
+/// Subscribes to the CMS event stream, reconnecting for as long as the app
+/// runs.
 ///
-/// The subscription has to outlive transient failures: the CMS may not be up
-/// yet when the launcher starts, and any dropped stream previously left the
-/// launcher silently unsubscribed for the rest of the session.
-pub async fn start_rpc_client(
+/// This never returns: the subscription has to outlive transient failures. The
+/// CMS may not be up yet when the launcher starts, a stream can drop at any
+/// time, and giving up on either leaves the launcher silently unsubscribed for
+/// the rest of the session. Errors are emitted to the frontend rather than
+/// returned -- the caller spawns this and drops the `JoinHandle`, so a returned
+/// error would end the subscription without being seen by anyone.
+pub async fn start_rpc_client<R: Runtime>(
+  app: AppHandle<R>,
   app_data_dir: PathBuf,
   cms_url: String,
   plugins_url: String,
   launcher_name: String,
-) -> Result<(), SparusError> {
+) {
   const MIN_BACKOFF: Duration = Duration::from_secs(1);
   const MAX_BACKOFF: Duration = Duration::from_secs(60);
 
   let mut backoff = MIN_BACKOFF;
   loop {
-    let result = match EventClient::connect(cms_url.clone()).await {
+    match EventClient::connect(cms_url.clone()).await {
       Ok(mut client) => {
-        start_streaming(
+        // Connected: a later failure is transient, so restart the backoff.
+        backoff = MIN_BACKOFF;
+        if let Err(err) = start_streaming(
+          &app,
           app_data_dir.clone(),
           &mut client,
           plugins_url.clone(),
           launcher_name.clone(),
         )
         .await
+        {
+          report(&app, err);
+        }
       }
-      Err(err) => return Err(SparusError::Rpc(err)),
-    };
-
-    if let Err(SparusError::PluginEvent(err)) = result {
-      return Err(SparusError::PluginEvent(format!(
-        "Plugin event failed, stopping subscription: {err}"
-      )));
+      Err(err) => report(&app, SparusError::Rpc(err)),
     }
 
     sleep(backoff).await;
