@@ -50,6 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Create json store
+        shell: bash
         run: |
           jq -n \
             --arg version         "${{ inputs.initial_version }}" \
