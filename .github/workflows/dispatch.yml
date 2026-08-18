@@ -12,11 +12,11 @@ on:
         required: true
         default: "sparus"
       repository_url:
-        description: "Repository URL"
+        description: "Update server URL"
         required: true
         default: "https://example.com"
-      launcher_url:
-        description: "Launcher URL"
+      cms_url:
+        description: "cms URL"
         required: true
         default: "https://example.com"
       config_filename:
