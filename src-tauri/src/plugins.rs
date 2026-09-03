@@ -45,7 +45,7 @@ impl PluginSystem {
     args: Vec<Val>,
   ) -> Result<Value, SparusError> {
     let mut linker = Linker::new(&self.engine);
-    wasmtime_wasi::p2::add_to_linker_async(&mut linker)?;
+    wasmtime_wasi::p3::add_to_linker(&mut linker)?;
     let wasi = WasiCtx::builder().inherit_stdio().inherit_stderr().build();
     let state = ComponentRunStates {
       wasi_ctx: wasi,
