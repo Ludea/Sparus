@@ -110,6 +110,7 @@ jobs:
         with:
           releaseBody: ${{ steps.build_changelog.outputs.changelog }}
           uploadUpdaterJson: false
+          uploadPlainBinary: true
           uploadUpdaterSignatures: false
           tagName: ${{ github.ref_name }}
           mobile: ${{ matrix.mobile }}
