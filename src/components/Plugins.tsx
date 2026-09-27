@@ -1,18 +1,17 @@
 import { ModuleFederation } from "@module-federation/runtime";
-import { useState, useEffect, useContext, ReactElement, ComponentType } from "react";
+import { useState, useEffect, useContext, ComponentType } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { SparusErrorContext } from "utils/Context";
-
-type PluginPosition = "header" | "body" | "footer";
+import type { RegisterPluginFn } from "utils/usePlugins";
 
 type PluginsManagerProps = {
   path: string;
-  register: (pos: PluginPosition, el: ReactElement) => void;
+  register: RegisterPluginFn;
 };
 
 type PluginsProps = {
-  register: (pos: PluginPosition, el: ReactElement) => void;
+  register: RegisterPluginFn;
   setError: (err: unknown) => void;
 };
 
