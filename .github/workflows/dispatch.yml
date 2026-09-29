@@ -121,5 +121,5 @@ jobs:
           FILES=$(echo "$FILES" | sed 's/^\[//; s/\]$//; s/"//g')
           for f in ${FILES//,/ }; do
            echo "Uploading: $f"
-           curl --fail ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/binaries/${{ matrix.host }} -F "file=@$f"
+           curl --fail ${{ secrets.STORE_URL }}/${{ inputs.repository_name }}/launcher/binaries/${{ github.ref_name }}/${{ matrix.host }} -F "file=@$f"
           done
