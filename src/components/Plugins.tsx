@@ -32,9 +32,6 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
     let cancelled = false;
 
     const loadPlugin = (entry: string) => {
-      // Cache-bust the bundle URL so an updated frontend.js is fetched fresh
-      // instead of served stale from the webview cache (#1037). `force` lets the
-      // new entry replace a previously-registered remote of the same name.
       const versionedEntry = `${entry}?v=${Date.now()}`;
       mf.registerRemotes([{ name: "button", type: "module", entry: versionedEntry }], {
         force: true,
