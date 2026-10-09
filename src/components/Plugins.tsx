@@ -36,37 +36,41 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
       mf.registerRemotes([{ name: "button", type: "module", entry: versionedEntry }], {
         force: true,
       });
-      mf.loadRemote(`button/Button`)
+      mf.loadRemote("button/Button")
         .then((mod: unknown) => {
           if (cancelled) return;
           if (!isRemoteModule(mod)) {
-            setGlobalError(`plugin "${path}" is invalid (no default export)`);
+            setGlobalError({
+              kind: "plugin",
+              message: `plugin "${path}" is invalid (no default export)`,
+            });
             return;
           }
           setComponent(() => mod.default);
         })
         .catch((err: Error) => {
           if (cancelled) return;
-          if (!(err instanceof TypeError) && !err.message.includes("Failed to fetch")) {
-            setGlobalError(err);
-          }
+          setGlobalError({
+            kind: "plugin",
+            message: err.message,
+          });
         });
     };
 
     if (import.meta.env.DEV) {
-      loadPlugin("http://localhost:3002/frontend.js");
+      loadPlugin(`http://localhost:3000/frontend.js`);
     } else {
-      // Resolve the on-disk bundle path FIRST, then load. The previous code set
-      // `url` inside an async `.then()` but called registerRemotes synchronously,
-      // so in production the remote was registered with an empty entry and never
-      // loaded.
       appDataDir()
         .then((dir) => join(dir, "plugins", path, "frontend.js"))
         .then((file) => {
           if (!cancelled) loadPlugin(convertFileSrc(file));
         })
         .catch((err) => {
-          if (!cancelled) setGlobalError(err);
+          if (!cancelled)
+            setGlobalError({
+              kind: "plugin",
+              message: err.message,
+            });
         });
     }
 

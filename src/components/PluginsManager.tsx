@@ -1,5 +1,15 @@
 import React, { FC, ReactNode, useEffect, useState, useContext } from "react";
 import ReactDOM from "react-dom";
+import * as ReactDOMClient from "react-dom/client";
+import * as ReactCompilerRuntime from "react/compiler-runtime";
+import * as ReactJsxRuntime from "react/jsx-runtime";
+import * as ReactJsxDevRuntime from "react/jsx-dev-runtime";
+import * as MuiMaterial from "@mui/material";
+import muiMaterialPackage from "@mui/material/package.json";
+import * as EmotionReact from "@emotion/react";
+import emotionReactPackage from "@emotion/react/package.json";
+import * as EmotionStyled from "@emotion/styled";
+import emotionStyledPackage from "@emotion/styled/package.json";
 import { invoke } from "@tauri-apps/api/core";
 import { createInstance, ModuleFederation } from "@module-federation/runtime";
 import { PluginsProvider, usePluginsContext } from "utils/usePlugins";
@@ -44,6 +54,69 @@ const PluginLoader: FC = () => {
         shareConfig: {
           singleton: true,
           requiredVersion: `^${ReactDOM.version || React.version}`,
+        },
+      },
+      "react/jsx-runtime": {
+        version: React.version,
+        scope: "default",
+        lib: () => ReactJsxRuntime,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${React.version}`,
+        },
+      },
+      "react/jsx-dev-runtime": {
+        version: React.version,
+        scope: "default",
+        lib: () => ReactJsxDevRuntime,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${React.version}`,
+        },
+      },
+      "react/compiler-runtime": {
+        version: React.version,
+        scope: "default",
+        lib: () => ReactCompilerRuntime,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${React.version}`,
+        },
+      },
+      "react-dom/client": {
+        version: ReactDOM.version || React.version,
+        scope: "default",
+        lib: () => ReactDOMClient,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${ReactDOM.version || React.version}`,
+        },
+      },
+      "@mui/material": {
+        version: muiMaterialPackage.version,
+        scope: "default",
+        lib: () => MuiMaterial,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${muiMaterialPackage.version}`,
+        },
+      },
+      "@emotion/react": {
+        version: emotionReactPackage.version,
+        scope: "default",
+        lib: () => EmotionReact,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${emotionReactPackage.version}`,
+        },
+      },
+      "@emotion/styled": {
+        version: emotionStyledPackage.version,
+        scope: "default",
+        lib: () => EmotionStyled,
+        shareConfig: {
+          singleton: true,
+          requiredVersion: `^${emotionStyledPackage.version}`,
         },
       },
     });

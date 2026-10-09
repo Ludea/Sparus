@@ -57,10 +57,10 @@
       },
       "csp": {
         "default-src": "'self'",
-        "connect-src": "ipc: http://ipc.localhost",
+        "connect-src": "ipc: http://ipc.localhost http://localhost:3000",
         "style-src": "'unsafe-inline' 'self' tauri://localhost",
         "img-src": "'self' data: tauri://localhost",
-        "script-src": "'self' tauri://localhost asset: http://asset.localhost"
+        "script-src": "'self' tauri://localhost asset: http://asset.localhost http://localhost:3000"
       }
     }
   },
