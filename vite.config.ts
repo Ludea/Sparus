@@ -7,7 +7,7 @@ export default defineConfig({
   define: {
     process: { env: {} },
   },
-  plugins: [...react()] as PluginOption[],
+  plugins: [react({ reactRefreshHost: "http://localhost:3000" })] as PluginOption[],
   resolve: {
     tsconfigPaths: true,
   },
