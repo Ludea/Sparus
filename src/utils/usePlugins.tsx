@@ -12,44 +12,67 @@ import {
 
 export type PluginPosition = "header" | "body" | "footer" | "options";
 
+// CSS lengths: a number is treated as px, a string is used as-is (e.g. "10%").
+export type PluginCoords = {
+  x: number | string;
+  y: number | string;
+};
+
+export type RegisterPluginFn = (
+  position: PluginPosition,
+  element: ReactElement,
+  coords?: PluginCoords,
+) => void;
+
+type PluginEntry = {
+  element: ReactElement;
+  coords?: PluginCoords;
+};
+
 interface PluginContextType {
-  header: ReactElement[];
-  body: ReactElement[];
-  footer: ReactElement[];
-  options: ReactElement[];
-  register: (position: PluginPosition, element: ReactElement) => void;
+  header: PluginEntry[];
+  body: PluginEntry[];
+  footer: PluginEntry[];
+  options: PluginEntry[];
+  register: RegisterPluginFn;
   unregister: (position: PluginPosition, element: ReactElement) => void;
 }
 const PluginsContext = createContext<PluginContextType | null>(null);
 
-const addPluginElement = (elements: ReactElement[], element: ReactElement) => {
-  const alreadyRegistered = elements.some(
-    (registered) => registered.key === element.key && registered.type === element.type,
+const addPluginEntry = (entries: PluginEntry[], entry: PluginEntry) => {
+  const alreadyRegistered = entries.some(
+    (registered) =>
+      registered.element.key === entry.element.key &&
+      registered.element.type === entry.element.type,
   );
 
-  if (alreadyRegistered) return elements;
+  if (alreadyRegistered) return entries;
 
-  return [...elements, element];
+  return [...entries, entry];
 };
 
 export const PluginsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [header, setHeader] = useState<ReactElement[]>([]);
-  const [body, setBody] = useState<ReactElement[]>([]);
-  const [footer, setFooter] = useState<ReactElement[]>([]);
-  const [options, setOptions] = useState<ReactElement[]>([]);
+  const [header, setHeader] = useState<PluginEntry[]>([]);
+  const [body, setBody] = useState<PluginEntry[]>([]);
+  const [footer, setFooter] = useState<PluginEntry[]>([]);
+  const [options, setOptions] = useState<PluginEntry[]>([]);
 
-  const register = useCallback((position: PluginPosition, element: ReactElement) => {
-    if (position === "header") setHeader((prev) => addPluginElement(prev, element));
-    if (position === "body") setBody((prev) => addPluginElement(prev, element));
-    if (position === "footer") setFooter((prev) => addPluginElement(prev, element));
-    if (position === "options") setOptions((prev) => addPluginElement(prev, element));
-  }, []);
+  const register = useCallback(
+    (position: PluginPosition, element: ReactElement, coords?: PluginCoords) => {
+      const entry = { element, coords };
+      if (position === "header") setHeader((prev) => addPluginEntry(prev, entry));
+      if (position === "body") setBody((prev) => addPluginEntry(prev, entry));
+      if (position === "footer") setFooter((prev) => addPluginEntry(prev, entry));
+      if (position === "options") setOptions((prev) => addPluginEntry(prev, entry));
+    },
+    [],
+  );
 
   const unregister = useCallback((position: PluginPosition, element: ReactElement) => {
-    if (position === "header") setHeader((prev) => prev.filter((e) => e !== element));
-    if (position === "body") setBody((prev) => prev.filter((e) => e !== element));
-    if (position === "footer") setFooter((prev) => prev.filter((e) => e !== element));
-    if (position === "options") setOptions((prev) => prev.filter((e) => e !== element));
+    if (position === "header") setHeader((prev) => prev.filter((e) => e.element !== element));
+    if (position === "body") setBody((prev) => prev.filter((e) => e.element !== element));
+    if (position === "footer") setFooter((prev) => prev.filter((e) => e.element !== element));
+    if (position === "options") setOptions((prev) => prev.filter((e) => e.element !== element));
   }, []);
 
   const value = useMemo(
@@ -69,12 +92,23 @@ export const usePluginsContext = (): PluginContextType => {
 };
 
 export const PluginSlot = ({ position }: { position: PluginPosition }): ReactElement => {
-  const elements = usePluginsContext()[position];
+  const entries = usePluginsContext()[position];
   return (
     <>
-      {elements.map((element, index) => (
-        <Fragment key={index}>{element}</Fragment>
-      ))}
+      {entries.map((entry, index) =>
+        entry.coords ? (
+          // Anchored to the slot area: the slot's container is the nearest
+          // positioned ancestor (relative/fixed), so x/y are offsets inside it.
+          <div
+            key={index}
+            style={{ position: "absolute", left: entry.coords.x, top: entry.coords.y }}
+          >
+            {entry.element}
+          </div>
+        ) : (
+          <Fragment key={index}>{entry.element}</Fragment>
+        ),
+      )}
     </>
   );
 };
