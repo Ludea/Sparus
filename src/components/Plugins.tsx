@@ -20,6 +20,18 @@ type RemoteModule = {
   default: ComponentType<PluginsProps>;
 };
 
+const DEV_PLUGIN_ENTRY = "http://localhost:3000/frontend.js";
+const DEV_POLL_INTERVAL_MS = 1000;
+
+// Bundler-agnostic change token: ETag/Last-Modified, falling back to the body length.
+async function fetchEntryToken(entry: string): Promise<string> {
+  const res = await fetch(entry, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const etag = res.headers.get("ETag") ?? res.headers.get("Last-Modified");
+  if (etag) return etag;
+  return `len:${(await res.text()).length}`;
+}
+
 function isRemoteModule(mod: unknown): mod is RemoteModule {
   return typeof mod === "object" && mod != null && "default" in mod;
 }
@@ -57,8 +69,28 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
         });
     };
 
+    let pollTimer: ReturnType<typeof setTimeout> | undefined;
+
+    // Dev only: remount the plugin when the dev server's bundle changes (no state-preserving Fast Refresh).
+    const watchPlugin = (entry: string) => {
+      let lastToken: string | undefined;
+      const tick = async () => {
+        try {
+          const token = await fetchEntryToken(entry);
+          if (cancelled) return;
+          if (lastToken !== undefined && token !== lastToken) loadPlugin(entry);
+          lastToken = token;
+        } catch {
+          // dev server down or restarting: keep the last token and retry
+        }
+        if (!cancelled) pollTimer = setTimeout(tick, DEV_POLL_INTERVAL_MS);
+      };
+      void tick();
+    };
+
     if (import.meta.env.DEV) {
-      loadPlugin(`http://localhost:3000/frontend.js`);
+      loadPlugin(DEV_PLUGIN_ENTRY);
+      watchPlugin(DEV_PLUGIN_ENTRY);
     } else {
       appDataDir()
         .then((dir) => join(dir, "plugins", path, "frontend.js"))
@@ -76,6 +108,7 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
 
     return () => {
       cancelled = true;
+      clearTimeout(pollTimer);
     };
   }, [path, mf]);
 
