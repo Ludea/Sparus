@@ -152,6 +152,8 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       updater::update_available,
       plugins::call_wasm_plugin_function,
       plugins::js_plugins_path,
+      plugins::drop_wasm_plugin_resource,
+      plugins::unload_wasm_plugin,
       utils::get_current_path,
       utils::get_game_exe_name
     ])
