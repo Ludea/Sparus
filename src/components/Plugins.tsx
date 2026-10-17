@@ -85,7 +85,7 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
         }
         if (!cancelled) pollTimer = setTimeout(tick, DEV_POLL_INTERVAL_MS);
       };
-      tick();
+      void tick();
     };
 
     if (import.meta.env.DEV) {
