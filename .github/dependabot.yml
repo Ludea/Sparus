@@ -4,9 +4,8 @@ updates:
     directory: "src-tauri"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 10
     groups:
-      rust-deps:
+      all:
         patterns:
           - "*"
 
@@ -14,9 +13,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 10
     groups:
-      js-deps:
+      all:
         patterns:
           - "*"
 
@@ -24,8 +22,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 10
     groups:
-      action-deps:
+      all:
         patterns:
           - "*"
