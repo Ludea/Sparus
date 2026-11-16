@@ -1,7 +1,5 @@
 import { ModuleFederation } from "@module-federation/runtime";
 import { useState, useEffect, useContext, ReactElement, ComponentType } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { appDataDir, join } from "@tauri-apps/api/path";
 import { SparusErrorContext } from "utils/Context";
 
 type PluginPosition = "header" | "body" | "footer";
@@ -31,12 +29,9 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
   useEffect(() => {
     let cancelled = false;
 
-    const loadPlugin = (entry: string) => {
-      const versionedEntry = `${entry}?v=${Date.now()}`;
-      mf.registerRemotes([{ name: "button", type: "module", entry: versionedEntry }], {
-        force: true,
-      });
-      mf.loadRemote("button/Button")
+    const loadPlugin = (entry: string, name: string) => {
+      mf.registerRemotes([{ name, type: "module", entry: entry }], { force: true });
+      mf.loadRemote(`${name}/guest`)
         .then((mod: unknown) => {
           if (cancelled) return;
           if (!isRemoteModule(mod)) {
@@ -49,29 +44,14 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
           setComponent(() => mod.default);
         })
         .catch((err: Error) => {
-          if (cancelled) return;
-          setGlobalError({
-            kind: "plugin",
-            message: err.message,
-          });
+          if (!cancelled) setGlobalError({ kind: "plugin", message: err.message });
         });
     };
 
     if (import.meta.env.DEV) {
-      loadPlugin(`http://localhost:3000/frontend.js`);
+      loadPlugin("http://localhost:3000/frontend.js", "remote");
     } else {
-      appDataDir()
-        .then((dir) => join(dir, "plugins", path, "frontend.js"))
-        .then((file) => {
-          if (!cancelled) loadPlugin(convertFileSrc(file));
-        })
-        .catch((err) => {
-          if (!cancelled)
-            setGlobalError({
-              kind: "plugin",
-              message: err.message,
-            });
-        });
+      loadPlugin(`https://plugins.sparus.app/${path}/frontend.js`, path);
     }
 
     return () => {

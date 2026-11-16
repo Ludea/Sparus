@@ -78,6 +78,22 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
           .expect("Cannot copy default Store file");
       }
 
+      let plugins_dir = app_data_dir.join("plugins");
+      if let Ok(entries) = fs::read_dir(&plugins_dir) {
+        let local_remotes = app.state::<tauri_plugin_module_federation::LocalRemotes>();
+        for entry in entries.flatten() {
+          let path = entry.path();
+          if !path.is_dir() || !path.join("frontend.js").is_file() {
+            continue;
+          }
+
+          let name = entry.file_name().to_string_lossy().into_owned();
+          let prefix = format!("https://plugins.sparus.app/{name}/");
+          if let Err(error) = local_remotes.set(&prefix, path) {
+            eprintln!("Failed to register local remote {name}: {error}");
+          }
+        }
+      }
       let store = app.store("Sparus.json")?;
       let cms_url = match store.get("launcher_url") {
         Some(url_json) => {
@@ -123,6 +139,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       Ok(())
     })
     .plugin(hotswap)
+    .plugin(tauri_plugin_module_federation::Builder::new().build())
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_http::init())

@@ -12,6 +12,7 @@ import * as EmotionStyled from "@emotion/styled";
 import emotionStyledPackage from "@emotion/styled/package.json";
 import { invoke } from "@tauri-apps/api/core";
 import { createInstance, ModuleFederation } from "@module-federation/runtime";
+import tauriRuntimePlugin from "@module-federation/tauri";
 import { PluginsProvider, usePluginsContext } from "utils/usePlugins";
 import { SparusErrorContext } from "utils/Context";
 import { Plugins } from "components/Plugins";
@@ -36,6 +37,8 @@ const PluginLoader: FC = () => {
       name: "host",
       remotes: [],
     });
+
+    instance.registerPlugins([tauriRuntimePlugin()]);
 
     instance.registerShared({
       react: {
