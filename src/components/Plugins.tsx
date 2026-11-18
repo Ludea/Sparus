@@ -31,7 +31,7 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
 
     const loadPlugin = (entry: string, name: string) => {
       mf.registerRemotes([{ name, type: "module", entry: entry }], { force: true });
-      mf.loadRemote(`${name}/guest`)
+      mf.loadRemote(`${name}/remote`)
         .then((mod: unknown) => {
           if (cancelled) return;
           if (!isRemoteModule(mod)) {
@@ -49,7 +49,7 @@ export const Plugins = ({ path, register, mf }: PluginsManagerProps & { mf: Modu
     };
 
     if (import.meta.env.DEV) {
-      loadPlugin("http://localhost:3000/frontend.js", "remote");
+      loadPlugin("http://localhost:3000/frontend.js", "guest");
     } else {
       loadPlugin(`https://plugins.sparus.app/${path}/frontend.js`, path);
     }
