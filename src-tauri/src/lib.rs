@@ -139,7 +139,7 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
       Ok(())
     })
     .plugin(hotswap)
-    .plugin(tauri_plugin_module_federation::Builder::new().build())
+    .plugin(tauri_plugin_module_federation::init(None))
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_http::init())
