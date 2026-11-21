@@ -14,7 +14,7 @@ use wasmtime::{
   },
   Config, Engine, Store,
 };
-use wasmtime_wasi::{WasiCtx, WasiCtxView, WasiView};
+use wasmtime_wasi::{FsPerms, WasiCtx, WasiCtxView, WasiView};
 
 fn plugin_err(msg: impl Into<String> + Clone) -> SparusError {
   println!("wastime err: {}", msg.clone().into());
@@ -336,7 +336,14 @@ impl PluginSession {
   ) -> std::result::Result<Self, SparusError> {
     let mut linker = Linker::new(engine);
     wasmtime_wasi::p3::add_to_linker(&mut linker)?;
-    let wasi = WasiCtx::builder().inherit_stdio().inherit_stderr().build();
+    let plugin_data_dir = plugin_dir.join(plugin_name);
+
+    let mut wasi_builder = WasiCtx::builder();
+    wasi_builder
+      .inherit_stdio()
+      .inherit_stderr()
+      .preopened_dir(&plugin_data_dir, ".", FsPerms::ReadWrite)?;
+    let wasi = wasi_builder.build();
     let state = ComponentRunStates {
       wasi_ctx: wasi,
       resource_table: ResourceTable::new(),
