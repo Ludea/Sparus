@@ -8,30 +8,20 @@ use semver::Version;
 use sparus::{event_client::EventClient, EventType, Plugins};
 use std::{
   collections::HashMap,
+  io::{Cursor, Read},
   path::{Path, PathBuf},
 };
 use tauri::{AppHandle, Emitter, Runtime};
 use tauri_plugin_http::reqwest;
 use tokio::{
-  fs::{self, File},
-  io::AsyncWriteExt,
+  fs,
   time::{sleep, Duration},
 };
 use tonic::transport::Channel;
 
-/// Event carrying a `SparusError` to the frontend.
-///
-/// `SparusError` already serializes to `{kind, message}`, which is the shape
-/// the UI's error handling expects, so this can be surfaced the same way as
-/// any other error. Same mechanism `updater.rs` uses for
-/// `sparus://downloadinfos`.
 pub const PLUGIN_ERROR_EVENT: &str = "sparus://pluginerror";
 
 fn report<R: Runtime>(app: &AppHandle<R>, err: SparusError) {
-  // `Emitter::emit` needs `Serialize + Clone`, and `SparusError` can't be
-  // `Clone` (it wraps `io::Error` and friends). Going through `to_value` reuses
-  // the existing `Serialize` impl, so the `kind` stays consistent with every
-  // other error the frontend receives.
   match serde_json::to_value(&err) {
     Ok(payload) => {
       let _ = app.emit(PLUGIN_ERROR_EVENT, payload);
@@ -54,6 +44,7 @@ async fn start_streaming<R: Runtime>(
   client: &mut EventClient<Channel>,
   plugins_url: String,
   launcher_name: String,
+  plugins_public_key: String,
 ) -> Result<(), SparusError> {
   let app_data_dir_string = app_data_dir.display().to_string();
   let plugins = get_list_plugins_with_versions(app_data_dir_string.clone()).await?;
@@ -66,10 +57,6 @@ async fn start_streaming<R: Runtime>(
 
   let mut stream = response.into_inner();
   loop {
-    // Handling the three outcomes explicitly. The previous
-    // `while let Ok(Some(item))` also matched `Err(_)` as "loop is over" and
-    // dropped the status without binding it, so a server-side error looked
-    // exactly like a clean shutdown and the launcher went permanently silent.
     let item = match stream.message().await {
       Ok(Some(item)) => item,
       Ok(None) => return Ok(()),
@@ -78,12 +65,12 @@ async fn start_streaming<R: Runtime>(
 
     let plugin_name = item.plugin;
     let url = format!("{}/plugins/{}", plugins_url, plugin_name);
-    // A failure on one plugin is reported to the frontend and skipped. It must
-    // not leave the loop: returning here ends the subscription, so the next
-    // event never arrives (#1060).
     match EventType::try_from(item.event_type) {
       Ok(EventType::Install) | Ok(EventType::Update) => {
-        if let Err(err) = download_and_write_file(app_data_dir.clone(), url, &plugin_name).await {
+        if let Err(err) =
+          download_and_write_file(app_data_dir.clone(), url, &plugin_name, &plugins_public_key)
+            .await
+        {
           report(
             app,
             SparusError::PluginEvent(format!(
@@ -115,21 +102,13 @@ async fn start_streaming<R: Runtime>(
   }
 }
 
-/// Subscribes to the CMS event stream, reconnecting for as long as the app
-/// runs.
-///
-/// This never returns: the subscription has to outlive transient failures. The
-/// CMS may not be up yet when the launcher starts, a stream can drop at any
-/// time, and giving up on either leaves the launcher silently unsubscribed for
-/// the rest of the session. Errors are emitted to the frontend rather than
-/// returned -- the caller spawns this and drops the `JoinHandle`, so a returned
-/// error would end the subscription without being seen by anyone.
 pub async fn start_rpc_client<R: Runtime>(
   app: AppHandle<R>,
   app_data_dir: PathBuf,
   cms_url: String,
   plugins_url: String,
   launcher_name: String,
+  plugins_public_key: String,
 ) {
   const MIN_BACKOFF: Duration = Duration::from_secs(1);
   const MAX_BACKOFF: Duration = Duration::from_secs(60);
@@ -138,7 +117,6 @@ pub async fn start_rpc_client<R: Runtime>(
   loop {
     match EventClient::connect(cms_url.clone()).await {
       Ok(mut client) => {
-        // Connected: a later failure is transient, so restart the backoff.
         backoff = MIN_BACKOFF;
         if let Err(err) = start_streaming(
           &app,
@@ -146,6 +124,7 @@ pub async fn start_rpc_client<R: Runtime>(
           &mut client,
           plugins_url.clone(),
           launcher_name.clone(),
+          plugins_public_key.clone(),
         )
         .await
         {
@@ -164,44 +143,83 @@ async fn download_and_write_file(
   app_data_dir: PathBuf,
   url: String,
   plugin_name: &str,
+  public_key: &str,
 ) -> Result<(), SparusError> {
-  let plugin_name_dir = app_data_dir.join("plugins").join(plugin_name);
-  fs::create_dir_all(&plugin_name_dir).await?;
+  if plugin_name.is_empty()
+    || !plugin_name
+      .chars()
+      .all(|c| c.is_ascii_alphanumeric() || "._-".contains(c))
+  {
+    return Err(SparusError::PluginEvent(
+      "Invalid plugin archive name".into(),
+    ));
+  }
+  if public_key.trim().is_empty() {
+    return Err(SparusError::PluginEvent(
+      "Plugin signing public key is not configured".into(),
+    ));
+  }
 
-  let mut entries = fs::read_dir(&plugin_name_dir).await?;
-  while let Some(entries) = entries.next_entry().await? {
-    let path = entries.path();
-    if path.extension().and_then(|e| e.to_str()) == Some("wasm") {
-      fs::remove_file(path).await?;
+  let archive_url = format!("{url}/{plugin_name}.zip");
+  let signature_url = format!("{archive_url}.minisig");
+  let archive = download_bytes(archive_url).await?;
+  let signature_text = String::from_utf8(download_bytes(signature_url).await?)?;
+  let key = minisign_verify::PublicKey::from_base64(public_key.trim())?;
+  let signature = minisign_verify::Signature::decode(&signature_text)?;
+  key.verify(&archive, &signature, false)?;
+
+  let plugins_dir = app_data_dir.join("plugins");
+  fs::create_dir_all(&plugins_dir).await?;
+  let staging_dir = plugins_dir.join(format!(".{plugin_name}.installing"));
+  if fs::try_exists(&staging_dir).await? {
+    fs::remove_dir_all(&staging_dir).await?;
+  }
+  fs::create_dir_all(&staging_dir).await?;
+
+  let mut zip = zip::ZipArchive::new(Cursor::new(archive))?;
+  for index in 0..zip.len() {
+    let mut file = zip.by_index(index)?;
+    let Some(relative_path) = file.enclosed_name() else {
+      let _ = fs::remove_dir_all(&staging_dir).await;
+      return Err(SparusError::PluginEvent(
+        "Plugin archive contains an unsafe path".into(),
+      ));
+    };
+    let destination = staging_dir.join(relative_path);
+    if file.is_dir() {
+      fs::create_dir_all(&destination).await?;
+    } else {
+      if let Some(parent) = destination.parent() {
+        fs::create_dir_all(parent).await?;
+      }
+      let mut contents = Vec::new();
+      file.read_to_end(&mut contents)?;
+      fs::write(destination, contents).await?;
     }
   }
-  download_to(
-    url.clone(),
-    plugin_name_dir.join(format!("{plugin_name}.wasm")),
-  )
-  .await?;
-  download_to(
-    format!("{url}/frontend.js"),
-    plugin_name_dir.join("frontend.js"),
-  )
-  .await?;
+
+  let destination_dir = plugins_dir.join(plugin_name);
+  if fs::try_exists(&destination_dir).await? {
+    fs::remove_dir_all(&destination_dir).await?;
+  }
+  fs::rename(&staging_dir, &destination_dir).await?;
 
   Ok(())
 }
 
-async fn download_to(url: String, destination: PathBuf) -> Result<(), SparusError> {
+async fn download_bytes(url: String) -> Result<Vec<u8>, SparusError> {
   let response = reqwest::get(url).await?;
   if response.status() != StatusCode::OK {
     return Err(SparusError::Plugin);
   }
 
   let mut stream = response.bytes_stream();
-  let mut file = File::create(destination).await?;
+  let mut bytes = Vec::new();
   while let Some(chunk) = stream.next().await {
     let data = chunk?;
-    file.write_all(&data).await?;
+    bytes.extend_from_slice(&data);
   }
-  Ok(())
+  Ok(bytes)
 }
 
 async fn get_list_plugins_with_versions(

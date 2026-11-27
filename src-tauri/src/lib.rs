@@ -128,12 +128,24 @@ pub fn run_app<R: Runtime>(mut builder: Builder<R>) {
         None => "kataster".to_string(),
       };
 
+      let plugins_public_key = match store.get("plugins_public_key") {
+        Some(key_json) => {
+          if let tauri_plugin_store::JsonValue::String(key) = key_json {
+            key
+          } else {
+            String::new()
+          }
+        }
+        None => String::new(),
+      };
+
       tauri::async_runtime::spawn(rpc::start_rpc_client(
         app.handle().clone(),
         app_data_dir.clone(),
         cms_url,
         repository_url,
         launcher_name,
+        plugins_public_key,
       ));
 
       Ok(())

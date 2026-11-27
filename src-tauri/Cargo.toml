@@ -32,6 +32,8 @@ tokio-stream = "0.1"
 getrandom = "0.4.1"
 thiserror = "2.0.18"
 async-lock = "3.4.0"
+minisign-verify = "0.2.5"
+zip = { version = "9.8.2", default-features = false, features = ["deflate"] }
 wasmtime = "51.0.0"
 wasmtime-wasi = "51.0.0"
 tauri-plugin-store = "2"

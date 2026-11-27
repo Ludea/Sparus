@@ -31,6 +31,12 @@ pub enum SparusError {
   Store(#[from] tauri_plugin_store::Error),
   #[error(transparent)]
   Wasmtime(#[from] wasmtime::Error),
+  #[error("Invalid plugin signature encoding: {0}")]
+  PluginSignatureEncoding(#[from] std::string::FromUtf8Error),
+  #[error("Plugin signature error: {0}")]
+  PluginSignature(#[from] minisign_verify::Error),
+  #[error("Plugin archive error: {0}")]
+  PluginArchive(#[from] zip::result::ZipError),
   #[error("Plugin event {0} not found")]
   PluginEvent(String),
   #[error("Plugin not found")]
@@ -104,6 +110,18 @@ impl Serialize for SparusError {
       }
       SparusError::Wasmtime(err) => {
         s.serialize_field("kind", "wasmtime")?;
+        s.serialize_field("message", &err.to_string())?;
+      }
+      SparusError::PluginSignatureEncoding(err) => {
+        s.serialize_field("kind", "plugin")?;
+        s.serialize_field("message", &err.to_string())?;
+      }
+      SparusError::PluginSignature(err) => {
+        s.serialize_field("kind", "plugin")?;
+        s.serialize_field("message", &err.to_string())?;
+      }
+      SparusError::PluginArchive(err) => {
+        s.serialize_field("kind", "plugin")?;
         s.serialize_field("message", &err.to_string())?;
       }
       SparusError::PluginEvent(event_type) => {
